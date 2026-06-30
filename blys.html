@@ -92,7 +92,15 @@ body {
 }
 .card > *, .block > * { position: relative; z-index: 1; }
 
-.card-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+/* ===== ✅ 标题居中 ===== */
+.card-title, .block-title {
+  font-size: 14px; font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 14px;
+  display: flex; align-items: center; justify-content: center;
+  gap: 6px;
+  text-align: center;
+}
 
 /* ===== 网格 ===== */
 .grid-3, .grid-2 { display: grid; gap: 10px; margin-bottom: 10px; justify-items: center; }
@@ -615,7 +623,7 @@ body {
     document.querySelectorAll('input[type="number"]').forEach(el => {
       if(!el.dataset.default) el.dataset.default = el.value;
       el.addEventListener('focus', function() { if(this.value===this.dataset.default) this.value=''; else this.select(); });
-      el.addEventListener('blurs', function() { if(this.value==='') this.value=this.dataset.default; });
+      el.addEventListener('blur', function() { if(this.value==='') this.value=this.dataset.default; });
     });
   }
 
@@ -759,7 +767,7 @@ body {
   function renderFwdResult(groups,tr,tl,dr,Vt,Vd,Vf,Tu,warnHtml,copyTextData){
     lastFwdData=arguments; copyText=copyTextData;
     let html=warnHtml||'';
-    html+='<div class="block"><div class="block-title">⚙️ 2 套最优齿轮方案（点击选中）</div>';
+    html+='<div class="block"><div class="block-title">⚙️ 2 套最优齿轮方案</div>';
     groups.forEach((g,i)=>{
       const key=schemeKey('fwd',g), starred=isFaved(key);
       const gT=`40-${g.gT.B}-${g.gT.C}-80`, gD=`72-${g.gD.B}-${g.gD.C}-58`, gF=`78-${g.gF.B}-${g.gF.C}-64`;
