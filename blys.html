@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="GGA 工艺">
+<title>国兴机齿轮工艺计算</title>
+
+<style>
+/* ===== 全局变量 ===== */
+:root {
+  --glass-outer: rgba(255, 255, 255, 0.52);
+  --glass-mid:   rgba(255, 255, 255, 0.34);
+  --glass-inner: rgba(255, 255, 255, 0.20);
+  --glass-border: rgba(255, 255, 255, 0.75);
+  --glass-hl:    rgba(255, 255, 255, 0.85);
+  --glass-shdw-out: 0 10px 36px rgba(100, 110, 220, 0.10), 0 1px 3px rgba(255,255,255,0.55) inset;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #94a3b8;
+  --input-bg: rgba(255, 255, 255, 0.92);
+  --input-border: rgba(255, 255, 255, 0.85);
+  --input-focus: #6366f1;
+  --input-shadow: 
+    0 4px 14px rgba(0,0,0,0.04),
+    0 1px 3px rgba(0,0,0,0.02),
+    inset 0 1px 0 rgba(255,255,255,0.85);
+  --input-shadow-focus: 
+    0 4px 20px rgba(99,102,241,0.12),
+    0 0 0 3px rgba(99,102,241,0.08),
+    inset 0 1px 0 rgba(255,255,255,0.9);
+  --btn-primary: linear-gradient(135deg, #6366f1 0%, #818cf8 50%, #a78bfa 100%);
+  --btn-shadow: 0 10px 28px rgba(99,102,241,0.28), 0 0 0 1px rgba(255,255,255,0.25) inset;
+  --bg-page: #edf2f9;
+  --radius: 22px;
+  --input-h: 46px;
+}
+
+[data-theme="dark"] {
+  --glass-outer: rgba(28, 34, 52, 0.66);
+  --glass-mid:   rgba(28, 34, 52, 0.48);
+  --glass-inner: rgba(28, 34, 52, 0.32);
+  --glass-border: rgba(255, 255, 255, 0.10);
+  --glass-hl:    rgba(255, 255, 255, 0.04);
+  --glass-shdw-out: 0 10px 40px rgba(0,0,0,0.38);
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #64748b;
+  --input-bg: rgba(30, 41, 59, 0.92);
+  --input-border: rgba(255, 255, 255, 0.12);
+  --input-shadow: 
+    0 4px 14px rgba(0,0,0,0.25),
+    0 1px 3px rgba(0,0,0,0.15),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+  --input-shadow-focus: 
+    0 4px 24px rgba(99,102,241,0.15),
+    0 0 0 3px rgba(99,102,241,0.12),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+  --btn-shadow: 0 10px 28px rgba(129,140,248,0.38), 0 0 0 1px rgba(255,255,255,0.08) inset;
+  --bg-page: #080e1a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', -apple-system, 'Microsoft YaHei', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 70px;
+  padding-right: 16px;
+  padding-bottom: 24px;
+  padding-left: 16px;
+  background: var(--bg-page);
+  background-image: radial-gradient(ellipse at 20% 20%, rgba(99,102,241,0.08) 0%, transparent 60%),
+                    radial-gradient(ellipse at 80% 80%, rgba(139,92,246,0.06) 0%, transparent 60%);
+  color: var(--text-primary);
+  font-size: 16px;
+  transition: all 0.3s;
+}
+.app { width: 100%; max-width: 520px; }
+
+/* ===== 头部 ===== */
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
+.logo { font-size: 22px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+.logo span { background: linear-gradient(135deg, #6366f1, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.logo small { font-size: 11px; color: var(--text-muted); }
+.actions { display: flex; gap: 8px; }
+.actions button { padding: 7px 14px; border-radius: 20px; border: 1px solid var(--glass-border); background: var(--glass-outer); backdrop-filter: blur(14px); color: var(--text-secondary); font-size: 13px; cursor: pointer; transition: all 0.2s; }
+.actions button:hover { background: var(--glass-mid); }
+
+/* ===== Tabs ===== */
+.tabs { display: flex; gap: 6px; margin-bottom: 16px; }
+.tab { flex: 1; padding: 11px 8px; border-radius: 14px; border: 1px solid var(--glass-border); background: var(--glass-outer); backdrop-filter: blur(12px); color: var(--text-secondary); font-size: 14px; cursor: pointer; transition: all 0.2s; }
+.tab.active { background: var(--btn-primary); color: #fff; border-color: transparent; font-weight: 600; box-shadow: var(--btn-shadow); }
+
+.panel { display: none; animation: fadeUp 0.25s ease; }
+.panel.active { display: block; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ===== 卡片 ===== */
+.card, .block {
+  position: relative;
+  background: var(--glass-mid);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+  margin-bottom: 14px;
+  box-shadow: var(--glass-shdw-out);
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+  overflow: hidden;
+}
+.card::before, .block::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 6%; right: 6%;
+  height: 42%;
+  border-radius: 18px 18px 60% 60% / 10px 10px 30% 30%;
+  background: linear-gradient(180deg, var(--glass-hl) 0%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+.card > *, .block > * { position: relative; z-index: 1; }
+
+.card-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 14px; display: flex; align-items: center; gap: 6px; }
+
+/* ===== 网格 ===== */
+.grid-3, .grid-2 { display: grid; gap: 10px; margin-bottom: 10px; justify-items: center; }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+
+/* ===== 输入框凸出 ===== */
+.cell { display: flex; flex-direction: column; gap: 5px; width: 100%; max-width: 140px; }
+.cell label { font-size: 11px; font-weight: 600; color: var(--text-muted); text-align: center; }
+
+.cell input,
+.gear-grid input {
+  width: 100%;
+  min-width: 0;
+  height: var(--input-h);
+  padding: 0 8px;
+  border-radius: 14px;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  backdrop-filter: blur(8px);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+  outline: none;
+  transition: all 0.2s ease;
+  box-shadow: var(--input-shadow);
+  letter-spacing: 0.3px;
+}
+
+.cell input:focus,
+.gear-grid input:focus {
+  border-color: var(--input-focus);
+  box-shadow: var(--input-shadow-focus);
+  background: var(--input-bg);
+}
+
+.cell input.error,
+.gear-grid input.error {
+  border-color: #ef4444;
+  box-shadow: 0 0 0 3px rgba(239,68,68,0.10), var(--input-shadow);
+}
+
+.gear-section { margin-bottom: 14px; }
+.gear-label { font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 6px; display: flex; align-items: center; gap: 4px; }
+.gear-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+
+[data-theme="dark"] .cell input,
+[data-theme="dark"] .gear-grid input {
+  color: #f1f5f9;
+  background: rgba(30, 41, 59, 0.92);
+  border-color: rgba(255, 255, 255, 0.10);
+  box-shadow: var(--input-shadow);
+  caret-color: #a78bfa;
+}
+[data-theme="dark"] .cell input:focus,
+[data-theme="dark"] .gear-grid input:focus {
+  border-color: #818cf8;
+  background: rgba(30, 41, 59, 0.96);
+  box-shadow: var(--input-shadow-focus);
+}
+
+/* ===== 按钮 ===== */
+.btn { display: block; width: 100%; margin-top: 14px; padding: 15px; border: none; border-radius: 16px; background: var(--btn-primary); color: #fff; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: var(--btn-shadow); transition: transform 0.18s, box-shadow 0.18s; position: relative; overflow: hidden; }
+.btn:active { transform: scale(0.97); }
+.btn::after { content: ''; position: absolute; top: -50%; left: -70%; width: 50%; height: 200%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.32), transparent); transform: skewX(-18deg); transition: left 0.55s; }
+.btn:hover::after { left: 140%; }
+.btn.loading { opacity: 0.7; cursor: not-allowed; pointer-events: none; }
+.btn.loading::before { content: ''; display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite; vertical-align: middle; margin-right: 8px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.btn-reset { display: block; width: 100%; margin-top: 8px; padding: 12px; border-radius: 14px; border: 1px solid var(--glass-border); background: var(--glass-outer); backdrop-filter: blur(8px); color: var(--text-secondary); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+.btn-reset:hover { background: var(--glass-mid); }
+
+/* ===== 结果区 ===== */
+.result-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 10px;
+}
+.result-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 6px;
+  background: var(--input-bg);
+  backdrop-filter: blur(6px);
+  border-radius: 12px;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--input-shadow);
+  text-align: center;
+  min-height: 64px;
+}
+.result-item .r-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.result-item .r-value {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-top: 2px;
+}
+.result-item .r-unit {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+[data-theme="dark"] .result-item {
+  background: rgba(30, 41, 59, 0.6);
+}
+[data-theme="dark"] .result-item .r-value {
+  color: #f1f5f9;
+}
+
+.warn { padding: 10px 14px; border-radius: 12px; margin: 6px 0 10px; font-size: 13px; font-weight: 500; text-align: center; }
+.warn.y { background: rgba(254,243,199,0.9); color: #78350f; }
+.warn.r { background: rgba(254,226,226,0.9); color: #7f1d1d; }
+[data-theme="dark"] .warn.y { background: rgba(113,63,18,0.65); color: #fcd34d; }
+[data-theme="dark"] .warn.r { background: rgba(127,29,29,0.65); color: #fca5a5; }
+
+.block-title { font-size: 14px; font-weight: 600; color: var(--text-primary); padding-bottom: 8px; border-bottom: 1px solid var(--glass-border); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+.block-title-actions { display: flex; gap: 6px; align-items: center; }
+.clear-fav-btn, .clear-group-btn { padding: 3px 10px; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--glass-mid); color: var(--text-muted); font-size: 11px; cursor: pointer; transition: all 0.15s; }
+.clear-fav-btn:hover, .clear-group-btn:hover { background: rgba(239,68,68,0.12); color: #ef4444; border-color: rgba(239,68,68,0.3); }
+
+.gear-row { display: flex; justify-content: space-between; align-items: flex-start; margin: 10px 0; font-size: 15px; line-height: 2; padding: 10px 12px; border-radius: 12px; background: var(--input-bg); border: 1px solid var(--glass-border); transition: all 0.15s; cursor: pointer; box-shadow: var(--input-shadow); }
+.gear-row:hover, .gear-row:active { background: rgba(99, 102, 241, 0.08); }
+[data-theme="dark"] .gear-row { background: rgba(30, 41, 59, 0.6); }
+.gear-info { flex: 1; }
+.gear-info .scheme-title { font-weight: 700; margin-bottom: 4px; color: var(--text-primary); }
+.gear-info .scheme-detail { font-size: 14px; color: var(--text-secondary); padding-left: 8px; }
+.gear-info .scheme-detail div { line-height: 1.8; }
+.star-btn { flex-shrink: 0; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--glass-border); background: var(--glass-outer); backdrop-filter: blur(8px); font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; margin-left: 8px; margin-top: 2px; user-select: none; -webkit-user-select: none; opacity: 0.5; }
+.star-btn:hover, .star-btn:active { opacity: 1; background: var(--glass-mid); transform: scale(1.15); }
+.star-btn.starred { opacity: 1; background: rgba(251, 191, 36, 0.25); border-color: rgba(251, 191, 36, 0.5); }
+.star-btn.starred .star-icon::before { content: '⭐'; }
+.star-icon::before { content: '☆'; }
+
+/* ===== 弹窗 ===== */
+.popup-mask { position: fixed; inset: 0; background: rgba(0,0,0,0.32); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 10000; padding: 20px; }
+.popup-mask.show { display: flex; }
+.note-popup { width: 280px; background: rgba(255,255,255,0.78); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); border: 1px solid rgba(255,255,255,0.40); border-radius: 18px; padding: 20px; box-shadow: 0 16px 48px rgba(0,0,0,0.10); animation: fadeUp 0.2s ease; }
+[data-theme="dark"] .note-popup { background: rgba(28,34,52,0.85); border-color: rgba(255,255,255,0.10); box-shadow: 0 16px 48px rgba(0,0,0,0.35); }
+.note-popup-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 10px; text-align: center; }
+.note-popup input { width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.6); background: rgba(255,255,255,0.7); font-size: 14px; color: var(--text-primary); outline: none; transition: all 0.2s; }
+[data-theme="dark"] .note-popup input { background: rgba(51,65,85,0.8); border-color: rgba(255,255,255,0.15); color: #f1f5f9; }
+.note-popup input:focus { border-color: var(--input-focus); box-shadow: 0 0 0 3px rgba(99,102,241,0.10); }
+.note-popup-actions { display: flex; gap: 8px; margin-top: 12px; }
+.note-popup-actions button { flex: 1; padding: 8px 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.4); color: var(--text-secondary); font-size: 13px; cursor: pointer; transition: all 0.15s; }
+[data-theme="dark"] .note-popup-actions button { background: rgba(51,65,85,0.5); border-color: rgba(255,255,255,0.08); color: #cbd5e1; }
+.note-popup-actions button:hover { background: rgba(255,255,255,0.6); }
+[data-theme="dark"] .note-popup-actions button:hover { background: rgba(51,65,85,0.8); }
+.note-popup-actions .confirm-btn { background: linear-gradient(135deg, #818cf8, #a78bfa); color: #fff; border-color: transparent; }
+[data-theme="dark"] .note-popup-actions .confirm-btn { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+
+.confirm-popup { width: 300px; background: rgba(255,255,255,0.78); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); border: 1px solid rgba(255,255,255,0.40); border-radius: 18px; padding: 20px; box-shadow: 0 16px 48px rgba(0,0,0,0.10); animation: fadeUp 0.2s ease; text-align: center; }
+[data-theme="dark"] .confirm-popup { background: rgba(28,34,52,0.85); border-color: rgba(255,255,255,0.10); box-shadow: 0 16px 48px rgba(0,0,0,0.35); }
+.confirm-popup-title { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 8px; }
+.confirm-popup-detail { font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; line-height: 1.8; }
+.confirm-popup-note { font-size: 12px; color: var(--text-muted); font-style: italic; margin-bottom: 14px; }
+.confirm-popup-actions { display: flex; gap: 8px; }
+.confirm-popup-actions button { flex: 1; padding: 9px 10px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.4); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.15s; color: var(--text-secondary); }
+[data-theme="dark"] .confirm-popup-actions button { background: rgba(51,65,85,0.5); border-color: rgba(255,255,255,0.08); color: #cbd5e1; }
+.confirm-popup-actions .cancel-btn:hover { background: rgba(255,255,255,0.6); }
+[data-theme="dark"] .confirm-popup-actions .cancel-btn:hover { background: rgba(51,65,85,0.8); }
+.confirm-popup-actions .ok-btn { background: linear-gradient(135deg, #818cf8, #a78bfa); color: #fff; border-color: transparent; }
+[data-theme="dark"] .confirm-popup-actions .ok-btn { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+
+/* ===== 帮助弹窗 ===== */
+.modal-mask { position: fixed; inset: 0; background: rgba(0,0,0,0.32); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 9999; padding: 20px; }
+.modal-mask.show { display: flex; }
+.modal-box { max-width: 380px; width: 100%; background: rgba(255,255,255,0.78); backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px); border-radius: var(--radius); padding: 22px 20px; border: 1px solid rgba(255,255,255,0.40); box-shadow: 0 16px 48px rgba(0,0,0,0.10); }
+[data-theme="dark"] .modal-box { background: rgba(28,34,52,0.85); border-color: rgba(255,255,255,0.10); box-shadow: 0 16px 48px rgba(0,0,0,0.35); }
+.modal-title { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: var(--text-primary); }
+.modal-body { font-size: 13px; line-height: 2; color: var(--text-secondary); margin-bottom: 14px; }
+.modal-body li { list-style: none; padding: 2px 0; }
+.modal-body ul { padding-left: 4px; margin: 0; }
+.modal-close { width: 100%; padding: 10px; border-radius: 14px; border: none; background: linear-gradient(135deg, #818cf8, #a78bfa); color: #fff; font-weight: 500; font-size: 14px; cursor: pointer; }
+[data-theme="dark"] .modal-close { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+
+/* ===== 收藏 ===== */
+.longpress-ring { position: fixed; width: 52px; height: 52px; border-radius: 50%; border: 3px solid rgba(99,102,241,0.2); border-top-color: #6366f1; z-index: 10001; pointer-events: none; animation: ring-progress 0.5s linear forwards; transform: translate(-50%, -50%); }
+@keyframes ring-progress { from { transform: translate(-50%, -50%) rotate(0deg); border-top-color: #6366f1; } to { transform: translate(-50%, -50%) rotate(180deg); border-top-color: #22c55e; } }
+
+.fav-list { margin-top: 12px; }
+.fav-group { margin-bottom: 10px; }
+.fav-group-header { display: flex; justify-content: space-between; align-items: center; padding: 6px 10px; background: rgba(99,102,241,0.08); border-radius: 10px; cursor: pointer; user-select: none; -webkit-user-select: none; transition: all 0.15s; }
+.fav-group-header:hover { background: rgba(99,102,241,0.14); }
+.fav-group-title { font-size: 12px; font-weight: 600; color: var(--text-primary); display: flex; align-items: center; gap: 4px; }
+.fav-group-count { font-size: 11px; color: var(--text-muted); background: var(--glass-mid); padding: 1px 8px; border-radius: 6px; }
+.fav-group-toggle { font-size: 10px; color: var(--text-muted); transition: transform 0.2s; }
+.fav-group.collapsed .fav-group-toggle { transform: rotate(-90deg); }
+.fav-group.collapsed .fav-group-items { display: none; }
+.fav-group-items { margin-top: 6px; }
+.fav-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; background: var(--input-bg); backdrop-filter: blur(6px); border-radius: 12px; margin-bottom: 6px; font-size: 14px; border: 1px solid var(--glass-border); transition: all 0.15s; box-shadow: var(--input-shadow); }
+[data-theme="dark"] .fav-item { background: rgba(30,41,59,0.6); }
+.fav-item:hover { background: rgba(99,102,241,0.08); }
+.fav-info { flex: 1; cursor: default; user-select: none; -webkit-user-select: none; }
+.fav-info .fav-title { font-weight: 600; color: var(--text-primary); font-size: 13px; }
+.fav-info .fav-note { font-size: 11px; color: var(--text-muted); font-style: italic; margin-top: 1px; }
+.fav-info .fav-detail { color: var(--text-secondary); font-size: 12px; margin-top: 2px; }
+.fav-actions { display: flex; gap: 6px; }
+.fav-actions button { padding: 4px 10px; border-radius: 8px; border: 1px solid var(--glass-border); background: var(--glass-outer); color: var(--text-secondary); font-size: 12px; cursor: pointer; transition: all 0.15s; }
+.fav-actions button:hover { background: var(--glass-mid); }
+.fav-actions .del-btn:hover { background: rgba(239,68,68,0.15); color: #ef4444; }
+.fav-empty { text-align: center; padding: 20px 12px; color: var(--text-muted); font-size: 13px; line-height: 1.8; }
+.fav-empty::before { content: '📌'; display: block; font-size: 24px; margin-bottom: 6px; }
+
+.copy-wrap { text-align: center; margin-top: 12px; }
+.copy-btn { padding: 8px 22px; border-radius: 20px; border: 1px solid var(--glass-border); background: var(--glass-outer); backdrop-filter: blur(8px); color: var(--text-secondary); font-size: 13px; cursor: pointer; transition: all 0.2s; }
+.copy-btn:hover { background: var(--glass-mid); }
+.copy-btn:active { transform: scale(0.95); }
+
+@media (max-width: 480px) {
+  body { padding: 16px 16px 24px; }
+  .app { max-width: 100%; }
+  .cell { max-width: 110px; }
+  .result-grid { grid-template-columns: 1fr 1fr; gap: 4px; }
+  .result-item { min-height: 56px; padding: 8px 4px; }
+  .result-item .r-value { font-size: 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="header">
+    <div class="logo">⚙️ <span>国兴机工艺计算</span> <small>· 液态玻璃版</small></div>
+    <div class="actions">
+      <button id="helpBtn">📖</button>
+      <button id="themeBtn">🌓</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="fwd">➡️ 正向</button>
+    <button class="tab" data-tab="bwd">⬅️ 反向</button>
+  </div>
+
+  <!-- ===== 正向面板 ===== -->
+  <div class="panel active" id="panelFwd">
+    <div class="card">
+      <div class="card-title">📟 触摸屏工艺参数</div>
+      <div class="grid-3">
+        <div class="cell"><label>张力比 TR（%）</label><input type="number" inputmode="decimal" id="trF" value="86.44"></div>
+        <div class="cell"><label>下捻 Tl（捻/m）</label><input type="number" inputmode="decimal" id="tlF" value="658.4"></div>
+        <div class="cell"><label>牵伸倍数 DR</label><input type="number" inputmode="decimal" id="drF" value="3.46"></div>
+      </div>
+      <div class="grid-2">
+        <div class="cell"><label>上层锭速</label><input type="number" inputmode="decimal" id="nuF" value="13998.4"></div>
+        <div class="cell"><label>下层锭速</label><input type="number" inputmode="decimal" id="nlF" value="14102.4"></div>
+      </div>
+    </div>
+    <button class="btn" id="calcF">🚀 开始运算</button>
+    <button class="btn-reset" id="resetF">🔄 重置参数</button>
+    <div id="resF"></div>
+  </div>
+
+  <!-- ===== 反向面板 ===== -->
+  <div class="panel" id="panelBwd">
+    <div class="card">
+      <div class="gear-section">
+        <div class="gear-label">⚙️ 卷取齿轮</div>
+        <div class="gear-grid">
+          <input type="number" inputmode="decimal" id="tA" value="36">
+          <input type="number" inputmode="decimal" id="tB" value="76">
+          <input type="number" inputmode="decimal" id="tC" value="72">
+          <input type="number" inputmode="decimal" id="tD" value="80">
+        </div>
+      </div>
+      <div class="gear-section">
+        <div class="gear-label">⚙️ 牵伸齿轮</div>
+        <div class="gear-grid">
+          <input type="number" inputmode="decimal" id="dA" value="72">
+          <input type="number" inputmode="decimal" id="dB" value="58">
+          <input type="number" inputmode="decimal" id="dC" value="42">
+          <input type="number" inputmode="decimal" id="dD" value="58">
+        </div>
+      </div>
+      <div class="gear-section">
+        <div class="gear-label">⚙️ 喂入齿轮</div>
+        <div class="gear-grid">
+          <input type="number" inputmode="decimal" id="fA" value="78">
+          <input type="number" inputmode="decimal" id="fB" value="54">
+          <input type="number" inputmode="decimal" id="fC" value="50">
+          <input type="number" inputmode="decimal" id="fD" value="64">
+        </div>
+      </div>
+      <div class="grid-2" style="margin-top:6px;">
+        <div class="cell"><label>上层锭速</label><input type="number" inputmode="decimal" id="nuB" value="13998.4"></div>
+        <div class="cell"><label>下层锭速</label><input type="number" inputmode="decimal" id="nlB" value="14102.4"></div>
+      </div>
+    </div>
+    <button class="btn" id="calcB">🚀 反推运算</button>
+    <button class="btn-reset" id="resetB">🔄 重置参数</button>
+    <div id="resB"></div>
+  </div>
+
+</div>
+
+<!-- ===== 弹窗 ===== -->
+<div class="popup-mask" id="noteMask">
+  <div class="note-popup">
+    <div class="note-popup-title">添加备注（可选）</div>
+    <input type="text" id="noteInput" placeholder="如：常规生产" maxlength="30">
+    <div class="note-popup-actions">
+      <button id="noteSkip">跳过</button>
+      <button class="confirm-btn" id="noteConfirm">收藏</button>
+    </div>
+  </div>
+</div>
+
+<div class="popup-mask" id="fillMask">
+  <div class="confirm-popup">
+    <div class="confirm-popup-title">确认回填方案？</div>
+    <div class="confirm-popup-detail" id="fillDetail"></div>
+    <div class="confirm-popup-note" id="fillNote"></div>
+    <div class="confirm-popup-actions">
+      <button class="cancel-btn" id="fillCancel">取消</button>
+      <button class="ok-btn" id="fillOk">确认回填</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 帮助弹窗 ===== -->
+<div class="modal-mask" id="helpModal">
+  <div class="modal-box">
+    <div class="modal-title">📖 快速指南</div>
+    <div class="modal-body">
+      <ul>
+        <li>🔹 <b>正向</b>：输入工艺参数 → 推荐 2 套最优齿轮</li>
+        <li>🔹 <b>反向</b>：输入齿轮齿数 → 反推工艺参数</li>
+        <li>⭐ <b>收藏</b>：点击 ⭐ 收藏方案，可添加备注</li>
+        <li>⏱ <b>回填</b>：收藏列表长按 0.5 秒 → 确认自动填入</li>
+        <li>⌨️ <b>快捷</b>：输入框按 Enter 快速计算</li>
+      </ul>
+      <div style="margin-top:6px;font-size:12px;color:var(--text-muted);">K1=1345.996 &nbsp; K2=3741.07 &nbsp; 齿轮 30~80 偶数齿</div>
+    </div>
+    <button class="modal-close" id="closeHelpBtn">关 闭</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  // ===== 核心常数 =====
+  const K1 = 1345.996;
+  const K2 = 3741.0728;
+  const GEAR_LIST = Array.from({length:26}, (_,i) => 30 + i*2);
+
+  // ===== 补偿系数 =====
+  const COMP_MAP = {
+    30: { D: 0.9820, F: 1.1600, T: 1.4320 },
+    32: { D: 0.9850, F: 1.1570, T: 1.4310 },
+    34: { D: 0.9875, F: 1.1550, T: 1.4305 },
+    36: { D: 0.98992, F: 1.15374, T: 1.42976 },
+    38: { D: 0.9920, F: 1.1510, T: 1.4290 },
+    40: { D: 0.9940, F: 1.1480, T: 1.4285 },
+    42: { D: 0.99601, F: 1.14603, T: 1.43022 },
+    44: { D: 0.9980, F: 1.1430, T: 1.4310 }
+  };
+  function getComp(TA) {
+    if (COMP_MAP[TA]) return COMP_MAP[TA];
+    const keys = Object.keys(COMP_MAP).map(Number).sort((a,b)=>a-b);
+    let lower = null, upper = null;
+    for (let k of keys) { if (k <= TA) lower = k; if (k >= TA && upper === null) upper = k; }
+    if (lower === null) return COMP_MAP[keys[0]];
+    if (upper === null) return COMP_MAP[keys[keys.length-1]];
+    if (lower === upper) return COMP_MAP[lower];
+    const ratio = (TA - lower) / (upper - lower);
+    const lo = COMP_MAP[lower], hi = COMP_MAP[upper];
+    return { D: lo.D + (hi.D - lo.D) * ratio, F: lo.F + (hi.F - lo.F) * ratio, T: lo.T + (hi.T - lo.T) * ratio };
+  }
+
+  // ===== 存储 =====
+  const storage = {
+    save(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); } catch(_){} },
+    load(k){ try{ const s=localStorage.getItem(k); return s?JSON.parse(s):null; } catch(_){ return null; } }
+  };
+  const STOR_F='gf_f6', STOR_B='gf_b6', STOR_T='ui_t6', STOR_FAV='gf_fav6';
+
+  const $ = id => document.getElementById(id);
+  const getVal = id => parseFloat($(id).value) || 0;
+  const getInt = id => parseInt($(id).value) || 0;
+
+  const DEFAULTS = {
+    trF:'86.44', tlF:'658.4', drF:'3.46', nuF:'13998.4', nlF:'14102.4',
+    tA:'36', tB:'76', tC:'72', tD:'80',
+    dA:'72', dB:'58', dC:'42', dD:'58',
+    fA:'78', fB:'54', fC:'50', fD:'64',
+    nuB:'13998.4', nlB:'14102.4'
+  };
+
+  // ===== 输入框自动清空 =====
+  function initAutoClear() {
+    document.querySelectorAll('input[type="number"]').forEach(el => {
+      if (!el.dataset.default) el.dataset.default = el.value;
+      el.addEventListener('focus', function() {
+        if (this.value === this.dataset.default) this.value = '';
+        else this.select();
+      });
+      el.addEventListener('blur', function() {
+        if (this.value === '') this.value = this.dataset.default;
+      });
+    });
+  }
+
+  // ===== 收藏系统 =====
+  function getFavs(){ return storage.load(STOR_FAV) || []; }
+  function saveFavs(f){ storage.save(STOR_FAV, f); }
+  function isFaved(key){ return getFavs().some(f => f.key === key); }
+  function addFav(scheme){
+    const favs = getFavs();
+    if(!favs.some(f => f.key === scheme.key && f.note === scheme.note)){
+      favs.unshift(scheme);
+      saveFavs(favs);
+    }
+  }
+  function removeFav(key){ saveFavs(getFavs().filter(f => f.key !== key)); }
+  function clearFavs(type){ saveFavs(getFavs().filter(f => f.type !== type)); }
+  function clearFavGroup(type, groupKey){
+    saveFavs(getFavs().filter(f => !(f.type === type && f.groupKey === groupKey)));
+  }
+
+  function renderFavs(containerId, type) {
+    const all = getFavs();
+    const container = $(containerId);
+    if(!container) return;
+    const typeFavs = all.filter(f => f.type === type);
+    if(typeFavs.length === 0) { container.innerHTML = '<div class="fav-empty">运算后点击 ⭐ 收藏常用方案</div>'; return; }
+    const groups = {};
+    typeFavs.forEach((f, idx) => {
+      const gk = f.groupKey || '默认';
+      if(!groups[gk]) groups[gk] = { items: [], indices: [] };
+      groups[gk].items.push(f);
+      groups[gk].indices.push(idx);
+    });
+    let html = '<div class="fav-list">';
+    Object.keys(groups).forEach(gk => {
+      const grp = groups[gk];
+      const groupId = `${containerId}_grp_${gk.replace(/[^a-zA-Z0-9]/g,'_')}`;
+      html += `<div class="fav-group" id="${groupId}">`;
+      html += `<div class="fav-group-header" onclick="window.toggleFavGroup('${groupId}')">`;
+      html += `<div class="fav-group-title">📂 ${gk} <span class="fav-group-count">${grp.items.length}</span></div>`;
+      html += `<div style="display:flex;align-items:center;gap:6px;">`;
+      html += `<button class="clear-group-btn" onclick="window.clearFavGroup('${type}','${gk}');window.renderFavs('${containerId}','${type}');" title="清空本组">🗑️ 清空本组</button>`;
+      html += `<span class="fav-group-toggle">▼</span>`;
+      html += `</div></div>`;
+      html += `<div class="fav-group-items">`;
+      grp.items.forEach((f, subIdx) => {
+        html += `<div class="fav-item" data-type="${f.type}" data-idx="${grp.indices[subIdx]}">`;
+        html += `<div class="fav-info" data-idx="${grp.indices[subIdx]}">`;
+        html += `<div class="fav-title">${f.note ? '📝 ' + f.note : f.title}</div>`;
+        if(f.note) html += `<div class="fav-note">${f.title}</div>`;
+        html += `<div class="fav-detail">卷取：${f.gear.take} ｜ 牵伸：${f.gear.draw} ｜ 喂入：${f.gear.feed}</div>`;
+        html += `</div>`;
+        html += `<div class="fav-actions"><button class="del-btn" data-key="${f.key}" data-type="${f.type}">删除</button></div>`;
+        html += `</div>`;
+      });
+      html += `</div></div>`;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+    container.querySelectorAll('.fav-info').forEach(el => { const idx = +el.dataset.idx; const f = typeFavs[idx]; if(f) initLongPressFill(el, f); });
+    container.querySelectorAll('.del-btn').forEach(btn => {
+      btn.addEventListener('click', function(e){ e.stopPropagation(); removeFav(this.dataset.key); renderFavs(containerId, type); });
+    });
+  }
+  window.renderFavs = renderFavs;
+  window.clearFavGroup = clearFavGroup;
+  window.clearFavs = clearFavs;
+  window.toggleFavGroup = function(id) { const el = document.getElementById(id); if(el) el.classList.toggle('collapsed'); };
+
+  // ===== 长按回填 =====
+  let pendingFillScheme = null;
+  function initLongPressFill(el, scheme) {
+    let timer = null, ringEl = null;
+    function startPress(e){
+      e.preventDefault();
+      const pos = e.touches ? e.touches[0] : e;
+      ringEl = document.createElement('div');
+      ringEl.className = 'longpress-ring';
+      ringEl.style.left = pos.clientX + 'px';
+      ringEl.style.top = pos.clientY + 'px';
+      document.body.appendChild(ringEl);
+      timer = setTimeout(() => {
+        if(ringEl) { ringEl.remove(); ringEl = null; }
+        pendingFillScheme = scheme;
+        const detail = `卷取：${scheme.gear.take} ｜ 牵伸：${scheme.gear.draw} ｜ 喂入：${scheme.gear.feed}`;
+        $('fillDetail').innerHTML = detail;
+        $('fillNote').textContent = scheme.note ? `备注：${scheme.note}` : '';
+        $('fillMask').classList.add('show');
+      }, 500);
+    }
+    function cancelPress(){ if(timer){ clearTimeout(timer); timer = null; } if(ringEl){ ringEl.remove(); ringEl = null; } }
+    el.addEventListener('touchstart', startPress, {passive: false});
+    el.addEventListener('touchend', cancelPress);
+    el.addEventListener('touchmove', cancelPress, {passive: true});
+    el.addEventListener('touchcancel', cancelPress);
+    el.addEventListener('mousedown', (e) => { if(e.button===0) startPress(e); });
+    el.addEventListener('mouseup', cancelPress);
+    el.addEventListener('mouseleave', cancelPress);
+  }
+
+  $('fillOk').addEventListener('click', () => { $('fillMask').classList.remove('show'); if(pendingFillScheme){ fillInputsAndCalc(pendingFillScheme); pendingFillScheme = null; } });
+  $('fillCancel').addEventListener('click', () => { $('fillMask').classList.remove('show'); pendingFillScheme = null; });
+  $('fillMask').addEventListener('click', e => { if(e.target === $('fillMask')){ $('fillMask').classList.remove('show'); pendingFillScheme = null; } });
+
+  function fillInputsAndCalc(scheme) {
+    if(scheme.type === 'fwd'){
+      $('trF').value = scheme.params.tr; $('tlF').value = scheme.params.tl; $('drF').value = scheme.params.dr;
+      switchTab('fwd');
+      setTimeout(() => { if(!lock) runForward(); }, 100);
+    }
+    if(scheme.type === 'bwd'){
+      const parts = scheme.key.split('_');
+      $('tA').value = parts[1]; $('tB').value = parts[2]; $('tC').value = parts[3]; $('tD').value = parts[4];
+      $('dA').value = parts[5]; $('dB').value = parts[6]; $('dC').value = parts[7]; $('dD').value = parts[8];
+      $('fA').value = parts[9]; $('fB').value = parts[10]; $('fC').value = parts[11]; $('fD').value = parts[12];
+      switchTab('bwd');
+      setTimeout(() => { if(!lock) runBackward(); }, 100);
+    }
+  }
+
+  // ===== 备注弹窗 =====
+  let pendingScheme = null;
+  function showNotePopup(scheme){
+    pendingScheme = scheme;
+    $('noteInput').value = '';
+    $('noteMask').classList.add('show');
+    setTimeout(() => $('noteInput').focus(), 100);
+    $('noteMask').onclick = (e) => { if(e.target === $('noteMask')){ $('noteMask').classList.remove('show'); pendingScheme = null; } };
+  }
+  function confirmNote(){
+    const note = $('noteInput').value.trim();
+    if(pendingScheme){ pendingScheme.note = note; addFav(pendingScheme); $('noteMask').classList.remove('show'); pendingScheme = null; refreshLastResult(); }
+  }
+  $('noteConfirm').addEventListener('click', confirmNote);
+  $('noteSkip').addEventListener('click', () => { if(pendingScheme){ addFav(pendingScheme); $('noteMask').classList.remove('show'); pendingScheme = null; refreshLastResult(); } });
+  $('noteInput').addEventListener('keydown', e => { if(e.key === 'Enter') confirmNote(); if(e.key === 'Escape') { $('noteMask').classList.remove('show'); pendingScheme = null; } });
+
+  function refreshLastResult() {
+    const active = document.querySelector('.panel.active');
+    if(active && active.id === 'panelFwd' && lastFwdData) renderFwdResult.apply(null, lastFwdData);
+    if(active && active.id === 'panelBwd' && lastBwdData) renderBwdResult.apply(null, lastBwdData);
+  }
+
+  // ===== 核心计算 =====
+  function getTop2(target){
+    const arr=[];
+    for(const b of GEAR_LIST) for(const c of GEAR_LIST){
+      const r = c / b;
+      const err = Math.abs(r - target) / (target || 1e-9);
+      arr.push({B:b, C:c, err});
+    }
+    return arr.sort((a,b)=>a.err-b.err).slice(0,2);
+  }
+  function calcLineSpeed(nl, tl, tr, dr) { const Vd = nl / tl; const Vt = Vd * tr / 100; const Vf = Vd / dr; return { Vt, Vd, Vf }; }
+  function schemeKey(type, gear) {
+    if(type === 'fwd') return `fwd_${gear.gT.B}_${gear.gT.C}_${gear.gD.B}_${gear.gD.C}_${gear.gF.B}_${gear.gF.C}`;
+    else return `bwd_${getInt('tA')}_${getInt('tB')}_${getInt('tC')}_${getInt('tD')}_${getInt('dA')}_${getInt('dB')}_${getInt('dC')}_${getInt('dD')}_${getInt('fA')}_${getInt('fB')}_${getInt('fC')}_${getInt('fD')}`;
+  }
+  function clearErrors(scope){ scope.querySelectorAll('input').forEach(i=>i.classList.remove('error')); }
+
+  let lastFwdData = null, lastBwdData = null, copyText = '', lock = false;
+
+  // ===== 正向 =====
+  function runForward(){
+    if(lock) return;
+    const btn = $('calcF');
+    lock = true;
+    btn.classList.add('loading');
+    btn.innerHTML = '🚀 运算中…';
+    setTimeout(() => {
+      try {
+        clearErrors($('panelFwd'));
+        const tr = getVal('trF'), tl = getVal('tlF'), dr = getVal('drF');
+        const nu = getVal('nuF'), nl = getVal('nlF');
+        if([tr, tl, dr, nu, nl].some(v => v<=0 || isNaN(v))) throw new Error('参数须为正数');
+        if(tr<0 || tr>100) throw new Error('张力比须在 0~100 之间');
+        if(tl<500 || tl>3000) throw new Error('下捻须在 500~3000 之间');
+        if(dr<0.5 || dr>5) throw new Error('牵伸倍数须在 0.5~5 之间');
+        if(nu<5000 || nu>20000 || nl<5000 || nl>20000) throw new Error('锭速须在 5000~20000 之间');
+        storage.save(STOR_F, {tr,tl,dr,nu,nl});
+
+        const offT = [-10,0,10], offD = [-0.05,0,0.05];
+        const all = [];
+        for(const dt of offT) { const nt = tl + dt; if(nt <= 0) continue; for(const dd of offD) { const nd = dr + dd; if(nd <= 0) continue; const rD = K1 / nt, rF = K2 / (nt * nd), rT = tr / 100; const gD = getTop2(rD), gF = getTop2(rF), gT = getTop2(rT); for(const gd of gD) for(const gf of gF) for(const gt of gT) { all.push({tl:nt, dr:nd, tr:tr/100, gD:gd, gF:gf, gT:gt, totalErr: gd.err+gf.err+gt.err}); } } }
+        if(all.length === 0) throw new Error('未找到有效齿轮组合');
+        const groups = all.sort((a,b)=>a.totalErr-b.totalErr).slice(0,2);
+        const {Vt, Vd, Vf} = calcLineSpeed(nl, tl, tr, dr);
+        const Tu = nu / Vd;
+        let warnHtml = '';
+        if(Math.abs(Tu - tl) > 300) warnHtml += '<div class="warn y">⚠️ 上下捻度差距较大，请复核</div>';
+        if(Vt > 600) warnHtml += '<div class="warn r">⚠️ 卷取速度偏高，请注意安全</div>';
+        let txt = `正向计算\n`;
+        groups.forEach((g,i) => { txt += `方案${i+1}: 卷取40-${g.gT.B}-${g.gT.C}-80  牵伸72-${g.gD.B}-${g.gD.C}-58  喂入78-${g.gF.B}-${g.gF.C}-64\n`; });
+        txt += `\nTl=${tl.toFixed(1)}  TR=${tr.toFixed(2)}%  DR=${dr.toFixed(2)}\nTu=${Tu.toFixed(1)}  卷取线速=${Vt.toFixed(2)} 牵伸线速=${Vd.toFixed(2)} 喂入线速=${Vf.toFixed(2)}`;
+        renderFwdResult(groups, tr, tl, dr, Vt, Vd, Vf, Tu, warnHtml, txt);
+      } catch(e) { $('resF').innerHTML = `<div class="warn r">错误：${e.message}</div>`; }
+      finally { lock = false; btn.classList.remove('loading'); btn.innerHTML = '🚀 开始运算'; }
+    }, 50);
+  }
+
+  function renderFwdResult(groups, tr, tl, dr, Vt, Vd, Vf, Tu, warnHtml, copyTextData) {
+    lastFwdData = arguments; copyText = copyTextData;
+    let html = warnHtml || '';
+    html += '<div class="block"><div class="block-title">⚙️ 2 套最优齿轮方案</div>';
+    groups.forEach((g, i) => {
+      const key = schemeKey('fwd', g);
+      const starred = isFaved(key);
+      const gearTake = `40-${g.gT.B}-${g.gT.C}-80`, gearDraw = `72-${g.gD.B}-${g.gD.C}-58`, gearFeed = `78-${g.gF.B}-${g.gF.C}-64`;
+      const groupKey = `正向方案`;
+      html += `<div class="gear-row"><div class="gear-info"><div class="scheme-title">方案 ${i+1}（综合偏差 ${(g.totalErr*100).toFixed(2)}%）</div><div class="scheme-detail"><div>📐 卷取：${gearTake}</div><div>🔧 牵伸：${gearDraw}</div><div>📥 喂入：${gearFeed}</div></div></div><button class="star-btn ${starred?'starred':''}" data-scheme='${JSON.stringify({key,type:'fwd',groupKey,title:`方案 ${i+1}（偏差 ${(g.totalErr*100).toFixed(2)}%）`,gear:{take:gearTake,draw:gearDraw,feed:gearFeed},params:{tr:tr,tl:tl,dr:dr}})}'>${starred?'⭐':'☆'}</button></div>`;
+    });
+    html += '</div>';
+
+    // 紧凑结果网格
+    html += '<div class="block" style="padding:16px 18px;"><div class="block-title" style="margin-bottom:8px;">📊 工艺参数</div><div class="result-grid">';
+    const items = [
+      ['卷取线速', Vt.toFixed(2), 'm/min'],
+      ['牵伸线速', Vd.toFixed(2), 'm/min'],
+      ['喂入线速', Vf.toFixed(2), 'm/min'],
+      ['Tu（上捻）', Tu.toFixed(1), '捻/m'],
+      ['Tl（下捻）', tl.toFixed(1), '捻/m'],
+      ['牵伸 DR', dr.toFixed(2), ''],
+      ['张力比 TR', tr.toFixed(2), '%']
+    ];
+    items.forEach(r => {
+      html += `<div class="result-item"><span class="r-label">${r[0]}</span><span class="r-value">${r[1]}</span><span class="r-unit">${r[2]}</span></div>`;
+    });
+    html += '</div></div>';
+
+    const favsFwd = getFavs().filter(f => f.type === 'fwd');
+    html += `<div class="block" id="favListFwd"><div class="block-title">⭐ 已收藏方案（长按 0.5 秒 → 确认回填）${favsFwd.length>0 ? `<span class="block-title-actions"><button class="clear-fav-btn" onclick="clearFavs('fwd');renderFavs('favListFwd','fwd');">全部清空</button></span>` : ''}</div></div>`;
+    html += '<div class="copy-wrap"><button class="copy-btn" id="copyFwdBtn">📋 复制数据</button></div>';
+    $('resF').innerHTML = html;
+    $('resF').querySelectorAll('.star-btn').forEach(btn => {
+      btn.addEventListener('click', function(e){ e.stopPropagation(); const scheme = JSON.parse(this.dataset.scheme); if(isFaved(scheme.key)) { removeFav(scheme.key); renderFwdResult.apply(null, lastFwdData); } else { showNotePopup(scheme); } });
+    });
+    $('copyFwdBtn')?.addEventListener('click', copyResult);
+    renderFavs('favListFwd', 'fwd');
+  }
+
+  // ===== 反向 =====
+  function runBackward() {
+    if(lock) return;
+    const btn = $('calcB');
+    lock = true;
+    btn.classList.add('loading');
+    btn.innerHTML = '🚀 运算中…';
+    setTimeout(() => {
+      try {
+        clearErrors($('panelBwd'));
+        const nu = getVal('nuB'), nl = getVal('nlB');
+        const tA=getInt('tA'), tB=getInt('tB'), tC=getInt('tC'), tD=getInt('tD');
+        const dA=getInt('dA'), dB=getInt('dB'), dC=getInt('dC'), dD=getInt('dD');
+        const fA=getInt('fA'), fB=getInt('fB'), fC=getInt('fC'), fD=getInt('fD');
+        if([nu,nl,tA,tB,tC,tD,dA,dB,dC,dD,fA,fB,fC,fD].some(v => v<=0 || isNaN(v))) throw new Error('所有参数须为正数');
+        if(nu<5000 || nu>20000 || nl<5000 || nl>20000) throw new Error('锭速须在 5000~20000 之间');
+        if([tA,tB,tC,tD,dA,dB,dC,dD,fA,fB,fC,fD].some(v => v<30 || v>80 || v%2!==0)) throw new Error('齿轮齿数须为 30~80 的偶数');
+        storage.save(STOR_B, {nu,nl,tA,tB,tC,tD,dA,dB,dC,dD,fA,fB,fC,fD});
+
+        const iD = (dA*dC)/(dB*dD), iF = (fA*fC)/(fB*fD), iT = (tA*tC)/(tB*tD);
+        const comp = getComp(tA);
+        const TlRaw = K1 / iD;
+        const Tl = TlRaw * comp.D;
+        const DR = (K2 / (iF * TlRaw)) * comp.F;
+        const TR = iT * 100 * comp.T;
+        const {Vt, Vd, Vf} = calcLineSpeed(nl, Tl, TR, DR);
+        const Tu = nu / Vd;
+        let warnHtml = '';
+        if(Math.abs(Tu - Tl) > 300) warnHtml += '<div class="warn y">⚠️ 上下捻度差距较大，请复核</div>';
+        let txt = `反向计算\n齿轮: 卷取${tA}-${tB}-${tC}-${tD}  牵伸${dA}-${dB}-${dC}-${dD}  喂入${fA}-${fB}-${fC}-${fD}\n\n`;
+        txt += `iD=${iD.toFixed(6)}  iF=${iF.toFixed(6)}  iT=${iT.toFixed(6)}\nTl=${Tl.toFixed(1)}  DR=${DR.toFixed(2)}  TR=${TR.toFixed(2)}%\nTu=${Tu.toFixed(1)}  卷取线速=${Vt.toFixed(2)} 牵伸线速=${Vd.toFixed(2)} 喂入线速=${Vf.toFixed(2)}`;
+        renderBwdResult(Tl, DR, TR, iD, iF, iT, Vt, Vd, Vf, Tu, warnHtml, txt);
+      } catch(e) { $('resB').innerHTML = `<div class="warn r">错误：${e.message}</div>`; }
+      finally { lock = false; btn.classList.remove('loading'); btn.innerHTML = '🚀 反推运算'; }
+    }, 50);
+  }
+
+  function renderBwdResult(Tl, DR, TR, iD, iF, iT, Vt, Vd, Vf, Tu, warnHtml, copyTextData) {
+    lastBwdData = arguments; copyText = copyTextData;
+    let html = warnHtml || '';
+    const tA=getInt('tA'), tB=getInt('tB'), tC=getInt('tC'), tD=getInt('tD');
+    const dA=getInt('dA'), dB=getInt('dB'), dC=getInt('dC'), dD=getInt('dD');
+    const fA=getInt('fA'), fB=getInt('fB'), fC=getInt('fC'), fD=getInt('fD');
+    const key = schemeKey('bwd');
+    const starred = isFaved(key);
+    const groupKey = `反向方案 A齿=${tA}`;
+    html += `<div class="gear-row"><div class="gear-info"><div class="scheme-title">⚙️ 当前齿轮方案</div><div class="scheme-detail"><div>📐 卷取：${tA}-${tB}-${tC}-${tD}</div><div>🔧 牵伸：${dA}-${dB}-${dC}-${dD}</div><div>📥 喂入：${fA}-${fB}-${fC}-${fD}</div><div style="margin-top:4px;">iD = ${iD.toFixed(6)} ｜ iF = ${iF.toFixed(6)} ｜ iT = ${iT.toFixed(6)}</div></div></div><button class="star-btn ${starred?'starred':''}" data-scheme='${JSON.stringify({key,type:'bwd',groupKey,title:`齿轮方案（A齿${tA}）`,gear:{take:`${tA}-${tB}-${tC}-${tD}`,draw:`${dA}-${dB}-${dC}-${dD}`,feed:`${fA}-${fB}-${fC}-${fD}`},params:{}})}'>${starred?'⭐':'☆'}</button></div>`;
+
+    html += '<div class="block" style="padding:16px 18px;"><div class="block-title" style="margin-bottom:8px;">📊 反推工艺参数</div><div class="result-grid">';
+    const items = [
+      ['卷取线速', Vt.toFixed(2), 'm/min'],
+      ['牵伸线速', Vd.toFixed(2), 'm/min'],
+      ['喂入线速', Vf.toFixed(2), 'm/min'],
+      ['Tl（下捻）', Tl.toFixed(1), '捻/m'],
+      ['Tu（上捻）', Tu.toFixed(1), '捻/m'],
+      ['牵伸 DR', DR.toFixed(2), ''],
+      ['张力比 TR', TR.toFixed(2), '%']
+    ];
+    items.forEach(r => {
+      html += `<div class="result-item"><span class="r-label">${r[0]}</span><span class="r-value">${r[1]}</span><span class="r-unit">${r[2]}</span></div>`;
+    });
+    html += '</div></div>';
+
+    const favsBwd = getFavs().filter(f => f.type === 'bwd');
+    html += `<div class="block" id="favListBwd"><div class="block-title">⭐ 已收藏方案（长按 0.5 秒 → 确认回填）${favsBwd.length>0 ? `<span class="block-title-actions"><button class="clear-fav-btn" onclick="clearFavs('bwd');renderFavs('favListBwd','bwd');">全部清空</button></span>` : ''}</div></div>`;
+    html += '<div class="copy-wrap"><button class="copy-btn" id="copyBwdBtn">📋 复制数据</button></div>';
+    $('resB').innerHTML = html;
+    $('resB').querySelector('.star-btn')?.addEventListener('click', function(e){ e.stopPropagation(); const scheme = JSON.parse(this.dataset.scheme); if(isFaved(scheme.key)) { removeFav(scheme.key); renderBwdResult.apply(null, lastBwdData); } else { showNotePopup(scheme); } });
+    $('copyBwdBtn')?.addEventListener('click', copyResult);
+    renderFavs('favListBwd', 'bwd');
+  }
+
+  // ===== 复制 =====
+  function copyResult() {
+    if(!copyText) return alert('请先运算生成数据');
+    if(navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(copyText).then(()=>alert('✅ 已复制到剪贴板')).catch(()=>fallbackCopy());
+    } else { fallbackCopy(); }
+    function fallbackCopy() {
+      const ta = document.createElement('textarea');
+      ta.value = copyText;
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); alert('✅ 已复制到剪贴板'); } catch(e) { alert('复制失败，请手动复制'); }
+      document.body.removeChild(ta);
+    }
+  }
+
+  // ===== UI 控制 =====
+  function switchTab(t){
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+    document.querySelector(`.tab[data-tab="${t}"]`)?.classList.add('active');
+    document.querySelector(`#panel${t==='fwd'?'Fwd':'Bwd'}`)?.classList.add('active');
+  }
+  function resetForward(){
+    ['trF','tlF','drF','nuF','nlF'].forEach(id => { const el = $(id); if(el) el.value = DEFAULTS[id]; });
+    $('resF').innerHTML = '';
+  }
+  function resetBackward(){
+    ['nuB','nlB','tA','tB','tC','tD','dA','dB','dC','dD','fA','fB','fC','fD'].forEach(id => { const el = $(id); if(el) el.value = DEFAULTS[id]; });
+    $('resB').innerHTML = '';
+  }
+  function initTheme(){ if(storage.load(STOR_T)==='dark') document.body.setAttribute('data-theme','dark'); }
+  function toggleTheme(){
+    const isDark = document.body.hasAttribute('data-theme');
+    if(isDark){ document.body.removeAttribute('data-theme'); storage.save(STOR_T,'light'); }
+    else { document.body.setAttribute('data-theme','dark'); storage.save(STOR_T,'dark'); }
+  }
+
+  // ===== 初始化 =====
+  function init() {
+    initTheme();
+    const fc = storage.load(STOR_F); if(fc) Object.keys(fc).forEach(k => { const e = $(k); if(e) e.value = fc[k]; });
+    const bc = storage.load(STOR_B); if(bc) Object.keys(bc).forEach(k => { const e = $(k); if(e) e.value = bc[k]; });
+    initAutoClear();
+    document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => switchTab(t.dataset.tab)));
+    $('calcF').addEventListener('click', runForward);
+    $('calcB').addEventListener('click', runBackward);
+    $('resetF').addEventListener('click', resetForward);
+    $('resetB').addEventListener('click', resetBackward);
+    $('themeBtn').addEventListener('click', toggleTheme);
+    $('helpBtn').addEventListener('click', () => $('helpModal').classList.add('show'));
+    $('closeHelpBtn').addEventListener('click', () => $('helpModal').classList.remove('show'));
+    $('helpModal').addEventListener('click', e => { if(e.target === $('helpModal')) $('helpModal').classList.remove('show'); });
+    document.addEventListener('keydown', e => {
+      if(e.key === 'Escape' && $('helpModal').classList.contains('show')) $('helpModal').classList.remove('show');
+      if(e.key === 'Enter' && document.activeElement?.tagName === 'INPUT') {
+        const p = document.querySelector('.panel.active');
+        if(p?.id === 'panelFwd') runForward();
+        else if(p?.id === 'panelBwd') runBackward();
+      }
+    });
+    window.clearFavs = clearFavs;
+    window.toggleFavGroup = function(id) { const el = document.getElementById(id); if(el) el.classList.toggle('collapsed'); };
+  }
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+</body>
+</html>
