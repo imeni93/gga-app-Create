@@ -6,7 +6,7 @@
     <title>工艺参数记录 · 货号追溯</title>
     <style>
         /* ============================================================
-           样式（与前一致，新增粘贴识别区域）
+           样式 — 面板格式显示 + 编辑功能 + 点击清空
            ============================================================ */
         *,
         *::before,
@@ -32,6 +32,7 @@
             --accent-bg: rgba(91, 122, 143, 0.15);
             --accent-border: rgba(91, 122, 143, 0.30);
             --accent-soft: rgba(91, 122, 143, 0.10);
+            --accent-highlight: rgba(91, 122, 143, 0.18);
             --card-bg: rgba(255, 255, 255, 0.45);
             --card-border: rgba(0, 0, 0, 0.08);
             --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.5);
@@ -90,6 +91,7 @@
             --accent-bg: rgba(80, 140, 210, 0.18);
             --accent-border: rgba(80, 140, 210, 0.35);
             --accent-soft: rgba(80, 140, 210, 0.10);
+            --accent-highlight: rgba(80, 140, 210, 0.20);
             --card-bg: rgba(255, 255, 255, 0.08);
             --card-border: rgba(255, 255, 255, 0.20);
             --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.04);
@@ -157,47 +159,15 @@
             animation: blobFloat 25s ease-in-out infinite alternate;
             transform: translateZ(0);
         }
-        .bg-blob-1 {
-            width: 50vw;
-            height: 50vw;
-            top: -18vw;
-            right: -14vw;
-            background: var(--blob1);
-            animation-duration: 20s;
-        }
-        .bg-blob-2 {
-            width: 42vw;
-            height: 42vw;
-            bottom: -12vw;
-            left: -10vw;
-            background: var(--blob2);
-            animation-duration: 24s;
-            animation-delay: -6s;
-        }
-        .bg-blob-3 {
-            width: 32vw;
-            height: 32vw;
-            top: 42%;
-            left: 56%;
-            background: var(--blob3);
-            animation-duration: 18s;
-            animation-delay: -12s;
-            opacity: 0.10;
-        }
+        .bg-blob-1 { width: 50vw; height: 50vw; top: -18vw; right: -14vw; background: var(--blob1); animation-duration: 20s; }
+        .bg-blob-2 { width: 42vw; height: 42vw; bottom: -12vw; left: -10vw; background: var(--blob2); animation-duration: 24s; animation-delay: -6s; }
+        .bg-blob-3 { width: 32vw; height: 32vw; top: 42%; left: 56%; background: var(--blob3); animation-duration: 18s; animation-delay: -12s; opacity: 0.10; }
 
         @keyframes blobFloat {
-            0% {
-                transform: translate(0, 0) scale(1);
-            }
-            33% {
-                transform: translate(30px, -22px) scale(1.06);
-            }
-            66% {
-                transform: translate(-22px, 26px) scale(0.94);
-            }
-            100% {
-                transform: translate(14px, -14px) scale(1.02);
-            }
+            0% { transform: translate(0,0) scale(1); }
+            33% { transform: translate(30px,-22px) scale(1.06); }
+            66% { transform: translate(-22px,26px) scale(0.94); }
+            100% { transform: translate(14px,-14px) scale(1.02); }
         }
 
         .app {
@@ -226,7 +196,7 @@
             left: 0;
             right: 0;
             height: 40%;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, transparent 100%);
+            background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 100%);
             border-radius: 40px 40px 0 0;
             pointer-events: none;
             z-index: 0;
@@ -250,17 +220,12 @@
             justify-content: center;
             font-size: 17px;
             transition: all 0.35s var(--ios-spring);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
             transform: translateZ(0);
             padding: 0;
         }
-        .theme-toggle:active {
-            transform: scale(0.82);
-            transition: all 0.15s var(--ios-ease-out);
-        }
-        .theme-toggle:hover {
-            background: var(--accent-bg);
-        }
+        .theme-toggle:active { transform: scale(0.82); transition: all 0.15s var(--ios-ease-out); }
+        .theme-toggle:hover { background: var(--accent-bg); }
 
         .title-bar {
             position: relative;
@@ -274,7 +239,7 @@
             text-align: center;
             color: var(--text-primary);
             letter-spacing: 0.4px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+            border-bottom: 1px solid rgba(255,255,255,0.10);
             flex-shrink: 0;
             display: flex;
             align-items: center;
@@ -289,14 +254,11 @@
             background: var(--badge-bg);
             padding: 2px 10px;
             border-radius: 18px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255,255,255,0.06);
             letter-spacing: 0.3px;
             color: var(--badge-text);
         }
-        .title-bar .icon {
-            font-size: 19px;
-            opacity: 0.7;
-        }
+        .title-bar .icon { font-size: 19px; opacity: 0.7; }
 
         .page {
             flex: 1;
@@ -311,30 +273,16 @@
             will-change: transform, opacity;
             transform: translateZ(0);
         }
-        .page::-webkit-scrollbar {
-            width: 3px;
-        }
-        .page::-webkit-scrollbar-track {
-            background: var(--scrollbar-track);
-            border-radius: 3px;
-        }
-        .page::-webkit-scrollbar-thumb {
-            background: var(--scrollbar-thumb);
-            border-radius: 3px;
-        }
+        .page::-webkit-scrollbar { width: 3px; }
+        .page::-webkit-scrollbar-track { background: var(--scrollbar-track); border-radius: 3px; }
+        .page::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
         .page.active {
             display: flex;
             animation: pageFadeIn 0.4s var(--ios-spring) both;
         }
         @keyframes pageFadeIn {
-            0% {
-                opacity: 0;
-                transform: translateY(10px) scale(0.97);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            0% { opacity: 0; transform: translateY(10px) scale(0.97); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .nav {
@@ -344,7 +292,7 @@
             justify-content: space-around;
             padding: 6px 4px 8px;
             background: var(--nav-bg);
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-top: 1px solid rgba(255,255,255,0.08);
             flex-shrink: 0;
             border-radius: 0 0 40px 40px;
             transition: background 0.4s var(--ios-ease-out), border-color 0.4s var(--ios-ease-out);
@@ -368,16 +316,8 @@
             transform: translateZ(0);
             position: relative;
         }
-        .nav-btn span {
-            font-size: 21px;
-            line-height: 1.2;
-            transition: transform 0.35s var(--ios-spring);
-            opacity: 0.8;
-        }
-        .nav-btn:active span {
-            transform: scale(0.78);
-            transition: transform 0.12s var(--ios-ease-out);
-        }
+        .nav-btn span { font-size: 21px; line-height: 1.2; transition: transform 0.35s var(--ios-spring); opacity: 0.8; }
+        .nav-btn:active span { transform: scale(0.78); transition: transform 0.12s var(--ios-ease-out); }
         .nav-btn .label {
             font-size: 9px;
             letter-spacing: 0.3px;
@@ -388,17 +328,10 @@
         .nav-btn.active {
             color: var(--accent);
             background: var(--nav-active-bg);
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.03);
+            box-shadow: 0 0 20px rgba(0,0,0,0.03);
         }
-        .nav-btn.active span {
-            transform: scale(1.06);
-            opacity: 1;
-        }
-        .nav-btn.active .label {
-            color: var(--accent);
-            opacity: 1;
-            font-weight: 600;
-        }
+        .nav-btn.active span { transform: scale(1.06); opacity: 1; }
+        .nav-btn.active .label { color: var(--accent); opacity: 1; font-weight: 600; }
         .nav-btn::after {
             content: '';
             position: absolute;
@@ -412,10 +345,7 @@
             transition: width 0.35s var(--ios-spring), opacity 0.35s var(--ios-ease-out);
             opacity: 0;
         }
-        .nav-btn.active::after {
-            width: 20px;
-            opacity: 1;
-        }
+        .nav-btn.active::after { width: 20px; opacity: 1; }
 
         button {
             position: relative;
@@ -432,7 +362,7 @@
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border: 1px solid var(--row-border);
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 2px 12px rgba(0,0,0,0.02);
             overflow: hidden;
             -webkit-tap-highlight-color: transparent;
             display: flex;
@@ -444,63 +374,59 @@
             transform: translateZ(0);
             user-select: none;
         }
-        button:active {
-            transform: scale(0.94);
-            opacity: 0.8;
-            transition: all 0.1s var(--ios-ease-out);
-        }
-        button:disabled {
-            opacity: 0.35;
-            transform: none;
-            cursor: not-allowed;
-        }
+        button:active { transform: scale(0.94); opacity: 0.8; transition: all 0.1s var(--ios-ease-out); }
+        button:disabled { opacity: 0.35; transform: none; cursor: not-allowed; }
 
         .btn-primary {
             background: var(--accent-bg);
             border-color: var(--accent-border);
             color: var(--accent);
         }
-        .btn-green {
-            background: rgba(70, 150, 120, 0.10);
-            border-color: rgba(70, 150, 120, 0.15);
-            color: var(--success);
-        }
-        .btn-red {
-            background: rgba(180, 80, 80, 0.08);
-            border-color: rgba(180, 80, 80, 0.10);
-            color: var(--danger);
-        }
-        .btn-orange {
-            background: rgba(190, 140, 80, 0.08);
-            border-color: rgba(190, 140, 80, 0.12);
-            color: var(--warn);
-        }
         .btn-ghost {
             background: var(--btn-ghost-bg);
             border-color: var(--btn-ghost-border);
         }
-        .btn-danger-sm {
-            background: rgba(180, 80, 80, 0.08);
-            border-color: rgba(180, 80, 80, 0.10);
-            color: var(--danger);
-        }
-        .btn-paste {
-            background: var(--accent-bg);
-            border-color: var(--accent-border);
-            color: var(--accent);
-            font-weight: 600;
-            font-size: 14px;
-            padding: 10px 16px;
+        .btn-ghost-sm {
+            padding: 6px 14px;
+            font-size: 12px;
+            border-radius: 12px;
             width: auto;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            margin: 4px 0;
+            margin: 0;
+            background: var(--btn-ghost-bg);
+            border: 1px solid var(--btn-ghost-border);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.25s var(--ios-spring);
         }
-        .btn-paste:active {
-            transform: scale(0.94);
+        .btn-ghost-sm:active { transform: scale(0.92); }
+        .btn-edit {
+            padding: 4px 12px;
+            font-size: 11px;
+            border-radius: 10px;
+            width: auto;
+            margin: 0;
+            background: var(--accent-bg);
+            border: 1px solid var(--accent-border);
+            color: var(--accent);
+            cursor: pointer;
+            transition: all 0.25s var(--ios-spring);
         }
+        .btn-edit:active { transform: scale(0.90); }
+        .btn-danger-sm {
+            padding: 4px 12px;
+            font-size: 11px;
+            border-radius: 10px;
+            width: auto;
+            margin: 0;
+            background: rgba(180,80,80,0.08);
+            border: 1px solid rgba(180,80,80,0.10);
+            color: var(--danger);
+            cursor: pointer;
+            transition: all 0.25s var(--ios-spring);
+        }
+        .btn-danger-sm:active { transform: scale(0.90); }
 
+        /* ===== 输入框 ===== */
         input {
             border: 1px solid var(--input-border);
             border-radius: 12px;
@@ -518,11 +444,7 @@
             transition: all 0.3s var(--ios-ease-out);
             transform: translateZ(0);
         }
-        input::placeholder {
-            color: var(--text-muted);
-            font-weight: 400;
-            font-size: 12px;
-        }
+        input::placeholder { color: var(--text-muted); font-weight: 400; font-size: 12px; }
         input:focus {
             outline: none;
             border-color: var(--input-focus-border);
@@ -531,41 +453,10 @@
             transform: scale(1.012);
             transition: all 0.25s var(--ios-spring);
         }
+        /* 点击清空默认值 — 通过JS实现，样式不变 */
         input[type="number"]::-webkit-inner-spin-button,
-        input[type="number"]::-webkit-outer-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type="number"] {
-            -moz-appearance: textfield;
-        }
-
-        textarea {
-            width: 100%;
-            min-height: 80px;
-            border: 1px solid var(--input-border);
-            border-radius: 12px;
-            padding: 10px 12px;
-            font-size: 13px;
-            background: var(--input-bg);
-            color: var(--text-primary);
-            box-shadow: var(--input-shadow);
-            resize: vertical;
-            transition: all 0.3s var(--ios-ease-out);
-            font-family: inherit;
-            line-height: 1.5;
-        }
-        textarea:focus {
-            outline: none;
-            border-color: var(--input-focus-border);
-            background: var(--input-focus-bg);
-            box-shadow: var(--input-shadow), 0 0 0 3px var(--accent-soft);
-        }
-        textarea::placeholder {
-            color: var(--text-muted);
-            font-weight: 400;
-            font-size: 12px;
-        }
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; }
 
         .form-grid {
             display: grid;
@@ -573,9 +464,7 @@
             gap: 6px 10px;
             margin: 6px 0;
         }
-        .form-grid .full-width {
-            grid-column: 1 / -1;
-        }
+        .form-grid .full-width { grid-column: 1 / -1; }
         .form-group {
             display: flex;
             flex-direction: column;
@@ -589,6 +478,22 @@
             letter-spacing: 0.3px;
             text-align: left;
             padding-left: 2px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .form-group label .num {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            line-height: 18px;
+            text-align: center;
+            font-size: 10px;
+            font-weight: 700;
+            background: var(--accent-bg);
+            color: var(--accent);
+            border-radius: 50%;
+            flex-shrink: 0;
         }
         .form-group input {
             min-height: 36px;
@@ -598,129 +503,330 @@
             width: 100%;
         }
 
-        /* 粘贴识别区域 */
-        .paste-section {
+        /* ===== 快速录入 ===== */
+        .quick-section {
             margin: 4px 0 10px;
             padding: 10px 12px;
             background: var(--row-bg);
             border-radius: 16px;
             border: 1px solid var(--row-border);
         }
-        .paste-section .header {
+        .quick-section .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 6px;
         }
-        .paste-section .header .title {
+        .quick-section .header .title {
             font-size: 13px;
             font-weight: 600;
             color: var(--text-secondary);
         }
-        .paste-section .header .hint {
+        .quick-section .header .hint {
             font-size: 11px;
             color: var(--text-muted);
         }
-        .paste-section .actions {
+        .quick-section .quick-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--input-border);
+            border-radius: 12px;
+            font-size: 15px;
+            background: var(--input-bg);
+            color: var(--text-primary);
+            box-shadow: var(--input-shadow);
+            transition: all 0.3s var(--ios-ease-out);
+            min-height: 56px;
+            line-height: 1.6;
+        }
+        .quick-section .quick-input:focus {
+            outline: none;
+            border-color: var(--input-focus-border);
+            background: var(--input-focus-bg);
+            box-shadow: var(--input-shadow), 0 0 0 3px var(--accent-soft);
+        }
+        .quick-section .quick-input::placeholder {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        .quick-section .actions {
             display: flex;
             gap: 8px;
-            margin-top: 6px;
+            margin-top: 8px;
             flex-wrap: wrap;
+            align-items: center;
         }
-        .paste-section .actions button {
+        .quick-section .actions button {
             width: auto;
             padding: 6px 14px;
             font-size: 12px;
             border-radius: 12px;
             margin: 0;
         }
-        .paste-status {
+        .quick-status {
             font-size: 12px;
             color: var(--text-secondary);
-            margin-left: 8px;
+            margin-left: 4px;
         }
 
-        /* 记录卡片 */
+        /* ===== 自定义弹窗（确认/编辑共用） ===== */
+        .dialog-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.40);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            padding: 16px;
+            animation: fadeInDialog 0.3s var(--ios-spring) both;
+        }
+        @keyframes fadeInDialog {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        .dialog-box {
+            background: var(--card-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--card-border);
+            border-radius: 28px;
+            max-width: 420px;
+            width: 100%;
+            max-height: 92vh;
+            overflow-y: auto;
+            padding: 24px 20px 20px;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.18);
+            animation: dialogPop 0.35s var(--ios-spring) both;
+        }
+        [data-theme="dark"] .dialog-box {
+            background: rgba(30,35,48,0.92);
+            border-color: rgba(255,255,255,0.15);
+        }
+        .dialog-box::-webkit-scrollbar { width: 3px; }
+        .dialog-box::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+        @keyframes dialogPop {
+            0% { opacity: 0; transform: scale(0.92) translateY(12px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .dialog-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .dialog-title .icon { font-size: 20px; }
+        .dialog-sub {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+        .dialog-body {
+            font-size: 14px;
+            color: var(--text-primary);
+            margin: 6px 0 14px;
+            line-height: 1.6;
+            background: var(--row-bg);
+            border-radius: 12px;
+            padding: 10px 12px;
+            border: 1px solid var(--row-border);
+        }
+        .dialog-body .row-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 2px 0;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+        }
+        .dialog-body .row-item:last-child { border-bottom: none; }
+        .dialog-body .row-item .label { color: var(--text-secondary); opacity: 0.6; }
+        .dialog-body .row-item .value { font-weight: 600; color: var(--text-primary); }
+        /* 编辑弹窗内的表单 */
+        .dialog-form .form-group {
+            margin-bottom: 6px;
+        }
+        .dialog-form .form-group label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            opacity: 0.7;
+            margin-bottom: 1px;
+        }
+        .dialog-form .form-group input {
+            min-height: 34px;
+            padding: 6px 8px;
+            font-size: 13px;
+            text-align: center;
+        }
+        .dialog-form .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px 8px;
+        }
+        .dialog-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            justify-content: flex-end;
+        }
+        .dialog-actions button {
+            padding: 10px 22px;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--row-border);
+            background: var(--row-bg);
+            color: var(--text-primary);
+            transition: all 0.25s var(--ios-spring);
+            width: auto;
+            margin: 0;
+            min-width: 72px;
+        }
+        .dialog-actions button:active { transform: scale(0.92); }
+        .dialog-actions .btn-dialog-primary {
+            background: var(--accent-bg);
+            border-color: var(--accent-border);
+            color: var(--accent);
+        }
+        .dialog-actions .btn-dialog-danger {
+            background: rgba(180,80,80,0.12);
+            border-color: rgba(180,80,80,0.20);
+            color: var(--danger);
+        }
+        .dialog-actions .btn-dialog-cancel {
+            background: var(--btn-ghost-bg);
+            border-color: var(--btn-ghost-border);
+        }
+
+        /* ===== 记录卡片 — 面板格式成对显示 ===== */
         .record-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             border-radius: 18px;
-            padding: 12px 14px;
-            margin: 6px 0;
+            padding: 14px 16px;
+            margin: 8px 0;
             box-shadow: var(--card-shadow);
             transition: all 0.35s var(--ios-spring);
             animation: cardEnter 0.4s var(--ios-spring) both;
+            cursor: default;
+            -webkit-tap-highlight-color: transparent;
         }
         @keyframes cardEnter {
-            0% {
-                opacity: 0;
-                transform: translateY(12px) scale(0.96);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            0% { opacity: 0; transform: translateY(12px) scale(0.96); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
+        .record-card.clicked {
+            background: var(--accent-highlight);
+            border-color: var(--accent-border);
+            box-shadow: 0 0 0 3px var(--accent-soft), 0 4px 20px rgba(0,0,0,0.06);
+            transform: scale(0.98);
+            transition: all 0.15s var(--ios-ease-out);
+        }
+
         .record-header {
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 4px;
-            padding-bottom: 4px;
+            margin-bottom: 6px;
+            padding-bottom: 6px;
             border-bottom: 1px solid var(--row-border);
+            gap: 4px 8px;
         }
         .record-header .code {
             font-weight: 700;
-            font-size: 15px;
+            font-size: 16px;
             color: var(--accent);
+        }
+        .record-header .meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .record-header .meta .tag {
+            background: var(--accent-bg);
+            padding: 1px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            color: var(--accent);
+            font-weight: 500;
+        }
+        .record-header .meta .tag-yield {
+            background: rgba(58, 106, 154, 0.08);
+            padding: 1px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            color: var(--accent);
+            font-weight: 600;
         }
         .record-header .time {
             font-size: 11px;
             color: var(--text-muted);
+            margin-left: auto;
         }
-        .record-body {
+
+        /* 面板格式：两列成对显示 */
+        .record-panel {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 2px 8px;
-            font-size: 12px;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px 16px;
+            font-size: 14px;
+            margin: 4px 0;
         }
-        .record-body .item {
+        .record-panel .pair {
             display: flex;
             justify-content: space-between;
-            padding: 1px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
         }
-        .record-body .item .label {
+        .record-panel .pair .label {
             color: var(--text-secondary);
             opacity: 0.6;
+            font-size: 12px;
         }
-        .record-body .item .value {
-            font-weight: 600;
+        .record-panel .pair .value {
+            font-weight: 700;
             color: var(--text-primary);
+            font-size: 15px;
         }
+        /* 产量单独一行 */
+        .record-panel .pair-yield {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0 2px;
+            border-top: 1px solid var(--row-border);
+            margin-top: 2px;
+        }
+        .record-panel .pair-yield .label {
+            color: var(--text-secondary);
+            opacity: 0.6;
+            font-size: 13px;
+        }
+        .record-panel .pair-yield .value {
+            font-weight: 700;
+            color: var(--success);
+            font-size: 16px;
+        }
+
         .record-footer {
-            margin-top: 6px;
-            padding-top: 4px;
+            margin-top: 8px;
+            padding-top: 6px;
             border-top: 1px solid var(--row-border);
             display: flex;
             justify-content: flex-end;
             gap: 8px;
         }
-        .record-footer button {
-            padding: 2px 12px;
-            font-size: 11px;
-            border-radius: 10px;
-            width: auto;
-            margin: 0;
-            background: rgba(180, 80, 80, 0.08);
-            border: 1px solid rgba(180, 80, 80, 0.10);
-            color: var(--danger);
-            cursor: pointer;
-            transition: all 0.25s var(--ios-spring);
-        }
-        .record-footer button:active {
-            transform: scale(0.90);
-        }
+        .record-footer button { width: auto; margin: 0; }
 
         .search-box {
             display: flex;
@@ -750,11 +856,11 @@
             padding: 4px 2px 8px;
             border-bottom: 1px solid var(--row-border);
             margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 4px;
         }
-        .stat-bar .count {
-            font-weight: 600;
-            color: var(--accent);
-        }
+        .stat-bar .count { font-weight: 600; color: var(--accent); }
+        .stat-bar .hint { color: var(--text-muted); font-size: 12px; }
 
         .empty-state {
             text-align: center;
@@ -762,11 +868,7 @@
             color: var(--text-muted);
             font-size: 14px;
         }
-        .empty-state .icon {
-            font-size: 48px;
-            margin-bottom: 12px;
-            opacity: 0.5;
-        }
+        .empty-state .icon { font-size: 48px; margin-bottom: 12px; opacity: 0.5; }
 
         .toast-msg {
             position: fixed;
@@ -778,7 +880,7 @@
             border-radius: 20px;
             font-size: 14px;
             font-weight: 600;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
             pointer-events: none;
             animation: toastIn 0.4s var(--ios-spring) both, toastOut 0.35s 1.6s var(--ios-ease-out) forwards;
             background: var(--card-bg);
@@ -788,164 +890,60 @@
             color: var(--text-primary);
         }
         [data-theme="dark"] .toast-msg {
-            background: rgba(30, 35, 48, 0.92);
-            border-color: rgba(255, 255, 255, 0.12);
+            background: rgba(30,35,48,0.92);
+            border-color: rgba(255,255,255,0.12);
         }
         @keyframes toastIn {
-            0% {
-                opacity: 0;
-                transform: translateX(-50%) translateY(20px) scale(0.9);
-            }
-            100% {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0) scale(1);
-            }
+            0% { opacity: 0; transform:translateX(-50%) translateY(20px) scale(0.9); }
+            100% { opacity: 1; transform:translateX(-50%) translateY(0) scale(1); }
         }
         @keyframes toastOut {
-            0% {
-                opacity: 1;
-                transform: translateX(-50%) translateY(0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translateX(-50%) translateY(-10px) scale(0.95);
-            }
+            0% { opacity: 1; transform:translateX(-50%) translateY(0) scale(1); }
+            100% { opacity: 0; transform:translateX(-50%) translateY(-10px) scale(0.95); }
         }
 
         @media (max-width: 420px) {
-            .app {
-                height: 96vh;
-                max-height: 740px;
-                border-radius: 28px;
-            }
-            .nav {
-                border-radius: 0 0 28px 28px;
-                padding: 4px 2px 8px;
-            }
-            .title-bar {
-                font-size: 15px;
-                padding: 12px 44px 10px 14px;
-                gap: 6px;
-            }
-            .form-grid {
-                gap: 4px 6px;
-            }
-            .form-group label {
-                font-size: 10px;
-            }
-            .form-group input {
-                min-height: 32px;
-                font-size: 12px;
-                padding: 4px 4px;
-            }
-            .record-body {
-                grid-template-columns: 1fr 1fr;
-                font-size: 11px;
-            }
-            .record-header .code {
-                font-size: 14px;
-            }
-            .home-btn {
-                font-size: 15px;
-                padding: 14px 20px;
-                width: 86%;
-            }
-            .nav-btn {
-                padding: 4px 10px;
-                min-width: 44px;
-            }
-            .nav-btn span {
-                font-size: 19px;
-            }
-            .nav-btn .label {
-                font-size: 8px;
-            }
-            .theme-toggle {
-                width: 34px;
-                height: 34px;
-                font-size: 15px;
-                top: 12px;
-                right: 14px;
-            }
-            .search-box input {
-                min-height: 34px;
-                font-size: 12px;
-            }
-            .search-box button {
-                min-height: 34px;
-                font-size: 12px;
-                padding: 6px 12px;
-            }
-            .btn-paste {
-                font-size: 13px;
-                padding: 8px 14px;
-            }
-            textarea {
-                min-height: 60px;
-                font-size: 12px;
-            }
-            .paste-section .header .hint {
-                font-size: 10px;
-            }
+            .app { height: 96vh; max-height: 740px; border-radius: 28px; }
+            .nav { border-radius: 0 0 28px 28px; padding: 4px 2px 8px; }
+            .title-bar { font-size: 15px; padding: 12px 44px 10px 14px; gap: 6px; }
+            .form-grid { gap: 4px 6px; }
+            .form-group label { font-size: 10px; }
+            .form-group input { min-height: 32px; font-size: 12px; padding: 4px 4px; }
+            .record-panel { font-size: 13px; gap: 2px 10px; }
+            .record-panel .pair .value { font-size: 14px; }
+            .record-panel .pair .label { font-size: 11px; }
+            .record-header .code { font-size: 14px; }
+            .home-btn { font-size: 15px; padding: 14px 20px; width: 86%; }
+            .nav-btn { padding: 4px 10px; min-width: 44px; }
+            .nav-btn span { font-size: 19px; }
+            .nav-btn .label { font-size: 8px; }
+            .theme-toggle { width: 34px; height: 34px; font-size: 15px; top: 12px; right: 14px; }
+            .search-box input { min-height: 34px; font-size: 12px; }
+            .search-box button { min-height: 34px; font-size: 12px; padding: 6px 12px; }
+            .quick-section .quick-input { font-size: 14px; min-height: 48px; padding: 10px 12px; }
+            .dialog-box { padding: 18px 14px 16px; max-height: 90vh; }
+            .dialog-actions button { padding: 8px 16px; font-size: 13px; min-width: 60px; }
+            .record-card { padding: 10px 12px; }
+            .dialog-form .form-row { grid-template-columns: 1fr; }
         }
         @media (max-width: 360px) {
-            .form-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 3px 4px;
-            }
-            .record-body {
-                grid-template-columns: 1fr 1fr;
-                font-size: 10px;
-            }
-            .record-body .item {
-                padding: 0;
-            }
-            .record-card {
-                padding: 8px 10px;
-            }
-            .record-header .code {
-                font-size: 12px;
-            }
-            .record-header .time {
-                font-size: 9px;
-            }
-            .app {
-                border-radius: 22px;
-                max-height: 680px;
-            }
-            .nav {
-                border-radius: 0 0 22px 22px;
-                padding: 4px 2px 8px;
-            }
-            .nav-btn {
-                padding: 2px 6px;
-                min-width: 36px;
-            }
-            .nav-btn span {
-                font-size: 16px;
-            }
-            .nav-btn .label {
-                font-size: 7px;
-            }
-            .title-bar {
-                font-size: 13px;
-                padding: 10px 40px 8px 10px;
-            }
-            .theme-toggle {
-                width: 30px;
-                height: 30px;
-                font-size: 13px;
-                top: 10px;
-                right: 12px;
-            }
-            .btn-paste {
-                font-size: 12px;
-                padding: 6px 10px;
-            }
-            textarea {
-                min-height: 50px;
-                font-size: 11px;
-            }
+            .form-grid { grid-template-columns: 1fr 1fr; gap: 3px 4px; }
+            .record-panel { grid-template-columns: 1fr 1fr; font-size: 12px; gap: 1px 6px; }
+            .record-panel .pair .value { font-size: 13px; }
+            .record-card { padding: 8px 10px; }
+            .record-header .code { font-size: 12px; }
+            .record-header .time { font-size: 9px; }
+            .app { border-radius: 22px; max-height: 680px; }
+            .nav { border-radius: 0 0 22px 22px; padding: 4px 2px 8px; }
+            .nav-btn { padding: 2px 6px; min-width: 36px; }
+            .nav-btn span { font-size: 16px; }
+            .nav-btn .label { font-size: 7px; }
+            .title-bar { font-size: 13px; padding: 10px 40px 8px 10px; }
+            .theme-toggle { width: 30px; height: 30px; font-size: 13px; top: 10px; right: 12px; }
+            .dialog-box { padding: 14px 10px 12px; max-height: 88vh; }
+            .dialog-actions button { padding: 6px 12px; font-size: 12px; min-width: 50px; }
+            .quick-section .quick-input { font-size: 13px; min-height: 44px; padding: 8px 10px; }
+            .dialog-form .form-row { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -971,55 +969,76 @@
             <div style="flex:1;overflow-y:auto;">
                 <div style="font-size:13px;font-weight:500;color:var(--text-secondary);margin:4px 0 8px;">📝 输入货号与工艺参数</div>
 
-                <!-- 📋 粘贴识别区域（方案一） -->
-                <div class="paste-section">
+                <!-- ⚡ 快速录入 -->
+                <div class="quick-section">
                     <div class="header">
-                        <span class="title">📋 粘贴识别</span>
-                        <span class="hint">用手机自带OCR复制面板文字后粘贴</span>
+                        <span class="title">⚡ 快速录入</span>
+                        <span class="hint">空格 / 逗号 / 短横线 分隔</span>
                     </div>
-                    <textarea id="pasteInput" placeholder="在此粘贴从面板复制的文字...&#10;例如：卷取线速 5.46 米/分钟 牵伸线速 8.96 米/分钟"></textarea>
+                    <input class="quick-input" id="quickInput" placeholder="例：5.46 8.96 3.54 60.95 2.53 11294.4 1260.0 13312.0 1485.1">
                     <div class="actions">
-                        <button class="btn-paste" onclick="parsePaste()">🔍 解析并填入</button>
-                        <button class="btn-ghost" onclick="clearPaste()" style="width:auto;padding:6px 14px;font-size:12px;border-radius:12px;margin:0;">清空</button>
-                        <span class="paste-status" id="pasteStatus">等待粘贴</span>
+                        <button class="btn-paste" onclick="quickFill()" style="background:var(--accent-bg);border-color:var(--accent-border);color:var(--accent);padding:6px 14px;font-size:12px;border-radius:12px;width:auto;margin:0;display:inline-flex;align-items:center;gap:4px;cursor:pointer;transition:all 0.25s var(--ios-spring);border:1px solid var(--accent-border);">⚡ 快速填入</button>
+                        <button class="btn-ghost-sm" onclick="clearQuick()">清空</button>
+                        <span class="quick-status" id="quickStatus">输入数字序列</span>
                     </div>
                 </div>
 
                 <div class="form-grid">
                     <div class="form-group full-width">
                         <label>货号 *</label>
-                        <input id="input-code" placeholder="例如：A23015" type="text" autofocus>
+                        <input id="input-code" placeholder="例如：A23015" type="text" inputmode="text" autofocus data-default="">
                     </div>
                     <div class="form-group">
-                        <label>卷取线速 (m/min)</label>
-                        <input id="input-wind" placeholder="0" type="number" step="any">
+                        <label>机台号</label>
+                        <input id="input-machine" placeholder="例如：020" type="text" inputmode="text" data-default="">
                     </div>
                     <div class="form-group">
-                        <label>牵伸线速 (m/min)</label>
-                        <input id="input-draw" placeholder="0" type="number" step="any">
+                        <label>日期</label>
+                        <input id="input-date" type="date" data-default="">
                     </div>
                     <div class="form-group">
-                        <label>喂入线速 (m/min)</label>
-                        <input id="input-feed" placeholder="0" type="number" step="any">
+                        <label>产量 (kg)</label>
+                        <input id="input-yield" placeholder="0" type="number" inputmode="decimal" step="any" data-default="">
+                    </div>
+
+                    <div class="form-group">
+                        <label><span class="num">①</span>卷取线速 (m/min)</label>
+                        <input id="input-wind" placeholder="0" type="number" inputmode="decimal" step="any" data-default="">
                     </div>
                     <div class="form-group">
-                        <label>张力比 (%)</label>
-                        <input id="input-tension" placeholder="0" type="number" step="any">
+                        <label><span class="num">②</span>牵伸线速 (m/min)</label>
+                        <input id="input-draw" placeholder="0" type="number" inputmode="decimal" step="any" data-default="">
                     </div>
                     <div class="form-group">
-                        <label>拉比</label>
-                        <input id="input-ratio" placeholder="0" type="number" step="any">
+                        <label><span class="num">③</span>喂入线速 (m/min)</label>
+                        <input id="input-feed" placeholder="0" type="number" inputmode="decimal" step="any" data-default="">
                     </div>
                     <div class="form-group">
-                        <label>上层锭速度 (转/min)</label>
-                        <input id="input-spindle" placeholder="0" type="number" step="any">
+                        <label><span class="num">④</span>张力比 (%)</label>
+                        <input id="input-tension" placeholder="0" type="number" inputmode="decimal" step="any" data-default="">
                     </div>
                     <div class="form-group">
-                        <label>上层锭度 (锭/m)</label>
-                        <input id="input-twist" placeholder="0" type="number" step="any">
+                        <label><span class="num">⑤</span>拉比</label>
+                        <input id="input-ratio" placeholder="0" type="number" inputmode="decimal" step="any" data-default="">
+                    </div>
+                    <div class="form-group">
+                        <label><span class="num">⑥</span>上层锭速度 (转/min)</label>
+                        <input id="input-spindle" placeholder="0" type="number" inputmode="decimal" step="any" data-default="">
+                    </div>
+                    <div class="form-group">
+                        <label><span class="num">⑦</span>上层捻度 (捻/m)</label>
+                        <input id="input-twist" placeholder="0" type="number" inputmode="decimal" step="any" data-default="">
+                    </div>
+                    <div class="form-group">
+                        <label><span class="num">⑧</span>下层锭速度 (转/min)</label>
+                        <input id="input-spindle2" placeholder="0" type="number" inputmode="decimal" step="any" data-default="">
+                    </div>
+                    <div class="form-group">
+                        <label><span class="num">⑨</span>下层捻度 (捻/m)</label>
+                        <input id="input-twist2" placeholder="0" type="number" inputmode="decimal" step="any" data-default="">
                     </div>
                 </div>
-                <button class="btn-primary" onclick="saveRecord()">💾 保存记录</button>
+                <button class="btn-primary" onclick="confirmSave()">💾 保存记录</button>
                 <button class="btn-ghost" onclick="clearForm()">🗑️ 清空表单</button>
             </div>
         </div>
@@ -1028,13 +1047,13 @@
         <div id="list-page" class="page">
             <div style="flex:1;overflow-y:auto;">
                 <div class="search-box">
-                    <input id="search-input" placeholder="🔍 搜索货号..." type="text">
+                    <input id="search-input" placeholder="🔍 搜索货号或机台号..." type="text">
                     <button class="btn-ghost" onclick="searchRecords()" style="width:auto;padding:8px 16px;">搜索</button>
                     <button class="btn-ghost" onclick="clearSearch()" style="width:auto;padding:8px 12px;">✕</button>
                 </div>
                 <div class="stat-bar" id="statBar">
                     <span>共 <span class="count" id="totalCount">0</span> 条记录</span>
-                    <span id="searchHint"></span>
+                    <span class="hint" id="searchHint"></span>
                 </div>
                 <div id="recordList">
                     <div class="empty-state">
@@ -1051,18 +1070,15 @@
             <div style="flex:1;overflow-y:auto;">
                 <h3>📋 工艺参数记录</h3>
                 <h4>📌 功能说明</h4>
-                <p>本工具用于记录每个<strong>货号</strong>对应的工艺参数，包括卷取线速、牵伸线速、喂入线速、张力比、拉比、锭速度、锭度等。</p>
-                <h4>📋 粘贴识别（推荐）</h4>
-                <p>1. 用手机自带的「实况文本」(iOS) 或「Google Lens」(安卓) 复制面板上的文字<br>
-                2. 在「新建记录」页面的文本框中粘贴<br>
-                3. 点击「解析并填入」，系统自动识别数字并填入对应字段<br>
-                4. 手动输入货号，检查数据后保存</p>
-                <h4>🔧 手动输入</h4>
-                <p>您也可以直接在表单中输入所有参数，点击保存即可。</p>
-                <h4>📤 导出数据</h4>
-                <p>点击「导出CSV」可将所有记录导出为 CSV 文件，方便在 Excel 中查看和分析。</p>
-                <h4>📱 兼容性</h4>
-                <p>支持现代浏览器，建议使用<strong>手机全屏</strong>或桌面端 Chrome / Safari 获得最佳体验。</p>
+                <p>本工具用于记录每个<strong>货号</strong>对应的工艺参数，包含卷取/牵伸/喂入线速、张力比、拉比、上下层锭速度及捻度。</p>
+                <h4>📐 面板格式</h4>
+                <p>记录卡片采用<strong>成对显示</strong>，与机台面板布局一致，方便对照。</p>
+                <h4>✏️ 编辑功能</h4>
+                <p>点击记录卡片上的「编辑」按钮，可修改任意字段（货号、机台号、日期、产量、全部工艺参数）。</p>
+                <h4>⚡ 快速录入</h4>
+                <p>按顺序输入9个数字，用<strong>空格、逗号或短横线</strong>分隔，点击「快速填入」自动分配。</p>
+                <h4>🔍 搜索</h4>
+                <p>支持按<strong>货号</strong>或<strong>机台号</strong>搜索。</p>
             </div>
         </div>
 
@@ -1076,6 +1092,56 @@
     </div>
 
     <script>
+        // ============================================================
+        //  点击输入框自动清空（保留默认值功能）
+        // ============================================================
+        function setupClearOnFocus() {
+            // 记录每个输入框的默认值
+            document.querySelectorAll('#record-page input[data-default]').forEach(inp => {
+                // 如果还没记录默认值，用当前值作为默认
+                if (!inp._defaultSet) {
+                    inp._defaultVal = inp.value || '';
+                    inp._defaultSet = true;
+                }
+                inp.addEventListener('focus', function() {
+                    // 如果当前值等于默认值，清空
+                    const currentVal = this.value;
+                    const defaultVal = this._defaultVal || '';
+                    if (currentVal === defaultVal) {
+                        this.value = '';
+                        // 如果是日期输入框，清空后显示placeholder效果
+                        if (this.type === 'date') {
+                            this.type = 'text';
+                            this.placeholder = '选择日期';
+                            // 失焦时如果为空，恢复日期类型并设为默认日期
+                            const restore = () => {
+                                if (this.value === '' || this.value === '选择日期') {
+                                    this.type = 'date';
+                                    const today = new Date();
+                                    const y = today.getFullYear();
+                                    const m = String(today.getMonth() + 1).padStart(2, '0');
+                                    const d = String(today.getDate()).padStart(2, '0');
+                                    this.value = y + '-' + m + '-' + d;
+                                    this._defaultVal = this.value;
+                                }
+                                this.removeEventListener('blur', restore);
+                            };
+                            this.addEventListener('blur', restore);
+                        }
+                    }
+                });
+                inp.addEventListener('blur', function() {
+                    // 如果输入框为空，恢复默认值
+                    if (this.value.trim() === '' || this.value === '选择日期') {
+                        this.value = this._defaultVal || '';
+                        if (this.type === 'text' && this.placeholder === '选择日期') {
+                            this.type = 'date';
+                        }
+                    }
+                });
+            });
+        }
+
         // ============================================================
         //  主题切换
         // ============================================================
@@ -1102,8 +1168,7 @@
         //  页面切换
         // ============================================================
         function switchPage(page) {
-            document.querySelectorAll('.page').forEach(p => { p.classList.remove('active');
-                p.style.display = 'none'; });
+            document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.display = 'none'; });
             const target = document.getElementById(page + '-page');
             if (target) {
                 target.style.display = 'flex';
@@ -1114,7 +1179,25 @@
             if (navBtn) navBtn.classList.add('active');
 
             if (page === 'list') renderList();
-            if (page === 'record') document.getElementById('input-code')?.focus();
+            if (page === 'record') {
+                document.getElementById('input-code')?.focus();
+                const dateInput = document.getElementById('input-date');
+                if (dateInput && !dateInput.value) {
+                    const today = new Date();
+                    const y = today.getFullYear();
+                    const m = String(today.getMonth() + 1).padStart(2, '0');
+                    const d = String(today.getDate()).padStart(2, '0');
+                    dateInput.value = y + '-' + m + '-' + d;
+                    dateInput._defaultVal = dateInput.value;
+                }
+                // 设置默认值标记
+                document.querySelectorAll('#record-page input[data-default]').forEach(inp => {
+                    if (!inp._defaultSet) {
+                        inp._defaultVal = inp.value || '';
+                        inp._defaultSet = true;
+                    }
+                });
+            }
         }
 
         (function() {
@@ -1135,29 +1218,27 @@
         }
 
         // ============================================================
-        //  📋 粘贴识别（方案一：用户用手机自带OCR复制文本后粘贴）
+        //  ⚡ 快速录入 — 支持空格、逗号、短横线分隔
         // ============================================================
-        function parsePaste() {
-            const text = document.getElementById('pasteInput').value.trim();
-            const statusEl = document.getElementById('pasteStatus');
+        function quickFill() {
+            const raw = document.getElementById('quickInput').value.trim();
+            const status = document.getElementById('quickStatus');
 
-            if (!text) {
-                statusEl.textContent = '⚠️ 请先粘贴文本';
-                statusEl.style.color = 'var(--warn)';
+            if (!raw) {
+                status.textContent = '⚠️ 请输入数字';
+                status.style.color = 'var(--warn)';
                 return;
             }
 
-            // 提取所有数字（含小数点）
-            const numbers = text.match(/\d+\.?\d*/g) || [];
-            const validNumbers = numbers.map(Number).filter(n => n > 0.1);
+            const parts = raw.split(/[\s,，-]+/).filter(s => s.trim() !== '');
+            const numbers = parts.map(Number).filter(n => !isNaN(n) && n > 0);
 
-            if (validNumbers.length === 0) {
-                statusEl.textContent = '⚠️ 未识别到有效数字';
-                statusEl.style.color = 'var(--warn)';
+            if (numbers.length === 0) {
+                status.textContent = '⚠️ 未识别到有效数字';
+                status.style.color = 'var(--warn)';
                 return;
             }
 
-            // 按顺序填入7个字段
             const fields = [
                 document.getElementById('input-wind'),
                 document.getElementById('input-draw'),
@@ -1165,88 +1246,47 @@
                 document.getElementById('input-tension'),
                 document.getElementById('input-ratio'),
                 document.getElementById('input-spindle'),
-                document.getElementById('input-twist')
+                document.getElementById('input-twist'),
+                document.getElementById('input-spindle2'),
+                document.getElementById('input-twist2')
             ];
 
-            // 尝试通过关键词匹配更精准
-            // 先尝试关键词匹配
-            const keywordMap = {
-                '卷取': 'input-wind',
-                '卷取线速': 'input-wind',
-                '牵伸': 'input-draw',
-                '牵伸线速': 'input-draw',
-                '喂入': 'input-feed',
-                '喂入线速': 'input-feed',
-                '张力比': 'input-tension',
-                '张力': 'input-tension',
-                '拉比': 'input-ratio',
-                '锭速度': 'input-spindle',
-                '上层锭速度': 'input-spindle',
-                '锭度': 'input-twist',
-                '上层锭度': 'input-twist',
-                '上层捻度': 'input-twist'
-            };
-
-            let matched = 0;
-            const lines = text.split(/[\n\r]+/);
-            for (const line of lines) {
-                const trimmed = line.trim();
-                if (!trimmed) continue;
-                let foundField = null;
-                for (const [keyword, fieldId] of Object.entries(keywordMap)) {
-                    if (trimmed.includes(keyword)) {
-                        foundField = fieldId;
-                        break;
-                    }
-                }
-                if (foundField) {
-                    const nums = trimmed.match(/\d+\.?\d*/g);
-                    if (nums && nums.length > 0) {
-                        const val = parseFloat(nums[0]);
-                        if (val > 0.1) {
-                            document.getElementById(foundField).value = val;
-                            matched++;
-                        }
-                    }
+            let filled = 0;
+            for (let i = 0; i < fields.length && i < numbers.length; i++) {
+                if (fields[i]) {
+                    fields[i].value = numbers[i];
+                    filled++;
                 }
             }
 
-            // 如果关键词匹配少于3个，改用顺序填充
-            if (matched < 3) {
-                let filled = 0;
-                for (let i = 0; i < fields.length && i < validNumbers.length; i++) {
-                    if (fields[i]) {
-                        // 如果该字段已有值（已被关键词匹配填过），跳过
-                        if (!fields[i].value || fields[i].value === '0') {
-                            fields[i].value = validNumbers[i];
-                            filled++;
-                        }
-                    }
-                }
-                statusEl.textContent = `✅ 已填入 ${Math.max(matched, filled)} 个字段（顺序填充）`;
-            } else {
-                statusEl.textContent = `✅ 已通过关键词匹配填入 ${matched} 个字段`;
+            status.textContent = `✅ 已填入 ${filled} 个字段（共9个）`;
+            status.style.color = 'var(--success)';
+            if (numbers.length < 9) {
+                status.textContent += `，缺少 ${9 - numbers.length} 个数字请手动补填`;
+                status.style.color = 'var(--warn)';
+            } else if (numbers.length > 9) {
+                status.textContent += `，多余 ${numbers.length - 9} 个数字已忽略`;
+                status.style.color = 'var(--warn)';
             }
 
-            statusEl.style.color = 'var(--success)';
-
-            // 触发输入事件
-            document.querySelectorAll('#record-page input').forEach(f => f.dispatchEvent(new Event('input')));
+            fields.forEach(f => f?.dispatchEvent(new Event('input')));
         }
 
-        function clearPaste() {
-            document.getElementById('pasteInput').value = '';
-            document.getElementById('pasteStatus').textContent = '已清空';
-            document.getElementById('pasteStatus').style.color = 'var(--text-secondary)';
+        function clearQuick() {
+            document.getElementById('quickInput').value = '';
+            document.getElementById('quickStatus').textContent = '已清空';
+            document.getElementById('quickStatus').style.color = 'var(--text-secondary)';
         }
+
+        document.getElementById('quickInput')?.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') { e.preventDefault(); quickFill(); }
+        });
 
         // ============================================================
         //  数据管理
         // ============================================================
         function getRecords() {
-            try {
-                return JSON.parse(localStorage.getItem('processRecords')) || [];
-            } catch { return []; }
+            try { return JSON.parse(localStorage.getItem('processRecords')) || []; } catch { return []; }
         }
 
         function saveRecords(records) {
@@ -1263,9 +1303,32 @@
         }
 
         // ============================================================
-        //  保存记录
+        //  清空表单（保留默认日期）
         // ============================================================
-        function saveRecord() {
+        function clearForm() {
+            const inputs = document.querySelectorAll('#record-page input');
+            inputs.forEach(inp => {
+                // 恢复默认值
+                if (inp._defaultVal !== undefined) {
+                    inp.value = inp._defaultVal;
+                } else if (inp.id === 'input-date') {
+                    const today = new Date();
+                    const y = today.getFullYear();
+                    const m = String(today.getMonth() + 1).padStart(2, '0');
+                    const d = String(today.getDate()).padStart(2, '0');
+                    inp.value = y + '-' + m + '-' + d;
+                } else {
+                    inp.value = '';
+                }
+            });
+            document.getElementById('input-code')?.focus();
+            clearQuick();
+        }
+
+        // ============================================================
+        //  确认保存
+        // ============================================================
+        function confirmSave() {
             const code = document.getElementById('input-code').value.trim();
             if (!code) {
                 showToast('⚠️ 请输入货号');
@@ -1273,54 +1336,207 @@
                 return;
             }
 
-            const wind = parseFloat(document.getElementById('input-wind').value) || 0;
-            const draw = parseFloat(document.getElementById('input-draw').value) || 0;
-            const feed = parseFloat(document.getElementById('input-feed').value) || 0;
-            const tension = parseFloat(document.getElementById('input-tension').value) || 0;
-            const ratio = parseFloat(document.getElementById('input-ratio').value) || 0;
-            const spindle = parseFloat(document.getElementById('input-spindle').value) || 0;
-            const twist = parseFloat(document.getElementById('input-twist').value) || 0;
-
-            const record = {
-                id: generateId(),
-                code: code,
-                wind: wind,
-                draw: draw,
-                feed: feed,
-                tension: tension,
-                ratio: ratio,
-                spindle: spindle,
-                twist: twist,
-                createdAt: Date.now()
-            };
-
+            const record = collectFormData();
+            // 检查是否已有相同货号+机台号+日期的记录（近似去重提示）
             const records = getRecords();
-            records.unshift(record);
-            saveRecords(records);
+            const similar = records.filter(r =>
+                r.code === record.code &&
+                r.machine === record.machine &&
+                r.date === record.date
+            );
+            if (similar.length > 0) {
+                if (!confirm(`⚠️ 已有相同货号(${record.code})、机台(${record.machine || '无'})、日期(${record.date})的记录，确认继续保存吗？`)) {
+                    return;
+                }
+            }
 
+            showConfirmDialog('💾 确认保存', '请确认以下参数是否正确', record, () => {
+                doSaveRecord(record);
+            });
+        }
+
+        function collectFormData() {
+            return {
+                code: document.getElementById('input-code').value.trim(),
+                machine: document.getElementById('input-machine').value.trim() || '',
+                date: document.getElementById('input-date').value || '',
+                yield: parseFloat(document.getElementById('input-yield').value) || 0,
+                wind: parseFloat(document.getElementById('input-wind').value) || 0,
+                draw: parseFloat(document.getElementById('input-draw').value) || 0,
+                feed: parseFloat(document.getElementById('input-feed').value) || 0,
+                tension: parseFloat(document.getElementById('input-tension').value) || 0,
+                ratio: parseFloat(document.getElementById('input-ratio').value) || 0,
+                spindle: parseFloat(document.getElementById('input-spindle').value) || 0,
+                twist: parseFloat(document.getElementById('input-twist').value) || 0,
+                spindle2: parseFloat(document.getElementById('input-spindle2').value) || 0,
+                twist2: parseFloat(document.getElementById('input-twist2').value) || 0
+            };
+        }
+
+        function showConfirmDialog(title, sub, record, onConfirm) {
+            const items = [
+                ['货号', record.code],
+                ['机台号', record.machine || '（未填）'],
+                ['日期', record.date || '（未填）'],
+                ['产量 (kg)', record.yield.toFixed(1)],
+                ['①卷取线速', record.wind.toFixed(2) + ' m/min'],
+                ['②牵伸线速', record.draw.toFixed(2) + ' m/min'],
+                ['③喂入线速', record.feed.toFixed(2) + ' m/min'],
+                ['④张力比', record.tension.toFixed(2) + ' %'],
+                ['⑤拉比', record.ratio.toFixed(4)],
+                ['⑥上层锭速度', record.spindle.toFixed(1) + ' 转/min'],
+                ['⑦上层捻度', record.twist.toFixed(1) + ' 捻/m'],
+                ['⑧下层锭速度', record.spindle2.toFixed(1) + ' 转/min'],
+                ['⑨下层捻度', record.twist2.toFixed(1) + ' 捻/m']
+            ];
+
+            let bodyHtml = items.map(item =>
+                `<div class="row-item"><span class="label">${item[0]}</span><span class="value">${item[1]}</span></div>`
+            ).join('');
+
+            const overlay = document.createElement('div');
+            overlay.className = 'dialog-overlay';
+            overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+
+            const box = document.createElement('div');
+            box.className = 'dialog-box';
+            box.innerHTML = `
+                <div class="dialog-title"><span class="icon">${title.split(' ')[0]}</span>${title}</div>
+                <div class="dialog-sub">${sub}</div>
+                <div class="dialog-body">${bodyHtml}</div>
+                <div class="dialog-actions">
+                    <button class="btn-dialog-cancel" onclick="this.closest('.dialog-overlay').remove()">取消</button>
+                    <button class="btn-dialog-primary" id="dialogConfirmBtn">确认保存</button>
+                </div>
+            `;
+
+            overlay.appendChild(box);
+            document.body.appendChild(overlay);
+
+            document.getElementById('dialogConfirmBtn').addEventListener('click', function() {
+                overlay.remove();
+                onConfirm();
+            });
+        }
+
+        // ============================================================
+        //  实际保存
+        // ============================================================
+        function doSaveRecord(record) {
+            const records = getRecords();
+            records.unshift({
+                id: generateId(),
+                ...record,
+                createdAt: Date.now()
+            });
+            saveRecords(records);
             showToast('✅ 记录已保存');
             clearForm();
             switchPage('list');
         }
 
         // ============================================================
-        //  清空表单
+        //  编辑记录
         // ============================================================
-        function clearForm() {
-            document.getElementById('input-code').value = '';
-            document.getElementById('input-wind').value = '';
-            document.getElementById('input-draw').value = '';
-            document.getElementById('input-feed').value = '';
-            document.getElementById('input-tension').value = '';
-            document.getElementById('input-ratio').value = '';
-            document.getElementById('input-spindle').value = '';
-            document.getElementById('input-twist').value = '';
-            document.getElementById('input-code').focus();
-            clearPaste();
+        function editRecord(id) {
+            const records = getRecords();
+            const record = records.find(r => r.id === id);
+            if (!record) { showToast('❌ 记录不存在'); return; }
+
+            // 创建编辑弹窗
+            const overlay = document.createElement('div');
+            overlay.className = 'dialog-overlay';
+            overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+
+            const box = document.createElement('div');
+            box.className = 'dialog-box';
+
+            // 构建编辑表单
+            const fields = [
+                ['货号', 'code', 'text', record.code],
+                ['机台号', 'machine', 'text', record.machine || ''],
+                ['日期', 'date', 'date', record.date || ''],
+                ['产量 (kg)', 'yield', 'number', record.yield || 0],
+                ['①卷取线速', 'wind', 'number', record.wind || 0],
+                ['②牵伸线速', 'draw', 'number', record.draw || 0],
+                ['③喂入线速', 'feed', 'number', record.feed || 0],
+                ['④张力比', 'tension', 'number', record.tension || 0],
+                ['⑤拉比', 'ratio', 'number', record.ratio || 0],
+                ['⑥上层锭速度', 'spindle', 'number', record.spindle || 0],
+                ['⑦上层捻度', 'twist', 'number', record.twist || 0],
+                ['⑧下层锭速度', 'spindle2', 'number', record.spindle2 || 0],
+                ['⑨下层捻度', 'twist2', 'number', record.twist2 || 0]
+            ];
+
+            let formHtml = fields.map(f =>
+                `<div class="form-group">
+                    <label>${f[0]}</label>
+                    <input id="edit-${f[1]}" type="${f[2]}" step="${f[2] === 'number' ? 'any' : ''}" inputmode="${f[2] === 'number' ? 'decimal' : 'text'}" value="${f[3]}" ${f[0] === '货号' ? 'required' : ''}>
+                </div>`
+            ).join('');
+
+            box.innerHTML = `
+                <div class="dialog-title"><span class="icon">✏️</span>编辑记录</div>
+                <div class="dialog-sub">修改参数后点击保存</div>
+                <div class="dialog-body" style="max-height:50vh;overflow-y:auto;">
+                    <div class="dialog-form">
+                        <div class="form-row" style="display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;">
+                            ${formHtml}
+                        </div>
+                    </div>
+                </div>
+                <div class="dialog-actions">
+                    <button class="btn-dialog-cancel" onclick="this.closest('.dialog-overlay').remove()">取消</button>
+                    <button class="btn-dialog-primary" id="editSaveBtn">💾 保存修改</button>
+                </div>
+            `;
+
+            overlay.appendChild(box);
+            document.body.appendChild(overlay);
+
+            document.getElementById('editSaveBtn').addEventListener('click', function() {
+                // 收集编辑后的数据
+                const edited = {
+                    id: record.id,
+                    code: document.getElementById('edit-code').value.trim(),
+                    machine: document.getElementById('edit-machine').value.trim() || '',
+                    date: document.getElementById('edit-date').value || '',
+                    yield: parseFloat(document.getElementById('edit-yield').value) || 0,
+                    wind: parseFloat(document.getElementById('edit-wind').value) || 0,
+                    draw: parseFloat(document.getElementById('edit-draw').value) || 0,
+                    feed: parseFloat(document.getElementById('edit-feed').value) || 0,
+                    tension: parseFloat(document.getElementById('edit-tension').value) || 0,
+                    ratio: parseFloat(document.getElementById('edit-ratio').value) || 0,
+                    spindle: parseFloat(document.getElementById('edit-spindle').value) || 0,
+                    twist: parseFloat(document.getElementById('edit-twist').value) || 0,
+                    spindle2: parseFloat(document.getElementById('edit-spindle2').value) || 0,
+                    twist2: parseFloat(document.getElementById('edit-twist2').value) || 0
+                };
+
+                if (!edited.code) {
+                    showToast('⚠️ 货号不能为空');
+                    return;
+                }
+
+                // 更新记录
+                const allRecords = getRecords();
+                const idx = allRecords.findIndex(r => r.id === id);
+                if (idx === -1) { showToast('❌ 记录不存在'); return; }
+
+                allRecords[idx] = {
+                    ...allRecords[idx],
+                    ...edited,
+                    code: edited.code
+                };
+                saveRecords(allRecords);
+                overlay.remove();
+                showToast('✅ 记录已更新');
+                renderList();
+            });
         }
 
         // ============================================================
-        //  渲染列表
+        //  渲染列表 — 面板格式成对显示 + 编辑按钮
         // ============================================================
         let searchKeyword = '';
 
@@ -1332,7 +1548,11 @@
 
             let filtered = records;
             if (searchKeyword) {
-                filtered = records.filter(r => r.code.toLowerCase().includes(searchKeyword.toLowerCase()));
+                const keyword = searchKeyword.toLowerCase();
+                filtered = records.filter(r =>
+                    r.code.toLowerCase().includes(keyword) ||
+                    (r.machine && r.machine.toLowerCase().includes(keyword))
+                );
                 hintEl.textContent = `🔍 搜索 "${searchKeyword}"，找到 ${filtered.length} 条`;
             } else {
                 hintEl.textContent = '';
@@ -1344,8 +1564,8 @@
                 container.innerHTML = `
                     <div class="empty-state">
                         <div class="icon">${searchKeyword ? '🔍' : '📭'}</div>
-                        <div>${searchKeyword ? '未找到匹配的货号' : '暂无记录'}</div>
-                        <div style="font-size:12px;margin-top:4px;">${searchKeyword ? '请尝试其他关键词' : '点击「新建记录」添加第一条'}</div>
+                        <div>${searchKeyword ? '未找到匹配的记录' : '暂无记录'}</div>
+                        <div style="font-size:12px;margin-top:4px;">${searchKeyword ? '请尝试其他关键词（货号或机台号）' : '点击「新建记录」添加第一条'}</div>
                     </div>
                 `;
                 return;
@@ -1353,28 +1573,92 @@
 
             let html = '';
             filtered.forEach((r, idx) => {
+                // 构建头部标签
+                let tags = '';
+                if (r.machine) tags += `<span class="tag">🏷️ ${r.machine}</span>`;
+                if (r.date) tags += `<span class="tag">📅 ${r.date}</span>`;
+                if (r.yield && r.yield > 0) tags += `<span class="tag-yield">📦 ${r.yield.toFixed(1)} kg</span>`;
+
+                // 面板格式：成对显示
+                // 配对顺序：卷取↔牵伸，喂入↔张力比，拉比单独，上层锭速度↔上层捻度，下层锭速度↔下层捻度
+                const pairs = [
+                    { label: '卷取线速', value: r.wind.toFixed(2) },
+                    { label: '牵伸线速', value: r.draw.toFixed(2) },
+                    { label: '喂入线速', value: r.feed.toFixed(2) },
+                    { label: '张力比', value: r.tension.toFixed(2) + '%' },
+                    { label: '拉比', value: r.ratio.toFixed(4) },
+                    { label: '', value: '' },
+                    { label: '上层锭速度', value: r.spindle.toFixed(1) },
+                    { label: '上层捻度', value: r.twist.toFixed(1) },
+                    { label: '下层锭速度', value: r.spindle2.toFixed(1) },
+                    { label: '下层捻度', value: r.twist2.toFixed(1) }
+                ];
+
+                let panelHtml = '';
+                // 按行成对显示（每行两个pair）
+                for (let i = 0; i < pairs.length; i += 2) {
+                    const p1 = pairs[i];
+                    const p2 = pairs[i + 1] || { label: '', value: '' };
+                    // 如果两个都是空，跳过
+                    if (!p1.label && !p2.label) continue;
+                    // 拉比单独占一行？拉比和第5个配对，但这里我们让拉比单独显示在中间
+                    // 更好的方式：把拉比放在中间单独一行
+                    panelHtml += `
+                        <div class="pair">
+                            <span class="label">${p1.label}</span>
+                            <span class="value">${p1.value}</span>
+                        </div>
+                        <div class="pair">
+                            <span class="label">${p2.label}</span>
+                            <span class="value">${p2.value}</span>
+                        </div>
+                    `;
+                }
+
+                // 产量单独放
+                if (r.yield && r.yield > 0) {
+                    panelHtml += `
+                        <div class="pair-yield">
+                            <span class="label">产量</span>
+                            <span class="value">${r.yield.toFixed(1)} kg</span>
+                        </div>
+                    `;
+                }
+
                 html += `
-                    <div class="record-card" style="animation-delay:${Math.min(idx * 0.03, 0.3)}s;">
+                    <div class="record-card" id="card-${r.id}" style="animation-delay:${Math.min(idx * 0.03, 0.3)}s;">
                         <div class="record-header">
                             <span class="code">📦 ${r.code}</span>
                             <span class="time">${formatTime(r.createdAt)}</span>
                         </div>
-                        <div class="record-body">
-                            <div class="item"><span class="label">卷取线速</span><span class="value">${r.wind.toFixed(2)}</span></div>
-                            <div class="item"><span class="label">牵伸线速</span><span class="value">${r.draw.toFixed(2)}</span></div>
-                            <div class="item"><span class="label">喂入线速</span><span class="value">${r.feed.toFixed(2)}</span></div>
-                            <div class="item"><span class="label">张力比</span><span class="value">${r.tension.toFixed(2)}%</span></div>
-                            <div class="item"><span class="label">拉比</span><span class="value">${r.ratio.toFixed(4)}</span></div>
-                            <div class="item"><span class="label">锭速度</span><span class="value">${r.spindle.toFixed(1)}</span></div>
-                            <div class="item" style="grid-column:1/-1;"><span class="label">锭度</span><span class="value">${r.twist.toFixed(1)} 锭/m</span></div>
+                        <div class="record-header" style="border-bottom:none;padding-bottom:0;margin-bottom:4px;">
+                            <span class="meta">${tags}</span>
+                        </div>
+                        <div class="record-panel">
+                            ${panelHtml}
                         </div>
                         <div class="record-footer">
-                            <button onclick="deleteRecord('${r.id}')">🗑️ 删除</button>
+                            <button class="btn-edit" onclick="event.stopPropagation(); editRecord('${r.id}')">✏️ 编辑</button>
+                            <button class="btn-danger-sm" onclick="event.stopPropagation(); deleteRecord('${r.id}')">🗑️ 删除</button>
                         </div>
                     </div>
                 `;
             });
+
             container.innerHTML = html;
+
+            // 点击卡片选中反馈
+            container.querySelectorAll('.record-card').forEach(card => {
+                card.addEventListener('click', function(e) {
+                    if (e.target.closest('.record-footer button')) return;
+                    document.querySelectorAll('.record-card').forEach(c => c.classList.remove('clicked'));
+                    this.classList.add('clicked');
+                    clearTimeout(this._clickTimer);
+                    this._clickTimer = setTimeout(() => {
+                        this.classList.remove('clicked');
+                    }, 2000);
+                });
+            });
         }
 
         // ============================================================
@@ -1397,16 +1681,37 @@
         });
 
         // ============================================================
-        //  删除记录
+        //  删除记录（自定义弹窗）
         // ============================================================
         function deleteRecord(id) {
-            if (!confirm('确定要删除该记录吗？')) return;
-            const records = getRecords();
-            const filtered = records.filter(r => r.id !== id);
-            if (filtered.length === records.length) return;
-            saveRecords(filtered);
-            showToast('🗑️ 已删除');
-            renderList();
+            const overlay = document.createElement('div');
+            overlay.className = 'dialog-overlay';
+            overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+
+            const box = document.createElement('div');
+            box.className = 'dialog-box';
+            box.innerHTML = `
+                <div class="dialog-title"><span class="icon">🗑️</span>确认删除</div>
+                <div class="dialog-sub">此操作不可撤销</div>
+                <div class="dialog-body" style="text-align:center;padding:16px 12px;font-size:15px;">确定要删除该记录吗？</div>
+                <div class="dialog-actions">
+                    <button class="btn-dialog-cancel" onclick="this.closest('.dialog-overlay').remove()">取消</button>
+                    <button class="btn-dialog-danger" id="dialogDeleteBtn">确认删除</button>
+                </div>
+            `;
+
+            overlay.appendChild(box);
+            document.body.appendChild(overlay);
+
+            document.getElementById('dialogDeleteBtn').addEventListener('click', function() {
+                overlay.remove();
+                const records = getRecords();
+                const filtered = records.filter(r => r.id !== id);
+                if (filtered.length === records.length) return;
+                saveRecords(filtered);
+                showToast('🗑️ 已删除');
+                renderList();
+            });
         }
 
         // ============================================================
@@ -1419,7 +1724,11 @@
                 return;
             }
 
-            const headers = ['货号', '卷取线速(m/min)', '牵伸线速(m/min)', '喂入线速(m/min)', '张力比(%)', '拉比', '锭速度(转/min)', '锭度(锭/m)',
+            const headers = ['货号', '机台号', '日期', '产量(kg)',
+                '卷取线速(m/min)', '牵伸线速(m/min)', '喂入线速(m/min)',
+                '张力比(%)', '拉比',
+                '上层锭速度(转/min)', '上层捻度(捻/m)',
+                '下层锭速度(转/min)', '下层捻度(捻/m)',
                 '记录时间'
             ];
             let csv = headers.join(',') + '\n';
@@ -1427,6 +1736,9 @@
             records.forEach(r => {
                 const row = [
                     r.code,
+                    r.machine || '',
+                    r.date || '',
+                    r.yield ? r.yield.toFixed(1) : '0',
                     r.wind.toFixed(2),
                     r.draw.toFixed(2),
                     r.feed.toFixed(2),
@@ -1434,6 +1746,8 @@
                     r.ratio.toFixed(4),
                     r.spindle.toFixed(1),
                     r.twist.toFixed(1),
+                    r.spindle2.toFixed(1),
+                    r.twist2.toFixed(1),
                     formatTime(r.createdAt)
                 ];
                 csv += row.join(',') + '\n';
@@ -1453,26 +1767,37 @@
         //  初始化
         // ============================================================
         document.addEventListener('DOMContentLoaded', () => {
+            // 设置点击清空功能
+            setupClearOnFocus();
+
             switchPage('home');
 
-            document.addEventListener('keydown', (e) => {
-                if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-                    const activePage = document.querySelector('.page.active');
-                    if (activePage && activePage.id === 'record-page') {
-                        e.preventDefault();
-                        saveRecord();
-                    }
+            const dateInput = document.getElementById('input-date');
+            if (dateInput && !dateInput.value) {
+                const today = new Date();
+                const y = today.getFullYear();
+                const m = String(today.getMonth() + 1).padStart(2, '0');
+                const d = String(today.getDate()).padStart(2, '0');
+                dateInput.value = y + '-' + m + '-' + d;
+                dateInput._defaultVal = dateInput.value;
+            }
+
+            // 设置默认值
+            document.querySelectorAll('#record-page input[data-default]').forEach(inp => {
+                if (!inp._defaultSet) {
+                    inp._defaultVal = inp.value || '';
+                    inp._defaultSet = true;
                 }
             });
 
-            const inputs = document.querySelectorAll('#record-page input');
+            const inputs = document.querySelectorAll('#record-page input:not(.quick-input)');
             inputs.forEach((inp, idx) => {
                 inp.addEventListener('keydown', (e) => {
                     if (e.key === 'Enter') {
                         e.preventDefault();
                         const next = inputs[idx + 1];
                         if (next) next.focus();
-                        else saveRecord();
+                        else confirmSave();
                     }
                 });
             });
@@ -1480,16 +1805,17 @@
 
         // 暴露全局
         window.switchPage = switchPage;
-        window.saveRecord = saveRecord;
+        window.confirmSave = confirmSave;
         window.clearForm = clearForm;
         window.deleteRecord = deleteRecord;
+        window.editRecord = editRecord;
         window.searchRecords = searchRecords;
         window.clearSearch = clearSearch;
         window.exportCSV = exportCSV;
         window.toggleTheme = toggleTheme;
         window.renderList = renderList;
-        window.parsePaste = parsePaste;
-        window.clearPaste = clearPaste;
+        window.quickFill = quickFill;
+        window.clearQuick = clearQuick;
     </script>
 </body>
 </html>
