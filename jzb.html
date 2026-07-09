@@ -8,9 +8,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <style>
-        /* ===== 样式保持不变，此处省略（同之前） ===== */
-        /* 为节省篇幅，省略样式，实际代码中会包含完整样式 */
-        /* 但为保完整性，此处简写，实际输出应包含完整样式 */
+        /* ===== 样式保持不变（与之前一致） ===== */
         * {
             margin: 0;
             padding: 0;
@@ -88,7 +86,7 @@
             inset: 0;
             border-radius: inherit;
             background: linear-gradient(135deg, rgba(255, 248, 235, 0.06) 0%, rgba(255, 248, 235, 0.01) 40%, rgba(255, 248,
-                        235, 0) 70%, rgba(255, 248, 235, 0.02) 100%);
+                        235, 0) 70%, rgba(255, 248, 235, 0.03) 100%);
             pointer-events: none;
             z-index: 1;
         }
@@ -1380,6 +1378,7 @@
             const todayStr = `${y}-${m}-${d}`;
             return {
                 records: [
+                    // 内置示例记录 id 均为整数
                     { id: Date.now() - 86400000 * 2, date: todayStr, type: 'expense', category: 'food', amount: 36.5,
                         note: '午餐', account: 'default' },
                     { id: Date.now() - 86400000 * 1, date: todayStr, type: 'expense', category: 'transport',
@@ -1473,8 +1472,11 @@
         }
 
         // ================================================================
-        //  自定义弹窗 (独立 Promise)
+        //  自定义弹窗
         // ================================================================
+        let confirmResolve = null;
+        let isDeleting = false;
+
         function showAlert(msg) {
             return new Promise((resolve) => {
                 document.getElementById('alertMessage').textContent = msg;
@@ -1496,55 +1498,42 @@
             });
         }
 
-        // 使用队列存储 resolve 函数，确保每次调用独立
-        let confirmResolveQueue = [];
-
         function showConfirm(msg) {
             return new Promise((resolve) => {
                 document.getElementById('confirmMessage').textContent = msg;
                 document.getElementById('confirmModalOverlay').classList.add('active');
-                // 将 resolve 加入队列
-                confirmResolveQueue.push(resolve);
+                confirmResolve = resolve;
                 hideFab();
             });
         }
 
         function closeConfirm() {
             document.getElementById('confirmModalOverlay').classList.remove('active');
-            // 不在这里清空队列，由按钮处理
+            confirmResolve = null;
             showFabIfNeeded();
         }
 
-        // 确定按钮：取出队首 resolve 并执行
         document.getElementById('confirmOk').addEventListener('click', function() {
-            if (confirmResolveQueue.length > 0) {
-                const resolve = confirmResolveQueue.shift();
-                if (typeof resolve === 'function') {
-                    resolve(true);
-                }
+            if (typeof confirmResolve === 'function') {
+                confirmResolve(true);
+                confirmResolve = null;
             }
             closeConfirm();
         });
 
-        // 取消按钮：取出队首 resolve 并执行 false
         document.getElementById('confirmCancel').addEventListener('click', function() {
-            if (confirmResolveQueue.length > 0) {
-                const resolve = confirmResolveQueue.shift();
-                if (typeof resolve === 'function') {
-                    resolve(false);
-                }
+            if (typeof confirmResolve === 'function') {
+                confirmResolve(false);
+                confirmResolve = null;
             }
             closeConfirm();
         });
 
-        // 点击背景：取出队首 resolve 并执行 false
         document.getElementById('confirmModalOverlay').addEventListener('click', function(e) {
             if (e.target === this) {
-                if (confirmResolveQueue.length > 0) {
-                    const resolve = confirmResolveQueue.shift();
-                    if (typeof resolve === 'function') {
-                        resolve(false);
-                    }
+                if (typeof confirmResolve === 'function') {
+                    confirmResolve(false);
+                    confirmResolve = null;
                 }
                 closeConfirm();
             }
@@ -1695,59 +1684,61 @@
         });
 
         // ================================================================
-        //  事件绑定 - 使用事件委托（可靠）
+        //  ★★★ 核心修复：使用事件委托 + 确保 id 为整数 ★★★
         // ================================================================
-        function setupRecordEvents() {
-            // 移除之前的监听，防止重复绑定
-            recordList.removeEventListener('click', handleRecordClick);
-            recordList.addEventListener('click', handleRecordClick);
-        }
 
-        function handleRecordClick(e) {
-            // 1. 检查是否点击了删除按钮
+        // 在 recordList 上绑定一次点击事件，永久有效
+        recordList.addEventListener('click', function(e) {
+            // 1. 删除
             const delBtn = e.target.closest('.del-btn');
             if (delBtn) {
                 e.stopPropagation();
-                const id = parseInt(delBtn.dataset.id);
+                const id = Number(delBtn.dataset.id);
                 if (isNaN(id)) return;
-                handleDeleteRecord(id);
+                handleDelete(id);
                 return;
             }
 
-            // 2. 检查是否点击了复制按钮
+            // 2. 复制
             const copyBtn = e.target.closest('.copy-btn');
             if (copyBtn) {
                 e.stopPropagation();
-                const id = parseInt(copyBtn.dataset.id);
+                const id = Number(copyBtn.dataset.id);
                 if (isNaN(id)) return;
-                handleCopyRecord(id);
+                handleCopy(id);
                 return;
             }
 
-            // 3. 检查是否点击了记录本身（非按钮区域）
+            // 3. 编辑（点击记录本身）
             const item = e.target.closest('.record-item');
             if (item) {
-                // 确保点击的不是按钮内部（已经处理）
-                const id = parseInt(item.dataset.id);
+                // 防止点击按钮时触发编辑
+                if (e.target.closest('.del-btn') || e.target.closest('.copy-btn')) return;
+                const id = Number(item.dataset.id);
                 if (isNaN(id)) return;
-                handleEditRecord(id);
+                handleEdit(id);
+            }
+        });
+
+        // 删除处理（带锁）
+        async function handleDelete(id) {
+            if (isDeleting) return;
+            isDeleting = true;
+            try {
+                const ok = await showConfirm('确定删除此记录？');
+                if (ok) {
+                    records = records.filter(r => r.id !== id);
+                    appData.records = records;
+                    saveAll(appData);
+                    renderHome();
+                    if (activePage === 'analytics') renderAnalyticsCharts();
+                }
+            } finally {
+                isDeleting = false;
             }
         }
 
-        // 删除逻辑
-        async function handleDeleteRecord(id) {
-            const ok = await showConfirm('确定删除此记录？');
-            if (ok) {
-                records = records.filter(r => r.id !== id);
-                appData.records = records;
-                saveAll(appData);
-                renderHome();
-                if (activePage === 'analytics') renderAnalyticsCharts();
-            }
-        }
-
-        // 复制逻辑
-        function handleCopyRecord(id) {
+        function handleCopy(id) {
             const record = records.find(r => r.id === id);
             if (record) {
                 document.querySelectorAll('.record-item.selected').forEach(el => el.classList.remove('selected'));
@@ -1757,8 +1748,7 @@
             }
         }
 
-        // 编辑逻辑（点击记录）
-        function handleEditRecord(id) {
+        function handleEdit(id) {
             const record = records.find(r => r.id === id);
             if (record) {
                 document.querySelectorAll('.record-item.selected').forEach(el => el.classList.remove('selected'));
@@ -1840,14 +1830,12 @@
                     `;
                 });
                 recordList.innerHTML = html;
-                // 重新绑定事件
-                setupRecordEvents();
             }
             showFabIfNeeded();
         }
 
         // ================================================================
-        //  模态框（记账/复制）
+        //  模态框（记账/复制） - 修复 id 生成方式
         // ================================================================
         let modalType = 'expense';
 
@@ -1909,8 +1897,9 @@
             if (isNaN(amount) || amount <= 0) { await showAlert('请输入有效金额'); return; }
             const note = recordNote.value.trim();
             const account = recordAccount.value || 'default';
+            // ★★★ 生成整数 id ★★★
             const newRecord = {
-                id: Date.now() + Math.random() * 1000,
+                id: Math.floor(Date.now() + Math.random() * 1000),
                 date,
                 type,
                 category,
@@ -2266,7 +2255,7 @@
             const startDate = await showPrompt('开始日期', 'YYYY-MM-DD', todayStr());
             if (!startDate) return;
             recurrings.push({
-                id: Date.now() + Math.random(),
+                id: Math.floor(Date.now() + Math.random() * 1000), // ★★★ 整数 id
                 type: typeStr,
                 category,
                 amount,
@@ -2407,7 +2396,7 @@
                 if (!r.active) return;
                 if (r.nextDate <= today) {
                     const newRecord = {
-                        id: Date.now() + Math.random() * 1000,
+                        id: Math.floor(Date.now() + Math.random() * 1000),
                         date: today,
                         type: r.type,
                         category: r.category,
@@ -2440,7 +2429,7 @@
         renderSettings();
         populateSearchCategories();
         renderAnalyticsCharts();
-        console.log('🚀 记账本 · 事件委托重写，删除/编辑对所有记录生效');
+        console.log('✅ 记账本修复完成：所有记录均可删除和编辑（ID浮点数问题已解决）');
     </script>
 </body>
 </html>
