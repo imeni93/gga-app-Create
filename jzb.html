@@ -8,7 +8,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <style>
-        /* ===== 样式保持不变（与之前一致） ===== */
+        /* ===== 样式保持不变（与之前一致，此处省略以节省篇幅，实际使用请保留） ===== */
         * {
             margin: 0;
             padding: 0;
@@ -1378,7 +1378,6 @@
             const todayStr = `${y}-${m}-${d}`;
             return {
                 records: [
-                    // 内置示例记录 id 均为整数
                     { id: Date.now() - 86400000 * 2, date: todayStr, type: 'expense', category: 'food', amount: 36.5,
                         note: '午餐', account: 'default' },
                     { id: Date.now() - 86400000 * 1, date: todayStr, type: 'expense', category: 'transport',
@@ -1684,10 +1683,8 @@
         });
 
         // ================================================================
-        //  ★★★ 核心修复：使用事件委托 + 确保 id 为整数 ★★★
+        //  事件绑定：事件委托
         // ================================================================
-
-        // 在 recordList 上绑定一次点击事件，永久有效
         recordList.addEventListener('click', function(e) {
             // 1. 删除
             const delBtn = e.target.closest('.del-btn');
@@ -1712,7 +1709,6 @@
             // 3. 编辑（点击记录本身）
             const item = e.target.closest('.record-item');
             if (item) {
-                // 防止点击按钮时触发编辑
                 if (e.target.closest('.del-btn') || e.target.closest('.copy-btn')) return;
                 const id = Number(item.dataset.id);
                 if (isNaN(id)) return;
@@ -1720,7 +1716,6 @@
             }
         });
 
-        // 删除处理（带锁）
         async function handleDelete(id) {
             if (isDeleting) return;
             isDeleting = true;
@@ -1755,6 +1750,42 @@
                 const item = recordList.querySelector(`.record-item[data-id="${id}"]`);
                 if (item) item.classList.add('selected');
                 openModal(record.type, record);
+            }
+        }
+
+        // ================================================================
+        //  ★★★ 周期性处理核心函数（提取出来） ★★★
+        // ================================================================
+        function processRecurring() {
+            const today = todayStr();
+            let changed = false;
+            recurrings.forEach(r => {
+                if (!r.active) return;
+                if (r.nextDate <= today) {
+                    const newRecord = {
+                        id: Math.floor(Date.now() + Math.random() * 1000),
+                        date: today,
+                        type: r.type,
+                        category: r.category,
+                        amount: r.amount,
+                        note: r.note + ' (周期)',
+                        account: activeAccount
+                    };
+                    records.push(newRecord);
+                    const d = new Date(r.nextDate);
+                    if (r.frequency === 'daily') d.setDate(d.getDate() + 1);
+                    else if (r.frequency === 'weekly') d.setDate(d.getDate() + 7);
+                    else if (r.frequency === 'monthly') d.setMonth(d.getMonth() + 1);
+                    r.nextDate = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+                    changed = true;
+                }
+            });
+            if (changed) {
+                appData.records = records;
+                appData.recurrings = recurrings;
+                saveAll(appData);
+                renderHome();
+                renderBudgetPage();
             }
         }
 
@@ -1835,7 +1866,7 @@
         }
 
         // ================================================================
-        //  模态框（记账/复制） - 修复 id 生成方式
+        //  模态框（记账/复制）
         // ================================================================
         let modalType = 'expense';
 
@@ -1897,7 +1928,6 @@
             if (isNaN(amount) || amount <= 0) { await showAlert('请输入有效金额'); return; }
             const note = recordNote.value.trim();
             const account = recordAccount.value || 'default';
-            // ★★★ 生成整数 id ★★★
             const newRecord = {
                 id: Math.floor(Date.now() + Math.random() * 1000),
                 date,
@@ -2242,6 +2272,9 @@
             renderBudgetPage();
         });
 
+        // ================================================================
+        //  ★★★ 周期性记账添加逻辑（已修复） ★★★
+        // ================================================================
         addRecurringBtn.addEventListener('click', async () => {
             const type = await showConfirm('支出？(确定=支出，取消=收入)');
             const typeStr = type ? 'expense' : 'income';
@@ -2255,7 +2288,7 @@
             const startDate = await showPrompt('开始日期', 'YYYY-MM-DD', todayStr());
             if (!startDate) return;
             recurrings.push({
-                id: Math.floor(Date.now() + Math.random() * 1000), // ★★★ 整数 id
+                id: Math.floor(Date.now() + Math.random() * 1000),
                 type: typeStr,
                 category,
                 amount,
@@ -2267,7 +2300,12 @@
             });
             appData.recurrings = recurrings;
             saveAll(appData);
+
+            // ★★★ 修复：立即执行一次周期性检查，并刷新首页 ★★★
+            processRecurring(); // 立即生成今日到期的记录
             renderBudgetPage();
+            renderHome(); // 确保首页同步更新
+
             await showAlert('周期性记录已添加');
         });
 
@@ -2387,40 +2425,9 @@
         });
 
         // ================================================================
-        //  周期性检查
+        //  周期性检查（每30分钟 + 初始化执行）
         // ================================================================
-        setInterval(() => {
-            const today = todayStr();
-            let changed = false;
-            recurrings.forEach(r => {
-                if (!r.active) return;
-                if (r.nextDate <= today) {
-                    const newRecord = {
-                        id: Math.floor(Date.now() + Math.random() * 1000),
-                        date: today,
-                        type: r.type,
-                        category: r.category,
-                        amount: r.amount,
-                        note: r.note + ' (周期)',
-                        account: activeAccount
-                    };
-                    records.push(newRecord);
-                    const d = new Date(r.nextDate);
-                    if (r.frequency === 'daily') d.setDate(d.getDate() + 1);
-                    else if (r.frequency === 'weekly') d.setDate(d.getDate() + 7);
-                    else if (r.frequency === 'monthly') d.setMonth(d.getMonth() + 1);
-                    r.nextDate = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-                    changed = true;
-                }
-            });
-            if (changed) {
-                appData.records = records;
-                appData.recurrings = recurrings;
-                saveAll(appData);
-                renderHome();
-                renderBudgetPage();
-            }
-        }, 1800000);
+        setInterval(processRecurring, 1800000);
 
         // ================================================================
         //  初始化
@@ -2429,7 +2436,10 @@
         renderSettings();
         populateSearchCategories();
         renderAnalyticsCharts();
-        console.log('✅ 记账本修复完成：所有记录均可删除和编辑（ID浮点数问题已解决）');
+        // ★★★ 页面加载时先执行一次，避免漏掉未生成的周期 ★★★
+        processRecurring();
+
+        console.log('✅ 记账本已启动 · 周期性记账添加后立即生效，并自动刷新首页');
     </script>
 </body>
 </html>
