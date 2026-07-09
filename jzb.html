@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>液态玻璃 · 记账本</title>
+    <title>液态玻璃 · 全能记账本</title>
     <link rel="manifest" href="data:application/json,{}" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <style>
-        /* ===== 基础重置 & 全局 ===== */
+        /* ===== 样式保持不变，此处省略（同之前） ===== */
+        /* 为节省篇幅，省略样式，实际代码中会包含完整样式 */
+        /* 但为保完整性，此处简写，实际输出应包含完整样式 */
         * {
             margin: 0;
             padding: 0;
@@ -25,7 +27,6 @@
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
-        /* 柔和光晕 */
         body::before,
         body::after {
             content: '';
@@ -60,8 +61,6 @@
                 transform: translate(80px, 60px) scale(1.15);
             }
         }
-
-        /* ===== 主容器 ===== */
         .app {
             position: relative;
             z-index: 1;
@@ -69,8 +68,6 @@
             margin: 0 auto;
             padding: 0 16px 16px;
         }
-
-        /* ===== 液态玻璃卡片 ===== */
         .glass {
             background: rgba(255, 248, 235, 0.03);
             backdrop-filter: blur(40px) saturate(1.6);
@@ -113,8 +110,6 @@
             transform: scale(0.985);
             transition-duration: 0.15s;
         }
-
-        /* ===== 头部 ===== */
         .header {
             display: flex;
             justify-content: space-between;
@@ -164,8 +159,6 @@
             background: rgba(255, 248, 235, 0.08);
             border-color: rgba(201, 168, 108, 0.20);
         }
-
-        /* ===== 月份选择器 ===== */
         .month-selector {
             display: flex;
             justify-content: space-between;
@@ -217,8 +210,6 @@
             color: #e8d5b5;
             border-color: rgba(201, 168, 108, 0.15);
         }
-
-        /* ===== 预算进度 ===== */
         .budget-progress .budget-label {
             display: flex;
             justify-content: space-between;
@@ -243,8 +234,6 @@
         .budget-progress .budget-bar .fill.warning {
             background: linear-gradient(90deg, #c0392b, #e74c3c);
         }
-
-        /* ===== 统计卡片 ===== */
         .stats {
             display: grid;
             grid-template-columns: 1fr 1fr 1fr;
@@ -283,8 +272,6 @@
         .stat-item .value.balance {
             color: #e8d5b5;
         }
-
-        /* ===== 分类 ===== */
         .category-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -321,8 +308,6 @@
             font-size: 13px;
             color: #f1948a;
         }
-
-        /* ===== 流水记录 ===== */
         .section-header {
             display: flex;
             justify-content: space-between;
@@ -339,7 +324,6 @@
             font-size: 12px;
             color: rgba(240, 236, 228, 0.30);
         }
-
         .record-list {
             display: flex;
             flex-direction: column;
@@ -359,7 +343,6 @@
             background: rgba(201, 168, 108, 0.15);
             border-radius: 4px;
         }
-
         .record-item {
             background: rgba(255, 248, 235, 0.02);
             border-radius: 14px;
@@ -382,7 +365,6 @@
             border-color: rgba(201, 168, 108, 0.20);
             box-shadow: 0 0 0 1px rgba(201, 168, 108, 0.08);
         }
-
         .record-item .info {
             display: flex;
             align-items: center;
@@ -475,7 +457,6 @@
             color: #f5b7b0;
             background: rgba(241, 148, 138, 0.08);
         }
-
         .empty-state {
             text-align: center;
             padding: 24px 16px;
@@ -488,8 +469,6 @@
             margin-bottom: 8px;
             opacity: 0.4;
         }
-
-        /* ===== FAB ===== */
         .fab {
             position: fixed;
             bottom: 82px;
@@ -519,8 +498,6 @@
         .fab.hidden {
             display: none !important;
         }
-
-        /* ===== 底部导航栏 - 增强对比度 ===== */
         .bottom-nav {
             position: fixed;
             bottom: 12px;
@@ -552,7 +529,6 @@
             font-size: 9px;
             font-weight: 500;
             color: rgba(255, 255, 255, 0.6);
-            /* 提高未选中亮度 */
             cursor: pointer;
             padding: 4px 0;
             transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -570,7 +546,6 @@
             transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
             filter: grayscale(0.3);
             opacity: 0.75;
-            /* 提高图标亮度 */
         }
         .nav-item .nav-label {
             font-size: 9px;
@@ -580,7 +555,6 @@
         }
         .nav-item.active {
             color: #e8d5b5;
-            /* 选中使用香槟金 */
         }
         .nav-item.active .nav-icon {
             transform: scale(1.12);
@@ -628,8 +602,6 @@
                 bottom: 72px;
             }
         }
-
-        /* ===== 页面切换动画 ===== */
         .page {
             display: none;
             animation: pageFadeIn 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
@@ -647,14 +619,11 @@
                 transform: translateY(0) scale(1);
             }
         }
-
-        /* ===== 模态框 - 调亮背景 ===== */
         .modal-overlay {
             position: fixed;
             inset: 0;
             z-index: 200;
             background: rgba(0, 0, 0, 0.40);
-            /* 降低暗度 */
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
             display: none;
@@ -676,7 +645,6 @@
         }
         .modal {
             background: rgba(30, 40, 60, 0.40);
-            /* 更透亮 */
             backdrop-filter: blur(60px) saturate(1.8);
             -webkit-backdrop-filter: blur(60px) saturate(1.8);
             border: 1px solid rgba(201, 168, 108, 0.12);
@@ -822,8 +790,6 @@
             box-shadow: 0 6px 24px rgba(201, 168, 108, 0.30);
             transform: translateY(-1px);
         }
-
-        /* ===== 确认/提示模态框 ===== */
         .confirm-modal .modal-title {
             justify-content: center;
         }
@@ -847,8 +813,6 @@
             background: linear-gradient(135deg, #c9a86c, #a8895a);
             color: #fff;
         }
-
-        /* ===== 输入弹窗 ===== */
         .prompt-modal .modal-actions button {
             flex: 0 1 auto;
             padding: 10px 28px;
@@ -868,8 +832,6 @@
             font-size: 15px;
             font-family: inherit;
         }
-
-        /* ===== 分析页 - CSS图表 ===== */
         .chart-container {
             margin: 8px 0;
         }
@@ -967,8 +929,6 @@
             color: rgba(240,236,228,0.5);
             flex-shrink: 0;
         }
-
-        /* ===== 设置页 ===== */
         .setting-group .group-title {
             font-size: 13px;
             font-weight: 600;
@@ -1011,8 +971,6 @@
             background: rgba(255, 248, 235, 0.06);
             color: #e8d5b5;
         }
-
-        /* ===== 搜索页 ===== */
         .search-filters {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -1055,8 +1013,6 @@
         #searchBtn:hover {
             box-shadow: 0 4px 16px rgba(201, 168, 108, 0.20);
         }
-
-        /* ===== 响应式 ===== */
         @media (max-width: 480px) {
             .app {
                 padding: 0 12px 12px;
@@ -1141,19 +1097,16 @@
 
     <!-- ===== 应用容器 ===== -->
     <div class="app" id="app">
-        <!-- 头部 -->
         <div class="header">
             <div class="header-left">
-                <h1>💰私人记账本<span>· 全能</span></h1>
+                <h1>📒 记账本 <span>· 全能</span></h1>
             </div>
             <div class="header-actions">
                 <button id="resetBtn" title="重置数据">⟳</button>
             </div>
         </div>
 
-        <!-- ===== 页面：首页 ===== -->
         <div class="page active" id="page-home">
-            <!-- 月份选择 -->
             <div class="month-selector">
                 <span class="month-label" id="monthDisplay">2026年7月 <small>当前</small></span>
                 <div class="month-nav">
@@ -1163,7 +1116,6 @@
                 </div>
             </div>
 
-            <!-- 预算进度 -->
             <div class="glass budget-progress">
                 <div class="budget-label">
                     <span>📊 月度预算</span>
@@ -1174,7 +1126,6 @@
                 </div>
             </div>
 
-            <!-- 统计 -->
             <div class="glass" style="padding:10px 12px;">
                 <div class="stats">
                     <div class="stat-item">
@@ -1192,13 +1143,11 @@
                 </div>
             </div>
 
-            <!-- 分类支出 -->
             <div class="glass">
                 <div style="font-size:13px; font-weight:600; color:rgba(240,236,228,0.45); margin-bottom:8px; letter-spacing:0.3px;">📊 支出分类</div>
                 <div class="category-grid" id="categoryGrid"></div>
             </div>
 
-            <!-- 流水记录 -->
             <div class="glass" style="padding-bottom:12px;">
                 <div class="section-header">
                     <span class="title">📋 流水记录</span>
@@ -1208,7 +1157,6 @@
             </div>
         </div>
 
-        <!-- ===== 页面：分析 ===== -->
         <div class="page" id="page-analytics">
             <div class="glass">
                 <div class="chart-title">🧩 支出分类占比</div>
@@ -1224,7 +1172,6 @@
             </div>
         </div>
 
-        <!-- ===== 页面：预算 ===== -->
         <div class="page" id="page-budget">
             <div class="glass">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
@@ -1252,7 +1199,6 @@
             </div>
         </div>
 
-        <!-- ===== 页面：搜索 ===== -->
         <div class="page" id="page-search">
             <div class="glass">
                 <div class="search-filters">
@@ -1268,7 +1214,6 @@
             </div>
         </div>
 
-        <!-- ===== 页面：设置 ===== -->
         <div class="page" id="page-settings">
             <div class="glass">
                 <div class="setting-group">
@@ -1321,26 +1266,11 @@
 
     <!-- ===== 底部导航栏 ===== -->
     <div class="bottom-nav" id="bottomNav">
-        <button class="nav-item active" data-page="home">
-            <span class="nav-icon">🏠</span>
-            <span class="nav-label">首页</span>
-        </button>
-        <button class="nav-item" data-page="analytics">
-            <span class="nav-icon">📊</span>
-            <span class="nav-label">分析</span>
-        </button>
-        <button class="nav-item" data-page="budget">
-            <span class="nav-icon">🎯</span>
-            <span class="nav-label">预算</span>
-        </button>
-        <button class="nav-item" data-page="search">
-            <span class="nav-icon">🔍</span>
-            <span class="nav-label">搜索</span>
-        </button>
-        <button class="nav-item" data-page="settings">
-            <span class="nav-icon">⚙️</span>
-            <span class="nav-label">设置</span>
-        </button>
+        <button class="nav-item active" data-page="home"><span class="nav-icon">🏠</span><span class="nav-label">首页</span></button>
+        <button class="nav-item" data-page="analytics"><span class="nav-icon">📊</span><span class="nav-label">分析</span></button>
+        <button class="nav-item" data-page="budget"><span class="nav-icon">🎯</span><span class="nav-label">预算</span></button>
+        <button class="nav-item" data-page="search"><span class="nav-icon">🔍</span><span class="nav-label">搜索</span></button>
+        <button class="nav-item" data-page="settings"><span class="nav-icon">⚙️</span><span class="nav-label">设置</span></button>
     </div>
 
     <!-- ===== 模态框：记账 ===== -->
@@ -1430,12 +1360,14 @@
                 { key: 'housing', label: '住房', emoji: '🏠' },
                 { key: 'medical', label: '医疗', emoji: '💊' },
                 { key: 'education', label: '教育', emoji: '📚' },
+                { key: 'mahjong', label: '麻将', emoji: '🀄️' },
                 { key: 'other', label: '其他', emoji: '📌' },
             ],
             income: [
                 { key: 'salary', label: '工资', emoji: '💰' },
                 { key: 'bonus', label: '奖金', emoji: '🎁' },
                 { key: 'investment', label: '投资', emoji: '📈' },
+                { key: 'mahjong', label: '麻将', emoji: '🀄️' },
                 { key: 'other_income', label: '其他', emoji: '📌' },
             ]
         };
@@ -1541,7 +1473,7 @@
         }
 
         // ================================================================
-        //  自定义弹窗 (替代alert, confirm, prompt)
+        //  自定义弹窗 (独立 Promise)
         // ================================================================
         function showAlert(msg) {
             return new Promise((resolve) => {
@@ -1564,36 +1496,59 @@
             });
         }
 
+        // 使用队列存储 resolve 函数，确保每次调用独立
+        let confirmResolveQueue = [];
+
         function showConfirm(msg) {
             return new Promise((resolve) => {
                 document.getElementById('confirmMessage').textContent = msg;
                 document.getElementById('confirmModalOverlay').classList.add('active');
-                const okBtn = document.getElementById('confirmOk');
-                const cancelBtn = document.getElementById('confirmCancel');
-                const handlerOk = () => {
-                    document.getElementById('confirmModalOverlay').classList.remove('active');
-                    okBtn.removeEventListener('click', handlerOk);
-                    cancelBtn.removeEventListener('click', handlerCancel);
-                    resolve(true);
-                };
-                const handlerCancel = () => {
-                    document.getElementById('confirmModalOverlay').classList.remove('active');
-                    okBtn.removeEventListener('click', handlerOk);
-                    cancelBtn.removeEventListener('click', handlerCancel);
-                    resolve(false);
-                };
-                okBtn.addEventListener('click', handlerOk);
-                cancelBtn.addEventListener('click', handlerCancel);
-                document.getElementById('confirmModalOverlay').addEventListener('click', (e) => {
-                    if (e.target === e.currentTarget) {
-                        document.getElementById('confirmModalOverlay').classList.remove('active');
-                        okBtn.removeEventListener('click', handlerOk);
-                        cancelBtn.removeEventListener('click', handlerCancel);
-                        resolve(false);
-                    }
-                });
+                // 将 resolve 加入队列
+                confirmResolveQueue.push(resolve);
+                hideFab();
             });
         }
+
+        function closeConfirm() {
+            document.getElementById('confirmModalOverlay').classList.remove('active');
+            // 不在这里清空队列，由按钮处理
+            showFabIfNeeded();
+        }
+
+        // 确定按钮：取出队首 resolve 并执行
+        document.getElementById('confirmOk').addEventListener('click', function() {
+            if (confirmResolveQueue.length > 0) {
+                const resolve = confirmResolveQueue.shift();
+                if (typeof resolve === 'function') {
+                    resolve(true);
+                }
+            }
+            closeConfirm();
+        });
+
+        // 取消按钮：取出队首 resolve 并执行 false
+        document.getElementById('confirmCancel').addEventListener('click', function() {
+            if (confirmResolveQueue.length > 0) {
+                const resolve = confirmResolveQueue.shift();
+                if (typeof resolve === 'function') {
+                    resolve(false);
+                }
+            }
+            closeConfirm();
+        });
+
+        // 点击背景：取出队首 resolve 并执行 false
+        document.getElementById('confirmModalOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                if (confirmResolveQueue.length > 0) {
+                    const resolve = confirmResolveQueue.shift();
+                    if (typeof resolve === 'function') {
+                        resolve(false);
+                    }
+                }
+                closeConfirm();
+            }
+        });
 
         function showPrompt(title, label, defaultValue = '') {
             return new Promise((resolve) => {
@@ -1740,6 +1695,80 @@
         });
 
         // ================================================================
+        //  事件绑定 - 使用事件委托（可靠）
+        // ================================================================
+        function setupRecordEvents() {
+            // 移除之前的监听，防止重复绑定
+            recordList.removeEventListener('click', handleRecordClick);
+            recordList.addEventListener('click', handleRecordClick);
+        }
+
+        function handleRecordClick(e) {
+            // 1. 检查是否点击了删除按钮
+            const delBtn = e.target.closest('.del-btn');
+            if (delBtn) {
+                e.stopPropagation();
+                const id = parseInt(delBtn.dataset.id);
+                if (isNaN(id)) return;
+                handleDeleteRecord(id);
+                return;
+            }
+
+            // 2. 检查是否点击了复制按钮
+            const copyBtn = e.target.closest('.copy-btn');
+            if (copyBtn) {
+                e.stopPropagation();
+                const id = parseInt(copyBtn.dataset.id);
+                if (isNaN(id)) return;
+                handleCopyRecord(id);
+                return;
+            }
+
+            // 3. 检查是否点击了记录本身（非按钮区域）
+            const item = e.target.closest('.record-item');
+            if (item) {
+                // 确保点击的不是按钮内部（已经处理）
+                const id = parseInt(item.dataset.id);
+                if (isNaN(id)) return;
+                handleEditRecord(id);
+            }
+        }
+
+        // 删除逻辑
+        async function handleDeleteRecord(id) {
+            const ok = await showConfirm('确定删除此记录？');
+            if (ok) {
+                records = records.filter(r => r.id !== id);
+                appData.records = records;
+                saveAll(appData);
+                renderHome();
+                if (activePage === 'analytics') renderAnalyticsCharts();
+            }
+        }
+
+        // 复制逻辑
+        function handleCopyRecord(id) {
+            const record = records.find(r => r.id === id);
+            if (record) {
+                document.querySelectorAll('.record-item.selected').forEach(el => el.classList.remove('selected'));
+                const item = recordList.querySelector(`.record-item[data-id="${id}"]`);
+                if (item) item.classList.add('selected');
+                openModal(record.type, record);
+            }
+        }
+
+        // 编辑逻辑（点击记录）
+        function handleEditRecord(id) {
+            const record = records.find(r => r.id === id);
+            if (record) {
+                document.querySelectorAll('.record-item.selected').forEach(el => el.classList.remove('selected'));
+                const item = recordList.querySelector(`.record-item[data-id="${id}"]`);
+                if (item) item.classList.add('selected');
+                openModal(record.type, record);
+            }
+        }
+
+        // ================================================================
         //  渲染首页
         // ================================================================
         function renderHome() {
@@ -1811,37 +1840,8 @@
                     `;
                 });
                 recordList.innerHTML = html;
-
-                recordList.querySelectorAll('.del-btn').forEach(btn => {
-                    btn.addEventListener('click', async (e) => {
-                        e.stopPropagation();
-                        const id = parseInt(btn.dataset.id);
-                        const ok = await showConfirm('确定删除此记录？');
-                        if (ok) {
-                            records = records.filter(r => r.id !== id);
-                            appData.records = records;
-                            saveAll(appData);
-                            renderHome();
-                        }
-                    });
-                });
-                recordList.querySelectorAll('.copy-btn, .record-item').forEach(el => {
-                    const isItem = el.classList.contains('record-item');
-                    const clickHandler = (e) => {
-                        if (e.target.closest('.del-btn')) return;
-                        const item = el.closest('.record-item');
-                        if (!item) return;
-                        const id = parseInt(item.dataset.id);
-                        document.querySelectorAll('.record-item.selected').forEach(el => el.classList.remove(
-                            'selected'));
-                        item.classList.add('selected');
-                        const record = records.find(r => r.id === id);
-                        if (record) openModal(record.type, record);
-                    };
-                    if (isItem) el.addEventListener('click', clickHandler);
-                    else el.addEventListener('click', (e) => { e.stopPropagation();
-                        clickHandler(e); });
-                });
+                // 重新绑定事件
+                setupRecordEvents();
             }
             showFabIfNeeded();
         }
@@ -2440,7 +2440,7 @@
         renderSettings();
         populateSearchCategories();
         renderAnalyticsCharts();
-        console.log('🚀 高级深蓝×香槟金 · 导航与弹窗已优化');
+        console.log('🚀 记账本 · 事件委托重写，删除/编辑对所有记录生效');
     </script>
 </body>
 </html>
