@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>打纱计件工资 · 清新粉嫩</title>
+    <style>
+        /* ===== 基础重置 & 全局 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, 'Microsoft Yahei', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #fce4ec, #f3e5f5, #e8eaf6);
+            color: #4a3b4a;
+            padding: 16px;
+            overflow-x: hidden;
+        }
+        /* ===== 主容器 ===== */
+        .app {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* ===== 液态玻璃卡片 - 清新版 ===== */
+        .glass {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(40px) saturate(1.6);
+            -webkit-backdrop-filter: blur(40px) saturate(1.6);
+            border: 1px solid rgba(255, 255, 255, 0.50);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s ease, background 0.4s ease,
+                border 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            padding: 20px 24px;
+        }
+        .glass::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.40) 0%, rgba(255, 255, 255, 0.10) 40%, rgba(255, 255,
+                        255, 0) 70%, rgba(255, 255, 255, 0.20) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+        .glass::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: linear-gradient(145deg, rgba(255, 255, 255, 0.30) 0%, transparent 40%, transparent 70%, rgba(255,
+                        255, 255, 0.10) 100%);
+            pointer-events: none;
+            z-index: 1;
+        }
+        .glass>* {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ===== 头部 ===== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #d88a9a, #b87ab0);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.3px;
+        }
+        .header .sub {
+            font-size: 14px;
+            color: rgba(74, 59, 74, 0.5);
+            font-weight: 400;
+        }
+        .month-control {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.30);
+            border: 1px solid rgba(255, 255, 255, 0.40);
+            border-radius: 30px;
+            padding: 4px 6px;
+            backdrop-filter: blur(8px);
+        }
+        .month-control button {
+            background: none;
+            border: none;
+            color: rgba(74, 59, 74, 0.5);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .month-control button:hover {
+            background: rgba(216, 138, 154, 0.10);
+            color: #d88a9a;
+        }
+        .month-control button:active {
+            transform: scale(0.88);
+        }
+        .month-control .month-label {
+            font-size: 14px;
+            color: #4a3b4a;
+            font-weight: 500;
+            padding: 0 6px;
+            min-width: 90px;
+            text-align: center;
+            white-space: nowrap;
+        }
+        .month-control .add-btn {
+            background: rgba(216, 138, 154, 0.06);
+            border: 1px solid rgba(216, 138, 154, 0.10);
+            color: rgba(74, 59, 74, 0.6);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+        }
+        .month-control .add-btn:hover {
+            background: rgba(216, 138, 154, 0.10);
+            color: #d88a9a;
+        }
+        .month-control .add-btn .tip {
+            font-size: 10px;
+            opacity: 0.5;
+        }
+        @media (max-width: 540px) {
+            .month-control .month-label {
+                min-width: 70px;
+                font-size: 13px;
+            }
+            .month-control .add-btn .tip {
+                display: none;
+            }
+            .month-control .add-btn {
+                padding: 4px 10px;
+                font-size: 11px;
+            }
+        }
+        @media (max-width: 420px) {
+            .month-control {
+                width: 100%;
+                justify-content: center;
+                border-radius: 30px;
+                padding: 6px 10px;
+            }
+            .month-control .month-label {
+                min-width: 60px;
+                font-size: 13px;
+            }
+        }
+
+        /* ===== 统计按钮 ===== */
+        .stats-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .stats-actions .btn {
+            padding: 8px 24px;
+            border: none;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            font-family: inherit;
+            backdrop-filter: blur(8px);
+            background: rgba(255, 255, 255, 0.30);
+            border: 1px solid rgba(255, 255, 255, 0.40);
+            color: rgba(74, 59, 74, 0.6);
+        }
+        .stats-actions .btn:hover {
+            background: rgba(255, 255, 255, 0.50);
+            color: #4a3b4a;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+        .stats-actions .btn:active {
+            transform: scale(0.96);
+        }
+        .stats-actions .btn-primary {
+            background: linear-gradient(135deg, #f2c4d0, #d9b0d9);
+            border-color: transparent;
+            color: #4a3b4a;
+        }
+        .stats-actions .btn-primary:hover {
+            background: linear-gradient(135deg, #f8d4de, #e4c0e4);
+            color: #4a3b4a;
+            box-shadow: 0 4px 16px rgba(216, 138, 154, 0.15);
+        }
+        .stats-actions .btn-danger {
+            background: rgba(200, 80, 100, 0.06);
+            border-color: rgba(200, 80, 100, 0.10);
+            color: rgba(74, 59, 74, 0.5);
+        }
+        .stats-actions .btn-danger:hover {
+            background: rgba(200, 80, 100, 0.10);
+            color: #b87080;
+        }
+
+        /* ===== 表格容器 ===== */
+        .table-wrap {
+            overflow-x: auto;
+            padding: 4px 0;
+            margin-top: 4px;
+        }
+        .table-wrap table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            min-width: 820px;
+        }
+        .table-wrap th,
+        .table-wrap td {
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            padding: 6px 4px;
+            text-align: center;
+            vertical-align: middle;
+            min-width: 52px;
+        }
+        .table-wrap th {
+            background: rgba(255, 255, 255, 0.30);
+            color: rgba(74, 59, 74, 0.6);
+            font-weight: 600;
+            font-size: 12px;
+            letter-spacing: 0.3px;
+            position: sticky;
+            top: 0;
+            backdrop-filter: blur(8px);
+        }
+        .table-wrap th:first-child {
+            min-width: 44px;
+        }
+        .table-wrap td:first-child {
+            font-weight: 500;
+            color: rgba(74, 59, 74, 0.4);
+            font-size: 12px;
+        }
+        /* ★★★ 输入框优化：点击全选 ★★★ */
+        .table-wrap input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            text-align: center;
+            padding: 4px 0;
+            font-size: 13px;
+            color: #4a3b4a;
+            outline: none;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+        .table-wrap input:focus {
+            background: rgba(255, 255, 255, 0.40);
+            border-radius: 6px;
+            box-shadow: 0 0 0 2px rgba(216, 138, 154, 0.10);
+        }
+        .table-wrap input:hover {
+            background: rgba(255, 255, 255, 0.20);
+            border-radius: 6px;
+        }
+        .table-wrap input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        .table-wrap input[type="number"]::-webkit-outer-spin-button,
+        .table-wrap input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+        }
+
+        .table-wrap .total-row td {
+            background: rgba(216, 138, 154, 0.06);
+            font-weight: 600;
+            color: #b87080;
+            border-color: rgba(216, 138, 154, 0.06);
+        }
+        .table-wrap .total-row td:first-child {
+            color: #b87080;
+            font-weight: 600;
+        }
+        .table-wrap .pay-row td {
+            background: rgba(185, 140, 185, 0.04);
+            color: #8a6e8a;
+            font-weight: 500;
+            border-color: rgba(185, 140, 185, 0.04);
+        }
+        .table-wrap .final-row td {
+            background: rgba(216, 138, 154, 0.08);
+            font-weight: 700;
+            font-size: 16px;
+            color: #b87080;
+            border-color: rgba(216, 138, 154, 0.08);
+        }
+        .table-wrap .final-row td:first-child {
+            color: #4a3b4a;
+        }
+        .table-wrap .final-row .total-wage {
+            font-size: 20px;
+            color: #b87080;
+        }
+        .price-row td {
+            background: rgba(0, 0, 0, 0.02);
+            color: rgba(74, 59, 74, 0.3);
+            font-size: 12px;
+            border-color: rgba(0, 0, 0, 0.02);
+        }
+
+        /* ===== 底部操作栏 ===== */
+        .footer-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 16px;
+        }
+        .footer-bar .info {
+            font-size: 12px;
+            color: rgba(74, 59, 74, 0.25);
+        }
+        .footer-bar .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            font-family: inherit;
+            backdrop-filter: blur(8px);
+            background: rgba(255, 255, 255, 0.20);
+            border: 1px solid rgba(255, 255, 255, 0.30);
+            color: rgba(74, 59, 74, 0.5);
+        }
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.40);
+            color: #4a3b4a;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #f2c4d0, #d9b0d9);
+            border-color: transparent;
+            color: #4a3b4a;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #f8d4de, #e4c0e4);
+            color: #4a3b4a;
+            box-shadow: 0 4px 16px rgba(216, 138, 154, 0.15);
+        }
+
+        /* ===== Toast ===== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) scale(0.9);
+            background: rgba(255, 255, 255, 0.80);
+            backdrop-filter: blur(32px);
+            border: 1px solid rgba(255, 255, 255, 0.50);
+            border-radius: 16px;
+            padding: 12px 28px;
+            color: #4a3b4a;
+            font-size: 14px;
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            pointer-events: none;
+            z-index: 999;
+            white-space: nowrap;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+
+        /* ===== 模态框（统计）- 提亮版 ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 300;
+            background: rgba(0, 0, 0, 0.12);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: none;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 40px 20px;
+            animation: modalFadeIn 0.3s ease;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .modal {
+            background: rgba(255, 255, 255, 0.70);
+            backdrop-filter: blur(60px) saturate(1.8);
+            -webkit-backdrop-filter: blur(60px) saturate(1.8);
+            border: 1px solid rgba(255, 255, 255, 0.50);
+            border-radius: 28px;
+            padding: 28px 24px 24px;
+            width: 100%;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08);
+            animation: slideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.94);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        .modal .modal-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #4a3b4a;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal .modal-title .close-btn {
+            background: none;
+            border: none;
+            color: rgba(74, 59, 74, 0.3);
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+        .modal .modal-title .close-btn:hover {
+            color: #d88a9a;
+            transform: rotate(90deg);
+        }
+
+        .modal .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .modal .stat-item {
+            background: rgba(255, 255, 255, 0.30);
+            border-radius: 14px;
+            padding: 14px 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.40);
+        }
+        .modal .stat-item .label {
+            font-size: 11px;
+            color: rgba(74, 59, 74, 0.4);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .modal .stat-item .value {
+            font-size: 22px;
+            font-weight: 700;
+            margin-top: 4px;
+        }
+        .modal .stat-item .value.gold {
+            color: #b87080;
+        }
+        .modal .stat-item .value.green {
+            color: #8a6e8a;
+        }
+        .modal .stat-item .value.rose {
+            color: #d88a9a;
+        }
+
+        .modal .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 6px;
+            margin-top: 12px;
+        }
+        .modal .detail-item {
+            background: rgba(255, 255, 255, 0.20);
+            border-radius: 10px;
+            padding: 6px 8px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.30);
+            font-size: 12px;
+        }
+        .modal .detail-item .dl {
+            color: rgba(74, 59, 74, 0.3);
+            font-size: 10px;
+        }
+        .modal .detail-item .dv {
+            color: #4a3b4a;
+            font-weight: 600;
+        }
+        .modal .detail-item .dv.gold {
+            color: #b87080;
+        }
+
+        /* ★★★ 年度统计中的月份标签改为可点击 ★★★ */
+        .modal .month-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 12px;
+        }
+        .modal .month-list .month-tag {
+            background: rgba(255, 255, 255, 0.20);
+            border: 1px solid rgba(255, 255, 255, 0.30);
+            border-radius: 30px;
+            padding: 4px 14px;
+            font-size: 12px;
+            color: rgba(74, 59, 74, 0.5);
+            cursor: pointer;
+            transition: all 0.25s ease;
+            user-select: none;
+        }
+        .modal .month-list .month-tag:hover {
+            background: rgba(216, 138, 154, 0.08);
+            border-color: #d88a9a;
+            color: #d88a9a;
+        }
+        .modal .month-list .month-tag.active {
+            border-color: #d88a9a;
+            color: #d88a9a;
+            background: rgba(216, 138, 154, 0.06);
+        }
+
+        /* ===== 确认弹窗（液态玻璃）- 提亮 ===== */
+        .confirm-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 400;
+            background: rgba(0, 0, 0, 0.12);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: modalFadeIn 0.3s ease;
+        }
+        .confirm-overlay.active {
+            display: flex;
+        }
+        .confirm-box {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(60px) saturate(1.8);
+            -webkit-backdrop-filter: blur(60px) saturate(1.8);
+            border: 1px solid rgba(255, 255, 255, 0.50);
+            border-radius: 28px;
+            padding: 32px 28px 28px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 32px 80px rgba(0, 0, 0, 0.08);
+            animation: slideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .confirm-box .confirm-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #b87080;
+            margin-bottom: 10px;
+        }
+        .confirm-box .confirm-message {
+            font-size: 15px;
+            color: rgba(74, 59, 74, 0.7);
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+        .confirm-box .confirm-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .confirm-box .confirm-actions button {
+            padding: 10px 32px;
+            border: none;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            font-family: inherit;
+        }
+        .confirm-box .confirm-actions .btn-cancel {
+            background: rgba(255, 255, 255, 0.30);
+            border: 1px solid rgba(255, 255, 255, 0.40);
+            color: rgba(74, 59, 74, 0.5);
+        }
+        .confirm-box .confirm-actions .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.50);
+            color: #4a3b4a;
+        }
+        .confirm-box .confirm-actions .btn-confirm {
+            background: linear-gradient(135deg, #f2c4d0, #d9b0d9);
+            border-color: transparent;
+            color: #4a3b4a;
+        }
+        .confirm-box .confirm-actions .btn-confirm:hover {
+            background: linear-gradient(135deg, #f8d4de, #e4c0e4);
+            box-shadow: 0 6px 16px rgba(216, 138, 154, 0.15);
+            transform: translateY(-1px);
+        }
+        .confirm-box .confirm-actions .btn-confirm:active {
+            transform: scale(0.96);
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 640px) {
+            body {
+                padding: 10px;
+            }
+            .glass {
+                padding: 14px 12px;
+                border-radius: 18px;
+            }
+            .header h1 {
+                font-size: 18px;
+            }
+            .table-wrap table {
+                font-size: 12px;
+                min-width: 700px;
+            }
+            .table-wrap th,
+            .table-wrap td {
+                padding: 4px 2px;
+                min-width: 40px;
+            }
+            .table-wrap input {
+                font-size: 12px;
+                padding: 2px 0;
+            }
+            .modal {
+                padding: 18px 14px;
+            }
+            .modal .modal-title {
+                font-size: 18px;
+            }
+            .modal .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .toast {
+                font-size: 13px;
+                padding: 10px 20px;
+                white-space: normal;
+            }
+            .stats-actions .btn {
+                font-size: 12px;
+                padding: 6px 16px;
+            }
+            .confirm-box {
+                padding: 24px 20px 20px;
+            }
+            .confirm-box .confirm-title {
+                font-size: 18px;
+            }
+            .confirm-box .confirm-actions button {
+                padding: 8px 24px;
+                font-size: 13px;
+            }
+        }
+        @media (max-width: 420px) {
+            .modal .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .modal .detail-grid {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app">
+
+        <!-- ===== 头部 ===== -->
+        <div class="header glass">
+            <div>
+                <h1>🧵 打纱计件工资</h1>
+                <div class="sub"></div>
+            </div>
+            <div class="month-control">
+                <button id="prevMonthBtn">‹</button>
+                <span class="month-label" id="currentMonthLabel">2026年10月</span>
+                <button id="nextMonthBtn">›</button>
+                <button class="add-btn" id="addMonthBtn">
+                    + 添加月份
+                    <span class="tip">（提前建下月）</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== 统计按钮 ===== -->
+        <div class="stats-actions">
+            <button class="btn btn-primary" id="openMonthlyStats">📊 月度统计</button>
+            <button class="btn btn-primary" id="openYearlyStats">📆 年度统计</button>
+            <button class="btn btn-danger" id="resetMonthBtn" style="margin-left:auto;">↺ 重置本月</button>
+        </div>
+
+        <!-- ===== 表格 ===== -->
+        <div class="glass" style="padding:12px 12px 16px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:6px;">
+                <span style="font-size:13px; color:rgba(74,59,74,0.3);">📋 产量明细 · 可编辑</span>
+                <span style="font-size:12px; color:rgba(74,59,74,0.15);">修改数据自动计算</span>
+            </div>
+            <div class="table-wrap">
+                <table id="wageTable">
+                    <thead>
+                        <tr>
+                            <th>日期</th>
+                            <th>70/1(大)</th>
+                            <th>70/1(小)</th>
+                            <th>40/1(大)</th>
+                            <th>40/1(小)</th>
+                            <th>75/1</th>
+                            <th>150/1</th>
+                            <th>70/2</th>
+                            <th>40/1高F</th>
+                            <th>20/1</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataBody">
+                        <!-- JS 生成 -->
+                    </tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td>小计</td>
+                            <td id="sum1">0</td>
+                            <td id="sum2">0</td>
+                            <td id="sum3">0</td>
+                            <td id="sum4">0</td>
+                            <td id="sum5">0</td>
+                            <td id="sum6">0</td>
+                            <td id="sum7">0</td>
+                            <td id="sum8">0</td>
+                            <td id="sum9">0</td>
+                        </tr>
+                        <tr class="price-row">
+                            <td>单价</td>
+                            <td>0.18</td>
+                            <td>0.16</td>
+                            <td>0.26</td>
+                            <td>0.22</td>
+                            <td>0.22</td>
+                            <td>0.13</td>
+                            <td>0.14</td>
+                            <td>0.26</td>
+                            <td>0.40</td>
+                        </tr>
+                        <tr class="pay-row">
+                            <td>分项工资</td>
+                            <td id="pay1">0.00</td>
+                            <td id="pay2">0.00</td>
+                            <td id="pay3">0.00</td>
+                            <td id="pay4">0.00</td>
+                            <td id="pay5">0.00</td>
+                            <td id="pay6">0.00</td>
+                            <td id="pay7">0.00</td>
+                            <td id="pay8">0.00</td>
+                            <td id="pay9">0.00</td>
+                        </tr>
+                        <tr class="final-row">
+                            <td colspan="8">💰 当月实际总工资</td>
+                            <td colspan="1" class="total-wage" id="totalWage">0.00</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+
+            <div class="footer-bar">
+                <div class="info">💡 点击数字可修改 · 自动汇总</div>
+                <div class="actions">
+                    <button class="btn" id="exportBtn">📥 导出 CSV</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ===== 月度统计模态框 ===== -->
+    <div class="modal-overlay" id="monthlyModal">
+        <div class="modal">
+            <div class="modal-title">
+                <span>📊 月度统计 · <span id="modalMonthLabel">2026年10月</span></span>
+                <button class="close-btn" data-close="monthlyModal">✕</button>
+            </div>
+            <div class="stats-grid" id="monthlyStatsGrid">
+                <div class="stat-item"><div class="label">总产量</div><div class="value gold" id="mmTotalQty">0</div></div>
+                <div class="stat-item"><div class="label">总工资</div><div class="value gold" id="mmTotalWage">¥0.00</div></div>
+                <div class="stat-item"><div class="label">出勤天数</div><div class="value gold" id="mmWorkDays">0</div></div>
+                <div class="stat-item"><div class="label">日均工资</div><div class="value gold" id="mmDailyWage">¥0.00</div></div>
+            </div>
+            <div class="detail-grid" id="monthlyDetailGrid"></div>
+        </div>
+    </div>
+
+    <!-- ===== 年度统计模态框（月份标签可点击切换） ===== -->
+    <div class="modal-overlay" id="yearlyModal">
+        <div class="modal">
+            <div class="modal-title">
+                <span>📆 年度统计 · 2026年</span>
+                <button class="close-btn" data-close="yearlyModal">✕</button>
+            </div>
+            <div class="stats-grid" id="yearlyStatsGrid">
+                <div class="stat-item"><div class="label">年度总产量</div><div class="value green" id="yyTotalQty">0</div></div>
+                <div class="stat-item"><div class="label">年度总工资</div><div class="value green" id="yyTotalWage">¥0.00</div></div>
+                <div class="stat-item"><div class="label">已登记月份</div><div class="value green" id="yyMonths">0</div></div>
+                <div class="stat-item"><div class="label">月均工资</div><div class="value green" id="yyAvgWage">¥0.00</div></div>
+            </div>
+            <div style="margin-top:16px;">
+                <div style="font-size:13px; color:rgba(74,59,74,0.3); margin-bottom:8px;">📌 点击月份快速切换</div>
+                <div class="month-list" id="yyMonthList"></div>
+            </div>
+            <div class="detail-grid" id="yearlyDetailGrid" style="margin-top:12px;"></div>
+        </div>
+    </div>
+
+    <!-- ===== 确认弹窗（重置本月） ===== -->
+    <div class="confirm-overlay" id="confirmResetOverlay">
+        <div class="confirm-box">
+            <div class="confirm-title">⚠️ 确认重置</div>
+            <div class="confirm-message">确定要清空 <span id="resetMonthName">本月</span> 的所有产量数据吗？<br>此操作不可撤销！</div>
+            <div class="confirm-actions">
+                <button class="btn-cancel" id="confirmResetCancel">取消</button>
+                <button class="btn-confirm" id="confirmResetOk">确定重置</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Toast ===== -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // ================================================================
+        //  数据层
+        // ================================================================
+
+        const STORAGE_KEY = 'wage_data_multimonth';
+        const PRICES = [0.18, 0.16, 0.26, 0.22, 0.22, 0.13, 0.14, 0.26, 0.40];
+        const COL_NAMES = ['70/1(大)', '70/1(小)', '40/1(大)', '40/1(小)', '75/1', '150/1', '70/2', '40/1高F', '20/1'];
+        const DAYS = 31;
+        const PERSON = '赵玉巧';
+
+        function loadAllData() {
+            try {
+                const raw = localStorage.getItem(STORAGE_KEY);
+                if (raw) {
+                    const data = JSON.parse(raw);
+                    if (data && typeof data === 'object' && data.person === PERSON) {
+                        return data.months || {};
+                    }
+                }
+            } catch (_) { /* ignore */ }
+            return {};
+        }
+
+        function saveAllData(months) {
+            const data = { person: PERSON, months: months };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        function getMonthData(months, year, month) {
+            const key = `${year}-${String(month).padStart(2,'0')}`;
+            if (months[key]) {
+                return months[key].map(row => [...row]);
+            } else {
+                return Array.from({ length: DAYS }, () => Array(9).fill(0));
+            }
+        }
+
+        function setMonthData(months, year, month, data) {
+            const key = `${year}-${String(month).padStart(2,'0')}`;
+            months[key] = data.map(row => [...row]);
+            saveAllData(months);
+        }
+
+        function getMonthKeys(months) {
+            return Object.keys(months).sort();
+        }
+
+        function monthExists(months, year, month) {
+            const key = `${year}-${String(month).padStart(2,'0')}`;
+            return !!months[key];
+        }
+
+        // ================================================================
+        //  状态
+        // ================================================================
+
+        let allMonths = loadAllData();
+        let currentYear = 2026;
+        let currentMonth = 10;
+        let currentData = getMonthData(allMonths, currentYear, currentMonth);
+
+        // ================================================================
+        //  DOM 引用
+        // ================================================================
+
+        const bodyEl = document.getElementById('dataBody');
+        const sumEls = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => document.getElementById('sum' + i));
+        const payEls = [1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => document.getElementById('pay' + i));
+        const totalWageEl = document.getElementById('totalWage');
+        const currentMonthLabel = document.getElementById('currentMonthLabel');
+
+        const toast = document.getElementById('toast');
+        let toastTimer = null;
+
+        // ================================================================
+        //  Toast
+        // ================================================================
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2200);
+        }
+
+        // ================================================================
+        //  表格渲染与计算 + 输入框全选
+        // ================================================================
+
+        function readTableData() {
+            const rows = bodyEl.querySelectorAll('tr');
+            const data = [];
+            rows.forEach(row => {
+                const inputs = row.querySelectorAll('input');
+                const vals = [];
+                inputs.forEach(inp => {
+                    vals.push(Number(inp.value) || 0);
+                });
+                data.push(vals);
+            });
+            return data;
+        }
+
+        function writeTableData(data) {
+            const rows = bodyEl.querySelectorAll('tr');
+            rows.forEach((row, idx) => {
+                const inputs = row.querySelectorAll('input');
+                if (inputs.length === 0) return;
+                const rowData = data[idx] || [];
+                inputs.forEach((inp, j) => {
+                    inp.value = rowData[j] || 0;
+                });
+            });
+        }
+
+        function calcAll() {
+            const data = readTableData();
+            const colSum = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+            let workDays = 0;
+            data.forEach(row => {
+                let hasData = false;
+                row.forEach((val, idx) => {
+                    colSum[idx] += val;
+                    if (val > 0) hasData = true;
+                });
+                if (hasData) workDays++;
+            });
+
+            colSum.forEach((val, idx) => {
+                sumEls[idx].textContent = val;
+            });
+
+            let totalWage = 0;
+            const colPay = [];
+            colSum.forEach((val, idx) => {
+                const pay = val * PRICES[idx];
+                colPay.push(pay);
+                totalWage += pay;
+                payEls[idx].textContent = pay.toFixed(2);
+            });
+            totalWageEl.textContent = totalWage.toFixed(2);
+
+            const key = `${currentYear}-${String(currentMonth).padStart(2,'0')}`;
+            allMonths[key] = data.map(row => [...row]);
+            saveAllData(allMonths);
+        }
+
+        function renderMonth() {
+            const data = getMonthData(allMonths, currentYear, currentMonth);
+            currentData = data;
+            bodyEl.innerHTML = '';
+            for (let day = 1; day <= DAYS; day++) {
+                const tr = document.createElement('tr');
+                const dayTd = document.createElement('td');
+                dayTd.textContent = day;
+                tr.appendChild(dayTd);
+
+                const rowData = data[day - 1] || [];
+                for (let i = 0; i < 9; i++) {
+                    const td = document.createElement('td');
+                    const input = document.createElement('input');
+                    input.type = 'number';
+                    input.value = rowData[i] || 0;
+                    input.dataset.row = day - 1;
+                    input.dataset.col = i;
+                    // ★★★ 点击自动全选 ★★★
+                    input.addEventListener('focus', function() {
+                        this.select();
+                    });
+                    input.addEventListener('input', function() {
+                        const r = parseInt(this.dataset.row);
+                        const c = parseInt(this.dataset.col);
+                        const val = Number(this.value) || 0;
+                        if (!currentData[r]) currentData[r] = [];
+                        currentData[r][c] = val;
+                        const key = `${currentYear}-${String(currentMonth).padStart(2,'0')}`;
+                        allMonths[key] = currentData.map(row => [...row]);
+                        saveAllData(allMonths);
+                        calcAll();
+                    });
+                    td.appendChild(input);
+                    tr.appendChild(td);
+                }
+                bodyEl.appendChild(tr);
+            }
+            currentMonthLabel.textContent = `${currentYear}年${String(currentMonth).padStart(2,'0')}月`;
+            calcAll();
+        }
+
+        function switchMonth(year, month) {
+            currentYear = year;
+            currentMonth = month;
+            const key = `${year}-${String(month).padStart(2,'0')}`;
+            if (!allMonths[key]) {
+                allMonths[key] = Array.from({ length: DAYS }, () => Array(9).fill(0));
+                saveAllData(allMonths);
+            }
+            renderMonth();
+        }
+
+        // ================================================================
+        //  月份管理
+        // ================================================================
+
+        function addMonth() {
+            let y = currentYear,
+                m = currentMonth + 1;
+            if (m > 12) { m = 1;
+                y++; }
+            const key = `${y}-${String(m).padStart(2,'0')}`;
+            if (allMonths[key]) {
+                showToast('⚠️ 该月份已存在');
+                return;
+            }
+            allMonths[key] = Array.from({ length: DAYS }, () => Array(9).fill(0));
+            saveAllData(allMonths);
+            switchMonth(y, m);
+            showToast(`✅ 已添加 ${y}年${String(m).padStart(2,'0')}月`);
+        }
+
+        // ================================================================
+        //  重置本月（带确认弹窗）
+        // ================================================================
+
+        function showResetConfirm() {
+            const overlay = document.getElementById('confirmResetOverlay');
+            const monthName = `${currentYear}年${String(currentMonth).padStart(2,'0')}月`;
+            document.getElementById('resetMonthName').textContent = monthName;
+            overlay.classList.add('active');
+        }
+
+        function resetMonth() {
+            const key = `${currentYear}-${String(currentMonth).padStart(2,'0')}`;
+            allMonths[key] = Array.from({ length: DAYS }, () => Array(9).fill(0));
+            saveAllData(allMonths);
+            renderMonth();
+            showToast('✅ 已重置本月数据');
+            document.getElementById('confirmResetOverlay').classList.remove('active');
+        }
+
+        document.getElementById('confirmResetCancel').addEventListener('click', function() {
+            document.getElementById('confirmResetOverlay').classList.remove('active');
+        });
+        document.getElementById('confirmResetOk').addEventListener('click', resetMonth);
+        document.getElementById('confirmResetOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+            }
+        });
+
+        document.getElementById('resetMonthBtn').addEventListener('click', showResetConfirm);
+
+        // ================================================================
+        //  统计模态框
+        // ================================================================
+
+        function openMonthlyModal() {
+            const data = getMonthData(allMonths, currentYear, currentMonth);
+            const colSum = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+            let workDays = 0;
+            data.forEach(row => {
+                let hasData = false;
+                row.forEach((val, idx) => {
+                    colSum[idx] += val;
+                    if (val > 0) hasData = true;
+                });
+                if (hasData) workDays++;
+            });
+            const totalQty = colSum.reduce((a, b) => a + b, 0);
+            let totalWage = 0;
+            const colPay = [];
+            colSum.forEach((val, idx) => {
+                const pay = val * PRICES[idx];
+                colPay.push(pay);
+                totalWage += pay;
+            });
+
+            document.getElementById('modalMonthLabel').textContent = `${currentYear}年${String(currentMonth).padStart(2,'0')}月`;
+            document.getElementById('mmTotalQty').textContent = totalQty;
+            document.getElementById('mmTotalWage').textContent = '¥' + totalWage.toFixed(2);
+            document.getElementById('mmWorkDays').textContent = workDays;
+            document.getElementById('mmDailyWage').textContent = workDays > 0 ? '¥' + (totalWage / workDays).toFixed(2) :
+                '¥0.00';
+
+            let detailHtml = '';
+            colSum.forEach((val, idx) => {
+                const pay = colPay[idx];
+                detailHtml += `
+                        <div class="detail-item">
+                            <div class="dl">${COL_NAMES[idx]}</div>
+                            <div class="dv">${val}</div>
+                            <div class="dv gold">¥${pay.toFixed(2)}</div>
+                        </div>
+                    `;
+            });
+            document.getElementById('monthlyDetailGrid').innerHTML = detailHtml;
+
+            document.getElementById('monthlyModal').classList.add('active');
+        }
+
+        function openYearlyModal() {
+            const keys = getMonthKeys(allMonths);
+            if (keys.length === 0) {
+                showToast('⚠️ 暂无月份数据，请先添加');
+                return;
+            }
+
+            let totalQty = 0,
+                totalWage = 0;
+            let monthCount = keys.length;
+            const monthDetails = [];
+            keys.forEach(key => {
+                const [year, month] = key.split('-').map(Number);
+                const data = getMonthData(allMonths, year, month);
+                const colSum = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+                data.forEach(row => {
+                    row.forEach((val, idx) => {
+                        colSum[idx] += val;
+                    });
+                });
+                const qty = colSum.reduce((a, b) => a + b, 0);
+                let wage = 0;
+                colSum.forEach((val, idx) => {
+                    wage += val * PRICES[idx];
+                });
+                totalQty += qty;
+                totalWage += wage;
+                monthDetails.push({ key, year, month, qty, wage });
+            });
+
+            document.getElementById('yyTotalQty').textContent = totalQty;
+            document.getElementById('yyTotalWage').textContent = '¥' + totalWage.toFixed(2);
+            document.getElementById('yyMonths').textContent = monthCount;
+            document.getElementById('yyAvgWage').textContent = monthCount > 0 ? '¥' + (totalWage / monthCount).toFixed(2) :
+                '¥0.00';
+
+            // ★★★ 月份标签添加点击事件 ★★★
+            let monthListHtml = '';
+            keys.forEach(key => {
+                const [y, m] = key.split('-').map(Number);
+                const isCurrent = (y === currentYear && m === currentMonth);
+                monthListHtml += `
+                        <span class="month-tag ${isCurrent ? 'active' : ''}" data-year="${y}" data-month="${m}">
+                            ${y}年${String(m).padStart(2,'0')}月
+                        </span>
+                    `;
+            });
+            document.getElementById('yyMonthList').innerHTML = monthListHtml;
+
+            // 绑定点击事件
+            document.querySelectorAll('#yyMonthList .month-tag').forEach(tag => {
+                tag.addEventListener('click', function() {
+                    const y = parseInt(this.dataset.year);
+                    const m = parseInt(this.dataset.month);
+                    if (!isNaN(y) && !isNaN(m)) {
+                        // 关闭年度统计弹窗
+                        document.getElementById('yearlyModal').classList.remove('active');
+                        // 切换到目标月份
+                        switchMonth(y, m);
+                        // 显示提示
+                        showToast(`已切换到 ${y}年${String(m).padStart(2,'0')}月`);
+                    }
+                });
+            });
+
+            // 年度汇总明细
+            const allColSum = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+            keys.forEach(key => {
+                const [year, month] = key.split('-').map(Number);
+                const data = getMonthData(allMonths, year, month);
+                data.forEach(row => {
+                    row.forEach((val, idx) => {
+                        allColSum[idx] += val;
+                    });
+                });
+            });
+            let detailHtml = '';
+            allColSum.forEach((val, idx) => {
+                const pay = val * PRICES[idx];
+                detailHtml += `
+                        <div class="detail-item">
+                            <div class="dl">${COL_NAMES[idx]}</div>
+                            <div class="dv">${val}</div>
+                            <div class="dv gold">¥${pay.toFixed(2)}</div>
+                        </div>
+                    `;
+            });
+            document.getElementById('yearlyDetailGrid').innerHTML = detailHtml;
+
+            document.getElementById('yearlyModal').classList.add('active');
+        }
+
+        // ================================================================
+        //  导出 CSV
+        // ================================================================
+
+        function exportCSV() {
+            const data = readTableData();
+            let csv = '\uFEFF';
+            const headers = ['日期', ...COL_NAMES];
+            csv += headers.join(',') + '\n';
+            data.forEach((row, idx) => {
+                const day = idx + 1;
+                const vals = [day, ...row];
+                csv += vals.join(',') + '\n';
+            });
+            const colSum = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+            data.forEach(row => {
+                row.forEach((val, i) => { colSum[i] += val; });
+            });
+            csv += '小计,' + colSum.join(',') + '\n';
+            let totalWage = 0;
+            colSum.forEach((val, i) => { totalWage += val * PRICES[i]; });
+            csv += '总工资,,' + totalWage.toFixed(2) + '\n';
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download =
+                `打纱计件工资_${currentYear}年${String(currentMonth).padStart(2,'0')}月_${PERSON}.csv`;
+            link.click();
+            URL.revokeObjectURL(link.href);
+            showToast('📥 导出成功');
+        }
+
+        // ================================================================
+        //  事件绑定
+        // ================================================================
+
+        document.getElementById('prevMonthBtn').addEventListener('click', () => {
+            let m = currentMonth - 1,
+                y = currentYear;
+            if (m < 1) { m = 12;
+                y--; }
+            switchMonth(y, m);
+        });
+
+        document.getElementById('nextMonthBtn').addEventListener('click', () => {
+            let m = currentMonth + 1,
+                y = currentYear;
+            if (m > 12) { m = 1;
+                y++; }
+            switchMonth(y, m);
+        });
+
+        document.getElementById('addMonthBtn').addEventListener('click', addMonth);
+
+        document.getElementById('openMonthlyStats').addEventListener('click', openMonthlyModal);
+        document.getElementById('openYearlyStats').addEventListener('click', openYearlyModal);
+
+        document.getElementById('exportBtn').addEventListener('click', exportCSV);
+
+        // 模态框关闭
+        document.querySelectorAll('.close-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const target = this.dataset.close;
+                document.getElementById(target).classList.remove('active');
+            });
+        });
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+
+        // ================================================================
+        //  初始化
+        // ================================================================
+
+        const key = `${currentYear}-${String(currentMonth).padStart(2,'0')}`;
+        if (!allMonths[key]) {
+            allMonths[key] = Array.from({ length: DAYS }, () => Array(9).fill(0));
+            saveAllData(allMonths);
+        }
+        renderMonth();
+
+        // 快捷键 Ctrl+R 重置（弹窗）
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'r') {
+                e.preventDefault();
+                showResetConfirm();
+            }
+        });
+
+        console.log('🧵 打纱计件工资 · 清新粉嫩版（点击输入框全选 + 月份可点击切换）');
+    </script>
+
+</body>
+</html>
