@@ -176,7 +176,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 12px;
+            padding: 8px 12px 12px;
             background: var(--bg-base);
             transition: background 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
             -webkit-font-smoothing: antialiased;
@@ -215,11 +215,11 @@
             box-shadow: var(--shadow-app);
             display: flex;
             flex-direction: column;
-            /* ===== 关键调整：高度减小，增加边距 ===== */
-            height: 90vh;
+            /* ===== 关键调整：再减小高度，增加底部边距 ===== */
+            height: 84vh;
             max-height: none;
             margin-top: 8px;
-            margin-bottom: 12px;
+            margin-bottom: 28px;
             overflow: hidden;
             transition: background 0.4s cubic-bezier(0.22, 0.61, 0.36, 1), border-color 0.4s cubic-bezier(0.22, 0.61, 0.36, 1), box-shadow 0.4s cubic-bezier(0.22, 0.61, 0.36, 1);
         }
@@ -237,10 +237,21 @@
         /* ===== 桌面端额外安全边距 ===== */
         @media (min-width: 768px) {
             .app {
-                height: calc(100vh - 80px);
-                margin-top: 12px;
-                margin-bottom: 16px;
-                max-height: 860px;
+                height: calc(100vh - 120px);
+                margin-top: 16px;
+                margin-bottom: 24px;
+                max-height: 820px;
+            }
+        }
+        /* ===== 底部安全区域适配（全面屏手机） ===== */
+        @supports (padding-bottom: env(safe-area-inset-bottom)) {
+            .app {
+                margin-bottom: calc(28px + env(safe-area-inset-bottom));
+            }
+            @media (min-width: 768px) {
+                .app {
+                    margin-bottom: calc(24px + env(safe-area-inset-bottom));
+                }
             }
         }
 
@@ -1072,7 +1083,7 @@
 
         /* ===== 响应式 ===== */
         @media (max-width: 420px) {
-            .app { height: 90vh; margin-top: 6px; margin-bottom: 10px; border-radius: 28px; }
+            .app { height: 80vh; margin-top: 6px; margin-bottom: 20px; border-radius: 28px; }
             .nav { border-radius: 0 0 28px 28px; padding: 4px 4px 8px; }
             .title-bar { font-size: 19px; padding: 12px 44px 10px 14px; gap: 6px; }
             .title-bar .badge { font-size: 10px; padding: 2px 8px; }
@@ -1126,6 +1137,9 @@
             .home-card .card-title { font-size: 15px; }
             .home-card .card-desc { font-size: 10px; }
             .home-card:last-child:nth-child(odd) { max-width: 60%; }
+            @supports (padding-bottom: env(safe-area-inset-bottom)) {
+                .app { margin-bottom: calc(20px + env(safe-area-inset-bottom)); }
+            }
         }
         @media (max-width: 360px) {
             .settings-row { padding: 4px 4px; gap: 2px; }
