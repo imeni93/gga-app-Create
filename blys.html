@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-    <title>包覆工艺自动计算 · 琥珀</title>
+    <title>包覆工艺自动计算 · 琥珀 终极版</title>
     <style>
         /* ===== 重置 & 基础 ===== */
         * {
@@ -18,6 +18,8 @@
             --ios-ease-out: cubic-bezier(0, 0, 0.2, 1);
             --ios-ease-in: cubic-bezier(0.4, 0, 1, 1);
             --ios-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --angle: 0deg;
+            --bg-pos: 0% 50%;
         }
 
         /* ================================================================
@@ -66,6 +68,12 @@
             --warn: #b58a4a;
             --card-glow: rgba(184, 134, 58, 0.06);
             --card-top-glow: rgba(255, 252, 248, 0.70);
+            --gradient-bg: linear-gradient(135deg, #f0e8de, #e8ddd0, #f5ede4, #e8ddd0);
+            --input-glow: 0 0 20px rgba(184,134,58,0.3);
+            --badge-rank-bg: rgba(184,134,58,0.15);
+            --badge-rank-color: #b8863a;
+            --scrollbar-track: rgba(0,0,0,0.02);
+            --scrollbar-thumb: rgba(184,134,58,0.25);
         }
         [data-theme="dark"] {
             --bg-base: #181410;
@@ -110,6 +118,12 @@
             --warn: #d8a860;
             --card-glow: rgba(212, 168, 90, 0.04);
             --card-top-glow: rgba(255, 252, 248, 0.03);
+            --gradient-bg: linear-gradient(135deg, #181410, #2a221e, #181410, #2a221e);
+            --input-glow: 0 0 20px rgba(212,168,90,0.3);
+            --badge-rank-bg: rgba(212,168,90,0.15);
+            --badge-rank-color: #d4a85a;
+            --scrollbar-track: rgba(255,255,255,0.02);
+            --scrollbar-thumb: rgba(212,168,90,0.25);
         }
         [data-theme="black-gold"] {
             --bg-base: #0d0a08;
@@ -154,6 +168,12 @@
             --blob2: radial-gradient(circle, #2a2a2a, #1a1a1a 60%, transparent 80%);
             --card-glow: rgba(212, 175, 55, 0.04);
             --card-top-glow: rgba(212, 175, 55, 0.04);
+            --gradient-bg: linear-gradient(135deg, #0d0a08, #1a1410, #0d0a08, #1a1410);
+            --input-glow: 0 0 20px rgba(212,175,55,0.3);
+            --badge-rank-bg: rgba(212,175,55,0.15);
+            --badge-rank-color: #d4af37;
+            --scrollbar-track: rgba(255,255,255,0.02);
+            --scrollbar-thumb: rgba(212,175,55,0.25);
         }
         [data-theme="tech"] {
             --bg-base: #0b0e14;
@@ -198,6 +218,12 @@
             --blob2: radial-gradient(circle, #002040, #00101a 60%, transparent 80%);
             --card-glow: rgba(0, 240, 255, 0.04);
             --card-top-glow: rgba(0, 240, 255, 0.04);
+            --gradient-bg: linear-gradient(135deg, #0b0e14, #141a24, #0b0e14, #1a2230);
+            --input-glow: 0 0 20px rgba(0,240,255,0.3);
+            --badge-rank-bg: rgba(0,240,255,0.15);
+            --badge-rank-color: #00f0ff;
+            --scrollbar-track: rgba(255,255,255,0.02);
+            --scrollbar-thumb: rgba(0,240,255,0.25);
         }
         [data-theme="porcelain"] {
             --bg-base: #f2efe9;
@@ -242,9 +268,314 @@
             --blob2: radial-gradient(circle, #e0e4e0, #d0d4cc 60%, transparent 80%);
             --card-glow: rgba(138, 169, 196, 0.04);
             --card-top-glow: rgba(255, 255, 255, 0.80);
+            --gradient-bg: linear-gradient(135deg, #f2efe9, #ece7df, #f2efe9, #ece7df);
+            --input-glow: 0 0 20px rgba(138,169,196,0.3);
+            --badge-rank-bg: rgba(138,169,196,0.15);
+            --badge-rank-color: #8aa9c4;
+            --scrollbar-track: rgba(0,0,0,0.02);
+            --scrollbar-thumb: rgba(138,169,196,0.25);
         }
 
-        /* ===== 基础样式 ===== */
+        /* ================================================================
+           ★★★ 12 项终极 VIP 特效 ★★★
+           ================================================================ */
+
+        /* ---- 1. 背景动态渐变（覆盖 body） ---- */
+        body {
+            background: var(--gradient-bg);
+            background-size: 300% 300%;
+            animation: gradientFlow 18s ease-in-out infinite alternate;
+            transition: background 0.6s var(--ios-ease);
+        }
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* ---- 2. 背景星尘（body伪元素） ---- */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background-image:
+                radial-gradient(2px 2px at 15% 25%, rgba(255,255,240,0.35), transparent),
+                radial-gradient(2px 2px at 35% 65%, rgba(255,255,240,0.25), transparent),
+                radial-gradient(1.5px 1.5px at 55% 15%, rgba(255,255,240,0.40), transparent),
+                radial-gradient(1.5px 1.5px at 75% 80%, rgba(255,255,240,0.20), transparent),
+                radial-gradient(2px 2px at 90% 35%, rgba(255,255,240,0.30), transparent),
+                radial-gradient(1px 1px at 5% 70%, rgba(255,255,240,0.25), transparent),
+                radial-gradient(1px 1px at 45% 90%, rgba(255,255,240,0.15), transparent),
+                radial-gradient(2px 2px at 85% 10%, rgba(255,255,240,0.20), transparent);
+            background-size: 100% 100%;
+            animation: twinkle 10s ease-in-out infinite alternate;
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.25; }
+            100% { opacity: 0.85; }
+        }
+
+        /* ---- 3. 流光边框（App 伪元素） ---- */
+        .app {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 480px;
+            background: var(--bg-app);
+            backdrop-filter: blur(56px) saturate(1.6);
+            -webkit-backdrop-filter: blur(56px) saturate(1.6);
+            border-radius: 40px;
+            border: 1px solid var(--border-app);
+            box-shadow: var(--shadow-app);
+            display: flex;
+            flex-direction: column;
+            height: 82vh;
+            max-height: 760px;
+            overflow: hidden;
+            transition: background 0.6s var(--ios-ease), border-color 0.6s var(--ios-ease), box-shadow 0.6s var(--ios-ease);
+        }
+        .app::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(180deg, rgba(255, 252, 248, 0.06) 0%, transparent 100%);
+            border-radius: 40px 40px 0 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .app::after {
+            content: '';
+            position: absolute;
+            inset: -2.5px;
+            border-radius: 42px;
+            padding: 2.5px;
+            background: conic-gradient(
+                from var(--angle, 0deg),
+                transparent 0%,
+                var(--accent) 15%,
+                var(--accent-light) 30%,
+                transparent 45%,
+                transparent 55%,
+                var(--accent-light) 70%,
+                var(--accent) 85%,
+                transparent 100%
+            );
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: 20;
+            animation: rotateBorder 8s linear infinite;
+            opacity: 0.6;
+            transition: opacity 0.6s var(--ios-ease);
+        }
+        .app:hover::after { opacity: 1; }
+        @keyframes rotateBorder { to { --angle: 360deg; } }
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
+        /* ---- 4. 输入框聚焦光晕 ---- */
+        .gear-input:focus,
+        .target-input:focus,
+        .gear-field:focus,
+        .settings-input:focus {
+            position: relative;
+            z-index: 5;
+            animation: inputGlow 1.2s ease-in-out infinite alternate;
+        }
+        @keyframes inputGlow {
+            0% { box-shadow: 0 0 8px var(--input-focus), 0 0 20px var(--input-focus); }
+            100% { box-shadow: 0 0 16px var(--input-focus), 0 0 40px var(--input-focus), 0 0 60px var(--accent-soft); }
+        }
+
+        /* ---- 5. 结果卡片排名徽章 ---- */
+        .card {
+            position: relative;
+            overflow: visible;
+        }
+        .card .rank-badge {
+            position: absolute;
+            top: -8px;
+            left: -8px;
+            background: var(--badge-rank-bg);
+            backdrop-filter: blur(8px);
+            border: 1.5px solid var(--accent-border);
+            color: var(--badge-rank-color);
+            font-weight: 800;
+            font-size: 13px;
+            padding: 2px 10px 2px 8px;
+            border-radius: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            z-index: 10;
+            letter-spacing: 0.3px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            line-height: 1.4;
+            animation: badgePop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+        .card .rank-badge::before {
+            content: '🏆';
+            font-size: 12px;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+        }
+        @keyframes badgePop {
+            0% { opacity: 0; transform: scale(0.2) rotate(-20deg); }
+            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        }
+        .card:nth-child(2) .rank-badge { animation-delay: 0.05s; }
+        .card:nth-child(3) .rank-badge { animation-delay: 0.10s; }
+        .card:nth-child(4) .rank-badge { animation-delay: 0.15s; }
+        .card:nth-child(5) .rank-badge { animation-delay: 0.20s; }
+        .card:nth-child(6) .rank-badge { animation-delay: 0.25s; }
+
+        /* ---- 6. 导航图标点击弹跳（动画） ---- */
+        .nav-btn .nav-icon {
+            transition: transform 0.35s var(--ios-spring), box-shadow 0.35s var(--ios-ease);
+        }
+        .nav-btn .nav-icon.bounce {
+            animation: iconBounce 0.5s var(--ios-spring) both;
+        }
+        @keyframes iconBounce {
+            0% { transform: scale(1); }
+            30% { transform: scale(1.25) rotate(-5deg); }
+            60% { transform: scale(0.9) rotate(3deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        /* ---- 7. 鼠标拖尾光晕（桌面端） ---- */
+        .cursor-glow {
+            position: fixed;
+            pointer-events: none;
+            z-index: 99999;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            mix-blend-mode: screen;
+            will-change: transform, opacity;
+        }
+        @media (hover: hover) {
+            .cursor-glow.active {
+                opacity: 0.25;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        @media (hover: none) {
+            .cursor-glow { display: none !important; }
+        }
+
+        /* ---- 8. 数字弹射入场（VIP加强版） ---- */
+        .card .val,
+        .result-line .val {
+            display: inline-block;
+            animation: numberPopVIP 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+        }
+        @keyframes numberPopVIP {
+            0% { opacity: 0; transform: scale(0.1) translateY(30px) rotate(-5deg); }
+            60% { opacity: 1; transform: scale(1.3) translateY(-8px) rotate(2deg); }
+            80% { transform: scale(0.95) translateY(2px) rotate(0deg); }
+            100% { transform: scale(1) translateY(0) rotate(0deg); }
+        }
+        .card:nth-child(2) .val { animation-delay: 0.05s; }
+        .card:nth-child(3) .val { animation-delay: 0.10s; }
+        .card:nth-child(4) .val { animation-delay: 0.15s; }
+        .card:nth-child(5) .val { animation-delay: 0.20s; }
+        .card:nth-child(6) .val { animation-delay: 0.25s; }
+
+        /* ---- 9. 卡片悬浮增强（升起 + 放大 + 重阴影） ---- */
+        .home-card,
+        .card {
+            transform-style: preserve-3d;
+            will-change: transform;
+            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                        box-shadow 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                        border-color 0.5s ease,
+                        background 0.5s ease !important;
+        }
+        .home-card:hover,
+        .card:hover {
+            transform: translateY(-14px) scale(1.03) !important;
+            box-shadow: 0 40px 100px rgba(0, 0, 0, 0.20),
+                        0 16px 48px var(--accent-soft),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.6) !important;
+            border-color: var(--accent) !important;
+        }
+        /* 卡片扫光光泽 */
+        .home-card::after,
+        .card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 30%,
+                        rgba(255, 255, 255, 0.15) 0%,
+                        transparent 60%);
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            pointer-events: none;
+            z-index: 2;
+            border-radius: inherit;
+            mix-blend-mode: overlay;
+        }
+        .home-card:hover::after,
+        .card:hover::after {
+            opacity: 1;
+        }
+
+        /* ---- 10. 卡片流光边框（仅结果卡片） ---- */
+        .card {
+            border: 1px solid var(--card-border);
+            background-clip: padding-box;
+        }
+        .card:hover {
+            border-color: transparent;
+            background-image: linear-gradient(var(--card-bg), var(--card-bg)),
+                              conic-gradient(from var(--angle, 0deg),
+                                transparent 0%,
+                                var(--accent) 20%,
+                                var(--accent-light) 40%,
+                                transparent 60%,
+                                transparent 100%);
+            background-origin: padding-box, border-box;
+            background-clip: padding-box, border-box;
+            animation: rotateBorder 3s linear infinite;
+        }
+
+        /* ---- 11. 点击涟漪（在 JS 中实现） ---- */
+        /* 涟漪动画在 JS 中动态注入 */
+
+        /* ---- 12. 3D 卡片视差（在 JS 中驱动） ---- */
+        .home-card, .card {
+            transform-style: preserve-3d;
+            will-change: transform;
+            transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s var(--ios-ease), border-color 0.4s var(--ios-ease);
+        }
+        @media (hover: none) {
+            .home-card, .card {
+                transform: none !important;
+                transition: transform 0.3s var(--ios-ease), box-shadow 0.3s var(--ios-ease) !important;
+            }
+        }
+
+        /* ================================================================
+           原有完整样式（从你的原文件复制，保持全部功能）
+           ================================================================ */
+
+        /* ---- 基础样式 ---- */
         body {
             min-height: 100vh;
             display: flex;
@@ -285,15 +616,9 @@
         }
 
         @keyframes blobFloat {
-            0% {
-                transform: translate(0, 0) scale(1);
-            }
-            50% {
-                transform: translate(30px, -20px) scale(1.06);
-            }
-            100% {
-                transform: translate(-20px, 20px) scale(0.94);
-            }
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, -20px) scale(1.06); }
+            100% { transform: translate(-20px, 20px) scale(0.94); }
         }
 
         [data-theme="tech"] body::before {
@@ -314,59 +639,18 @@
             background-image: radial-gradient(ellipse at 70% 30%, rgba(138, 169, 196, 0.02) 0%, transparent 60%);
         }
 
-        /* ===== App 容器 ===== */
-        .app {
-            position: relative;
-            z-index: 1;
-            width: 100%;
-            max-width: 480px;
-            background: var(--bg-app);
-            backdrop-filter: blur(56px) saturate(1.6);
-            -webkit-backdrop-filter: blur(56px) saturate(1.6);
-            border-radius: 40px;
-            border: 1px solid var(--border-app);
-            box-shadow: var(--shadow-app);
-            display: flex;
-            flex-direction: column;
-            height: 82vh;
-            max-height: 760px;
-            overflow: hidden;
-            transition: background 0.6s var(--ios-ease), border-color 0.6s var(--ios-ease), box-shadow 0.6s var(--ios-ease);
-        }
-        .app::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 40%;
-            background: linear-gradient(180deg, rgba(255, 252, 248, 0.06) 0%, transparent 100%);
-            border-radius: 40px 40px 0 0;
-            pointer-events: none;
-            z-index: 0;
-        }
         @media (max-width:420px) {
-            .app {
-                border-radius: 32px;
-                height: 78vh;
-                max-height: 680px;
-            }
-            .app::before {
-                border-radius: 32px 32px 0 0;
-            }
+            .app { border-radius: 32px; height: 78vh; max-height: 680px; }
+            .app::before { border-radius: 32px 32px 0 0; }
+            .app::after { border-radius: 34px; }
         }
         @media (max-width:360px) {
-            .app {
-                border-radius: 26px;
-                height: 76vh;
-                max-height: 620px;
-            }
-            .app::before {
-                border-radius: 26px 26px 0 0;
-            }
+            .app { border-radius: 26px; height: 76vh; max-height: 620px; }
+            .app::before { border-radius: 26px 26px 0 0; }
+            .app::after { border-radius: 28px; }
         }
 
-        /* ===== 主题切换 ===== */
+        /* ---- 主题切换 ---- */
         .theme-toggle {
             position: absolute;
             top: 14px;
@@ -389,40 +673,18 @@
             user-select: none;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
         }
-        .theme-toggle:active {
-            transform: scale(0.82);
-            transition: transform 0.08s var(--ios-ease-in);
-        }
-        .theme-toggle .theme-icon-inner {
-            font-size: 18px;
-            line-height: 1;
-        }
+        .theme-toggle:active { transform: scale(0.82); transition: transform 0.08s var(--ios-ease-in); }
+        .theme-toggle .theme-icon-inner { font-size: 18px; line-height: 1; }
         @media (max-width:420px) {
-            .theme-toggle {
-                width: 34px;
-                height: 34px;
-                font-size: 16px;
-                top: 12px;
-                right: 14px;
-            }
-            .theme-toggle .theme-icon-inner {
-                font-size: 16px;
-            }
+            .theme-toggle { width: 34px; height: 34px; font-size: 16px; top: 12px; right: 14px; }
+            .theme-toggle .theme-icon-inner { font-size: 16px; }
         }
         @media (max-width:360px) {
-            .theme-toggle {
-                width: 30px;
-                height: 30px;
-                font-size: 14px;
-                top: 10px;
-                right: 12px;
-            }
-            .theme-toggle .theme-icon-inner {
-                font-size: 14px;
-            }
+            .theme-toggle { width: 30px; height: 30px; font-size: 14px; top: 10px; right: 12px; }
+            .theme-toggle .theme-icon-inner { font-size: 14px; }
         }
 
-        /* ===== 标题栏 ===== */
+        /* ---- 标题栏 ---- */
         .title-bar {
             position: relative;
             z-index: 1;
@@ -441,10 +703,7 @@
             backdrop-filter: blur(12px);
             transition: background 0.5s var(--ios-ease), color 0.5s var(--ios-ease), border-color 0.5s var(--ios-ease);
         }
-        .title-bar .icon {
-            font-size: 20px;
-            opacity: 0.45;
-        }
+        .title-bar .icon { font-size: 20px; opacity: 0.45; }
         .title-bar .badge {
             font-weight: 400;
             font-size: 11px;
@@ -459,35 +718,18 @@
             border: 1px solid transparent;
             user-select: none;
         }
-        .title-bar .badge:active {
-            transform: scale(0.88);
-        }
+        .title-bar .badge:active { transform: scale(0.88); }
         @media (max-width:420px) {
-            .title-bar {
-                font-size: 19px;
-                padding: 12px 44px 10px 16px;
-                gap: 8px;
-            }
-            .title-bar .badge {
-                font-size: 10px;
-                padding: 2px 12px;
-            }
-            .title-bar .icon {
-                font-size: 18px;
-            }
+            .title-bar { font-size: 19px; padding: 12px 44px 10px 16px; gap: 8px; }
+            .title-bar .badge { font-size: 10px; padding: 2px 12px; }
+            .title-bar .icon { font-size: 18px; }
         }
         @media (max-width:360px) {
-            .title-bar {
-                font-size: 17px;
-                padding: 10px 38px 8px 14px;
-            }
-            .title-bar .badge {
-                font-size: 9px;
-                padding: 1px 10px;
-            }
+            .title-bar { font-size: 17px; padding: 10px 38px 8px 14px; }
+            .title-bar .badge { font-size: 9px; padding: 1px 10px; }
         }
 
-        /* ===== 页面容器 ===== */
+        /* ---- 页面容器 ---- */
         .page {
             flex: 1;
             overflow-y: auto;
@@ -500,31 +742,19 @@
             align-items: center;
             justify-content: flex-start;
         }
-        .page::-webkit-scrollbar {
-            width: 2px;
-        }
-        .page::-webkit-scrollbar-thumb {
-            background: var(--accent-border);
-            border-radius: 2px;
-        }
+        .page::-webkit-scrollbar { width: 2px; }
+        .page::-webkit-scrollbar-track { background: transparent; }
+        .page::-webkit-scrollbar-thumb { background: var(--accent-border); border-radius: 2px; }
         .page.active {
             display: flex;
             animation: pageFadeIn 0.45s var(--ios-ease) both;
         }
         @keyframes pageFadeIn {
-            0% {
-                opacity: 0;
-                transform: translateY(12px) scale(0.98);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            0% { opacity: 0; transform: translateY(12px) scale(0.98); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
-        /* ================================================================
-           导航栏
-           ================================================================ */
+        /* ---- 导航栏 ---- */
         .nav {
             position: relative;
             z-index: 1;
@@ -541,18 +771,8 @@
             gap: 0;
             transition: background 0.5s var(--ios-ease), border-color 0.5s var(--ios-ease);
         }
-        @media (max-width:420px) {
-            .nav {
-                border-radius: 0 0 32px 32px;
-                padding: 4px 2px 8px;
-            }
-        }
-        @media (max-width:360px) {
-            .nav {
-                border-radius: 0 0 26px 26px;
-                padding: 3px 1px 6px;
-            }
-        }
+        @media (max-width:420px) { .nav { border-radius: 0 0 32px 32px; padding: 4px 2px 8px; } }
+        @media (max-width:360px) { .nav { border-radius: 0 0 26px 26px; padding: 3px 1px 6px; } }
 
         .nav-btn {
             border: none;
@@ -642,34 +862,28 @@
             opacity: 1;
         }
 
-        /* ===== 导航图标颜色 ===== */
-        /* 首页 - 金色 */
+        /* ---- 导航图标颜色 ---- */
         .nav-btn:nth-child(1) .nav-icon {
             background: radial-gradient(circle at 35% 30%, #e8d5b0, #b8863a);
             box-shadow: 0 2px 14px rgba(184, 134, 58, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.30), inset 0 -2px 8px rgba(0, 0, 0, 0.08);
         }
-        /* 寻优 - 金色（与首页卡片"自动寻优"对应） */
         .nav-btn:nth-child(2) .nav-icon {
             background: radial-gradient(circle at 35% 30%, #e8d5b0, #b8863a);
             box-shadow: 0 2px 14px rgba(184, 134, 58, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.30), inset 0 -2px 8px rgba(0, 0, 0, 0.08);
         }
-        /* 验算 - 翠绿（与首页卡片"手动验算"对应） */
         .nav-btn:nth-child(3) .nav-icon {
             background: radial-gradient(circle at 35% 30%, #80c8b8, #4a8278);
             box-shadow: 0 2px 14px rgba(74, 130, 120, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.30), inset 0 -2px 8px rgba(0, 0, 0, 0.08);
         }
-        /* 设置 - 暖橙红（与首页卡片"参数设置"对应） */
         .nav-btn:nth-child(4) .nav-icon {
             background: radial-gradient(circle at 35% 30%, #e8a888, #b46450);
             box-shadow: 0 2px 14px rgba(180, 100, 80, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.30), inset 0 -2px 8px rgba(0, 0, 0, 0.08);
         }
-        /* 关于 - 紫晶（与首页卡片"关于程序"对应） */
         .nav-btn:nth-child(5) .nav-icon {
             background: radial-gradient(circle at 35% 30%, #c8a8e8, #8c6eaa);
             box-shadow: 0 2px 14px rgba(140, 110, 170, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.30), inset 0 -2px 8px rgba(0, 0, 0, 0.08);
         }
 
-        /* 暗色主题适配 */
         [data-theme="dark"] .nav-btn:nth-child(1) .nav-icon,
         [data-theme="dark"] .nav-btn:nth-child(2) .nav-icon {
             background: radial-gradient(circle at 35% 30%, #b8965a, #7a5a2a);
@@ -687,14 +901,10 @@
             background: radial-gradient(circle at 35% 30%, #a888c8, #5a3a7a);
             box-shadow: 0 2px 14px rgba(140, 110, 170, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.20), inset 0 -2px 8px rgba(0, 0, 0, 0.10);
         }
-
-        /* 黑金主题 - 统一金色系 */
         [data-theme="black-gold"] .nav-btn .nav-icon {
             background: radial-gradient(circle at 35% 30%, #d4af37, #b8963a);
             box-shadow: 0 2px 14px rgba(212, 175, 55, 0.20), inset 0 1px 0 rgba(255, 255, 255, 0.25), inset 0 -2px 8px rgba(0, 0, 0, 0.12);
         }
-
-        /* 科技主题 - 各自颜色 */
         [data-theme="tech"] .nav-btn:nth-child(1) .nav-icon,
         [data-theme="tech"] .nav-btn:nth-child(2) .nav-icon {
             background: radial-gradient(circle at 35% 30%, #66f0ff, #00f0ff);
@@ -712,8 +922,6 @@
             background: radial-gradient(circle at 35% 30%, #66ddff, #00ccff);
             box-shadow: 0 2px 14px rgba(0, 204, 255, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.20), inset 0 -2px 8px rgba(0, 0, 0, 0.10);
         }
-
-        /* 白瓷主题 - 柔和色 */
         [data-theme="porcelain"] .nav-btn:nth-child(1) .nav-icon,
         [data-theme="porcelain"] .nav-btn:nth-child(2) .nav-icon {
             background: radial-gradient(circle at 35% 30%, #b0c8dc, #8aa9c4);
@@ -733,56 +941,21 @@
         }
 
         @media (max-width:420px) {
-            .nav-btn {
-                min-width: 36px;
-                max-width: 60px;
-                padding: 3px 4px;
-                font-size: 9px;
-            }
-            .nav-btn .nav-icon {
-                width: 30px;
-                height: 30px;
-            }
-            .nav-btn .nav-icon svg {
-                width: 16px;
-                height: 16px;
-            }
-            .nav-btn .label {
-                font-size: 8px;
-            }
+            .nav-btn { min-width: 36px; max-width: 60px; padding: 3px 4px; font-size: 9px; }
+            .nav-btn .nav-icon { width: 30px; height: 30px; }
+            .nav-btn .nav-icon svg { width: 16px; height: 16px; }
+            .nav-btn .label { font-size: 8px; }
         }
         @media (max-width:360px) {
-            .nav-btn {
-                min-width: 30px;
-                max-width: 50px;
-                padding: 2px 3px;
-                font-size: 8px;
-            }
-            .nav-btn .nav-icon {
-                width: 26px;
-                height: 26px;
-            }
-            .nav-btn .nav-icon svg {
-                width: 14px;
-                height: 14px;
-            }
-            .nav-btn .label {
-                font-size: 7px;
-            }
+            .nav-btn { min-width: 30px; max-width: 50px; padding: 2px 3px; font-size: 8px; }
+            .nav-btn .nav-icon { width: 26px; height: 26px; }
+            .nav-btn .nav-icon svg { width: 14px; height: 14px; }
+            .nav-btn .label { font-size: 7px; }
         }
 
-        /* ================================================================
-           首页卡片
-           ================================================================ */
-        #home-page {
-            padding: 6px 8px;
-            justify-content: flex-start;
-        }
-        .home-header {
-            text-align: center;
-            padding: 2px 0 6px;
-            flex-shrink: 0;
-        }
+        /* ---- 首页卡片 ---- */
+        #home-page { padding: 6px 8px; justify-content: flex-start; }
+        .home-header { text-align: center; padding: 2px 0 6px; flex-shrink: 0; }
         .home-header .brand-icon {
             font-size: 38px;
             display: block;
@@ -790,27 +963,11 @@
             animation: iconFloat 3.6s var(--ios-ease-out) infinite;
         }
         @keyframes iconFloat {
-            0%,
-            100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-4px);
-            }
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
         }
-        .home-header h1 {
-            font-size: 20px;
-            font-weight: 700;
-            color: var(--text-primary);
-            letter-spacing: 0.6px;
-        }
-        .home-header p {
-            font-size: 11px;
-            color: var(--text-secondary);
-            opacity: 0.40;
-            margin-top: 0;
-            letter-spacing: 0.4px;
-        }
+        .home-header h1 { font-size: 20px; font-weight: 700; color: var(--text-primary); letter-spacing: 0.6px; }
+        .home-header p { font-size: 11px; color: var(--text-secondary); opacity: 0.40; margin-top: 0; letter-spacing: 0.4px; }
 
         .home-grid {
             display: grid;
@@ -827,7 +984,6 @@
             border-radius: 20px;
             padding: 14px 8px 12px;
             cursor: pointer;
-            transition: all 0.4s var(--ios-spring);
             text-align: center;
             display: flex;
             flex-direction: column;
@@ -839,6 +995,8 @@
             min-height: 100px;
             justify-content: center;
             user-select: none;
+            transform-style: preserve-3d;
+            will-change: transform;
         }
         .home-card::before {
             content: '';
@@ -850,19 +1008,6 @@
             pointer-events: none;
             z-index: 0;
             background: radial-gradient(ellipse at 30% 20%, var(--card-glow), transparent 70%);
-        }
-        .home-card::after {
-            content: '';
-            position: absolute;
-            top: -1px;
-            left: 8%;
-            right: 8%;
-            height: 55%;
-            border-radius: 0 0 50% 50%;
-            background: radial-gradient(ellipse at center, var(--card-top-glow) 0%, transparent 80%);
-            pointer-events: none;
-            opacity: 0.60;
-            z-index: 1;
         }
         .home-card .card-glow {
             position: absolute;
@@ -877,32 +1022,10 @@
             filter: blur(40px);
             z-index: 0;
         }
-        .home-card:nth-child(1) .card-glow {
-            background: #b8863a;
-        }
-        .home-card:nth-child(2) .card-glow {
-            background: #4a8278;
-        }
-        .home-card:nth-child(3) .card-glow {
-            background: #b46450;
-        }
-        .home-card:nth-child(4) .card-glow {
-            background: #8c6eaa;
-        }
-
-        .home-card:hover {
-            transform: translateY(-3px) scale(1.01);
-            border-color: var(--accent-border);
-            box-shadow: var(--shadow-card-hover);
-        }
-        .home-card:hover .card-glow {
-            opacity: 0.22;
-            transform: scale(1.1);
-        }
-        .home-card:active {
-            transform: scale(0.94);
-            transition: transform 0.08s var(--ios-ease-in);
-        }
+        .home-card:nth-child(1) .card-glow { background: #b8863a; }
+        .home-card:nth-child(2) .card-glow { background: #4a8278; }
+        .home-card:nth-child(3) .card-glow { background: #b46450; }
+        .home-card:nth-child(4) .card-glow { background: #8c6eaa; }
 
         .home-card .card-icon-wrap {
             width: 46px;
@@ -918,26 +1041,14 @@
             flex-shrink: 0;
             animation: iconBreathe 3.6s var(--ios-ease-out) infinite alternate;
         }
-        .home-card:nth-child(1) .card-icon-wrap {
-            animation-delay: 0s;
-        }
-        .home-card:nth-child(2) .card-icon-wrap {
-            animation-delay: 0.3s;
-        }
-        .home-card:nth-child(3) .card-icon-wrap {
-            animation-delay: 0.6s;
-        }
-        .home-card:nth-child(4) .card-icon-wrap {
-            animation-delay: 0.9s;
-        }
+        .home-card:nth-child(1) .card-icon-wrap { animation-delay: 0s; }
+        .home-card:nth-child(2) .card-icon-wrap { animation-delay: 0.3s; }
+        .home-card:nth-child(3) .card-icon-wrap { animation-delay: 0.6s; }
+        .home-card:nth-child(4) .card-icon-wrap { animation-delay: 0.9s; }
 
         @keyframes iconBreathe {
-            0% {
-                transform: translateY(0) scale(1) rotate(0deg);
-            }
-            100% {
-                transform: translateY(-5px) scale(1.04) rotate(2deg);
-            }
+            0% { transform: translateY(0) scale(1) rotate(0deg); }
+            100% { transform: translateY(-5px) scale(1.04) rotate(2deg); }
         }
 
         .home-card .card-icon-wrap::after {
@@ -1072,98 +1183,36 @@
         }
 
         @media (max-width:420px) {
-            .home-header .brand-icon {
-                font-size: 32px;
-            }
-            .home-header h1 {
-                font-size: 18px;
-            }
-            .home-header p {
-                font-size: 10px;
-            }
-            .home-grid {
-                gap: 10px;
-            }
-            .home-card {
-                padding: 12px 6px 10px;
-                min-height: 88px;
-                border-radius: 16px;
-            }
-            .home-card .card-icon-wrap {
-                width: 40px;
-                height: 40px;
-            }
-            .home-card .card-icon-wrap svg {
-                width: 22px;
-                height: 22px;
-            }
-            .home-card .card-title {
-                font-size: 14px;
-            }
-            .home-card .card-desc {
-                font-size: 9px;
-            }
-            .home-card .card-glow {
-                width: 100px;
-                height: 100px;
-                top: -35px;
-                right: -35px;
-            }
+            .home-header .brand-icon { font-size: 32px; }
+            .home-header h1 { font-size: 18px; }
+            .home-header p { font-size: 10px; }
+            .home-grid { gap: 10px; }
+            .home-card { padding: 12px 6px 10px; min-height: 88px; border-radius: 16px; }
+            .home-card .card-icon-wrap { width: 40px; height: 40px; }
+            .home-card .card-icon-wrap svg { width: 22px; height: 22px; }
+            .home-card .card-title { font-size: 14px; }
+            .home-card .card-desc { font-size: 9px; }
+            .home-card .card-glow { width: 100px; height: 100px; top: -35px; right: -35px; }
             @keyframes iconBreathe {
-                0% {
-                    transform: translateY(0) scale(1) rotate(0deg);
-                }
-                100% {
-                    transform: translateY(-4px) scale(1.03) rotate(1.5deg);
-                }
+                0% { transform: translateY(0) scale(1) rotate(0deg); }
+                100% { transform: translateY(-4px) scale(1.03) rotate(1.5deg); }
             }
         }
         @media (max-width:360px) {
-            .home-header .brand-icon {
-                font-size: 28px;
-            }
-            .home-header h1 {
-                font-size: 16px;
-            }
-            .home-grid {
-                gap: 8px;
-            }
-            .home-card {
-                padding: 10px 4px 8px;
-                min-height: 76px;
-                border-radius: 14px;
-            }
-            .home-card .card-icon-wrap {
-                width: 34px;
-                height: 34px;
-            }
-            .home-card .card-icon-wrap svg {
-                width: 18px;
-                height: 18px;
-            }
-            .home-card .card-title {
-                font-size: 13px;
-            }
-            .home-card .card-desc {
-                font-size: 8px;
-            }
-            .home-card .card-glow {
-                width: 80px;
-                height: 80px;
-                top: -28px;
-                right: -28px;
-            }
-            .home-card:last-child:nth-child(odd) {
-                max-width: 60%;
-            }
+            .home-header .brand-icon { font-size: 28px; }
+            .home-header h1 { font-size: 16px; }
+            .home-grid { gap: 8px; }
+            .home-card { padding: 10px 4px 8px; min-height: 76px; border-radius: 14px; }
+            .home-card .card-icon-wrap { width: 34px; height: 34px; }
+            .home-card .card-icon-wrap svg { width: 18px; height: 18px; }
+            .home-card .card-title { font-size: 13px; }
+            .home-card .card-desc { font-size: 8px; }
+            .home-card .card-glow { width: 80px; height: 80px; top: -28px; right: -28px; }
+            .home-card:last-child:nth-child(odd) { max-width: 60%; }
         }
 
-        /* ================================================================
-           自动寻优
-           ================================================================ */
-        #auto-page {
-            padding: 4px 6px;
-        }
+        /* ---- 自动寻优 ---- */
+        #auto-page { padding: 4px 6px; }
         #auto-page>div {
             display: flex;
             flex-direction: column;
@@ -1205,18 +1254,8 @@
             text-align: right;
             line-height: 1.2;
         }
-        @media (max-width:420px) {
-            .row .row-label {
-                width: 42px;
-                font-size: 11px;
-            }
-        }
-        @media (max-width:360px) {
-            .row .row-label {
-                width: 36px;
-                font-size: 10px;
-            }
-        }
+        @media (max-width:420px) { .row .row-label { width: 42px; font-size: 11px; } }
+        @media (max-width:360px) { .row .row-label { width: 36px; font-size: 10px; } }
 
         .row .target-input {
             flex: 1 1 50px;
@@ -1246,22 +1285,10 @@
             font-size: 10px;
         }
         @media (max-width:420px) {
-            .row .target-input {
-                font-size: 12px;
-                min-height: 26px;
-                min-width: 30px;
-                max-width: 64px;
-                padding: 4px 2px;
-            }
+            .row .target-input { font-size: 12px; min-height: 26px; min-width: 30px; max-width: 64px; padding: 4px 2px; }
         }
         @media (max-width:360px) {
-            .row .target-input {
-                font-size: 11px;
-                min-height: 24px;
-                min-width: 26px;
-                max-width: 52px;
-                padding: 3px 2px;
-            }
+            .row .target-input { font-size: 11px; min-height: 24px; min-width: 26px; max-width: 52px; padding: 3px 2px; }
         }
 
         .row .gear-label {
@@ -1274,18 +1301,8 @@
             text-align: center;
             line-height: 1;
         }
-        @media (max-width:420px) {
-            .row .gear-label {
-                font-size: 11px;
-                width: 11px;
-            }
-        }
-        @media (max-width:360px) {
-            .row .gear-label {
-                font-size: 10px;
-                width: 10px;
-            }
-        }
+        @media (max-width:420px) { .row .gear-label { font-size: 11px; width: 11px; } }
+        @media (max-width:360px) { .row .gear-label { font-size: 10px; width: 10px; } }
 
         .row .gear-input {
             flex: 0 1 32px;
@@ -1316,30 +1333,12 @@
             opacity: 0.30;
         }
         @media (max-width:420px) {
-            .row .gear-input {
-                flex: 0 1 26px;
-                width: 26px;
-                min-width: 20px;
-                font-size: 12px;
-                min-height: 26px;
-                padding: 4px 0;
-            }
-            .row .gear-input::placeholder {
-                font-size: 8px;
-            }
+            .row .gear-input { flex: 0 1 26px; width: 26px; min-width: 20px; font-size: 12px; min-height: 26px; padding: 4px 0; }
+            .row .gear-input::placeholder { font-size: 8px; }
         }
         @media (max-width:360px) {
-            .row .gear-input {
-                flex: 0 1 22px;
-                width: 22px;
-                min-width: 18px;
-                font-size: 11px;
-                min-height: 22px;
-                padding: 3px 0;
-            }
-            .row .gear-input::placeholder {
-                font-size: 7px;
-            }
+            .row .gear-input { flex: 0 1 22px; width: 22px; min-width: 18px; font-size: 11px; min-height: 22px; padding: 3px 0; }
+            .row .gear-input::placeholder { font-size: 7px; }
         }
 
         .row .sep {
@@ -1351,18 +1350,8 @@
             width: 7px;
             text-align: center;
         }
-        @media (max-width:420px) {
-            .row .sep {
-                font-size: 9px;
-                width: 5px;
-            }
-        }
-        @media (max-width:360px) {
-            .row .sep {
-                font-size: 8px;
-                width: 4px;
-            }
-        }
+        @media (max-width:420px) { .row .sep { font-size: 9px; width: 5px; } }
+        @media (max-width:360px) { .row .sep { font-size: 8px; width: 4px; } }
 
         .row .hint-text {
             font-size: 10px;
@@ -1378,19 +1367,8 @@
             text-overflow: ellipsis;
             min-width: 40px;
         }
-        @media (max-width:420px) {
-            .row .hint-text {
-                font-size: 9px;
-                padding-left: 2px;
-                min-width: 30px;
-            }
-        }
-        @media (max-width:360px) {
-            .row .hint-text {
-                font-size: 8px;
-                min-width: 20px;
-            }
-        }
+        @media (max-width:420px) { .row .hint-text { font-size: 9px; padding-left: 2px; min-width: 30px; } }
+        @media (max-width:360px) { .row .hint-text { font-size: 8px; min-width: 20px; } }
 
         .btn-wrapper {
             display: flex;
@@ -1398,11 +1376,7 @@
             width: 100%;
             margin: 2px 0;
         }
-        .btn-primary,
-        .btn-cancel,
-        .btn-fav,
-        .btn-reset,
-        .btn-calc-manual {
+        .btn-primary, .btn-cancel, .btn-fav, .btn-reset, .btn-calc-manual {
             width: 50%;
             min-width: 130px;
             padding: 10px 16px;
@@ -1424,37 +1398,29 @@
             z-index: 6;
             pointer-events: auto !important;
         }
-        .btn-primary:active,
-        .btn-cancel:active,
-        .btn-fav:active,
-        .btn-reset:active,
-        .btn-calc-manual:active {
+        .btn-primary:active, .btn-cancel:active, .btn-fav:active, .btn-reset:active, .btn-calc-manual:active {
             transform: scale(0.94);
             opacity: 0.80;
             transition: transform 0.06s var(--ios-ease-in);
         }
 
-        .btn-primary,
-        .btn-calc-manual {
+        .btn-primary, .btn-calc-manual {
             background: var(--card-bg);
             border-color: var(--accent-border);
             color: var(--accent);
         }
-        [data-theme="black-gold"] .btn-primary,
-        [data-theme="black-gold"] .btn-calc-manual {
+        [data-theme="black-gold"] .btn-primary, [data-theme="black-gold"] .btn-calc-manual {
             border-color: rgba(212, 175, 55, 0.15);
             background: rgba(212, 175, 55, 0.06);
             color: #d4af37;
         }
-        [data-theme="tech"] .btn-primary,
-        [data-theme="tech"] .btn-calc-manual {
+        [data-theme="tech"] .btn-primary, [data-theme="tech"] .btn-calc-manual {
             background: rgba(0, 240, 255, 0.04);
             border-color: rgba(0, 240, 255, 0.15);
             color: #00f0ff;
             box-shadow: 0 0 20px rgba(0, 240, 255, 0.02), inset 0 0 20px rgba(0, 240, 255, 0.01);
         }
-        [data-theme="porcelain"] .btn-primary,
-        [data-theme="porcelain"] .btn-calc-manual {
+        [data-theme="porcelain"] .btn-primary, [data-theme="porcelain"] .btn-calc-manual {
             background: rgba(138, 169, 196, 0.04);
             border-color: rgba(138, 169, 196, 0.12);
             color: #8aa9c4;
@@ -1474,65 +1440,29 @@
             background: rgba(196, 144, 128, 0.04);
         }
 
-        .btn-fav {
-            background: var(--card-bg);
-            border-color: var(--card-border);
-            color: var(--text-secondary);
-        }
-        .btn-reset {
-            background: var(--card-bg);
-            border-color: var(--card-border);
-            color: var(--text-secondary);
-        }
-        .btn-reset:hover {
-            color: var(--danger);
-            border-color: var(--danger);
-        }
-        [data-theme="black-gold"] .btn-reset:hover {
-            color: #c0806a;
-            border-color: #c0806a;
-        }
-        [data-theme="tech"] .btn-reset:hover {
-            color: #ff5a7a;
-            border-color: rgba(255, 90, 122, 0.30);
-        }
-        [data-theme="porcelain"] .btn-reset:hover {
-            color: #c49080;
-            border-color: rgba(196, 144, 128, 0.25);
-        }
+        .btn-fav { background: var(--card-bg); border-color: var(--card-border); color: var(--text-secondary); }
+        .btn-reset { background: var(--card-bg); border-color: var(--card-border); color: var(--text-secondary); }
+        .btn-reset:hover { color: var(--danger); border-color: var(--danger); }
+        [data-theme="black-gold"] .btn-reset:hover { color: #c0806a; border-color: #c0806a; }
+        [data-theme="tech"] .btn-reset:hover { color: #ff5a7a; border-color: rgba(255, 90, 122, 0.30); }
+        [data-theme="porcelain"] .btn-reset:hover { color: #c49080; border-color: rgba(196, 144, 128, 0.25); }
 
-        .btn-primary .icon-emoji,
-        .btn-cancel .icon-emoji,
-        .btn-fav .icon-emoji,
-        .btn-reset .icon-emoji,
-        .btn-calc-manual .icon-emoji {
+        .btn-primary .icon-emoji, .btn-cancel .icon-emoji, .btn-fav .icon-emoji, .btn-reset .icon-emoji, .btn-calc-manual .icon-emoji {
             font-size: 14px;
             filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.03));
         }
         @media (max-width:420px) {
-            .btn-primary,
-            .btn-cancel,
-            .btn-fav,
-            .btn-reset,
-            .btn-calc-manual {
+            .btn-primary, .btn-cancel, .btn-fav, .btn-reset, .btn-calc-manual {
                 padding: 8px 12px;
                 font-size: 12px;
                 min-width: 110px;
             }
-            .btn-primary .icon-emoji,
-            .btn-cancel .icon-emoji,
-            .btn-fav .icon-emoji,
-            .btn-reset .icon-emoji,
-            .btn-calc-manual .icon-emoji {
+            .btn-primary .icon-emoji, .btn-cancel .icon-emoji, .btn-fav .icon-emoji, .btn-reset .icon-emoji, .btn-calc-manual .icon-emoji {
                 font-size: 13px;
             }
         }
         @media (max-width:360px) {
-            .btn-primary,
-            .btn-cancel,
-            .btn-fav,
-            .btn-reset,
-            .btn-calc-manual {
+            .btn-primary, .btn-cancel, .btn-fav, .btn-reset, .btn-calc-manual {
                 padding: 6px 10px;
                 font-size: 11px;
                 min-width: 90px;
@@ -1549,13 +1479,9 @@
             width: 100%;
             max-width: 420px;
         }
-        #results::-webkit-scrollbar {
-            width: 2px;
-        }
-        #results::-webkit-scrollbar-thumb {
-            background: var(--accent-border);
-            border-radius: 2px;
-        }
+        #results::-webkit-scrollbar { width: 2px; }
+        #results::-webkit-scrollbar-track { background: transparent; }
+        #results::-webkit-scrollbar-thumb { background: var(--accent-border); border-radius: 2px; }
 
         .search-status {
             font-size: 12px;
@@ -1567,21 +1493,11 @@
             animation: fadeInUp 0.4s var(--ios-ease) both;
         }
         @keyframes fadeInUp {
-            0% {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
         }
-        .search-status.err-text {
-            color: var(--danger);
-        }
-        .search-status.hint {
-            color: var(--warn);
-        }
+        .search-status.err-text { color: var(--danger); }
+        .search-status.hint { color: var(--warn); }
         .section-title {
             font-weight: 600;
             margin: 4px 0 2px;
@@ -1600,12 +1516,13 @@
             padding: 8px 10px;
             margin: 3px 0;
             box-shadow: var(--shadow-card);
-            transition: all 0.4s var(--ios-spring), background 0.4s var(--ios-ease), border-color 0.4s var(--ios-ease), box-shadow 0.4s var(--ios-ease);
             animation: cardEnter 0.5s var(--ios-spring) both;
             cursor: default;
             position: relative;
             overflow: hidden;
             width: 100%;
+            transform-style: preserve-3d;
+            will-change: transform;
         }
         .card::before {
             content: '';
@@ -1616,31 +1533,6 @@
             pointer-events: none;
             opacity: 0.60;
             z-index: 0;
-        }
-        .card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 40%;
-            background: linear-gradient(180deg, var(--card-top-glow) 0%, transparent 100%);
-            pointer-events: none;
-            border-radius: 14px 14px 0 0;
-            z-index: 0;
-        }
-        .card:hover {
-            transform: translateY(-2px);
-            border-color: var(--accent-border);
-            box-shadow: var(--shadow-card-hover);
-        }
-        [data-theme="tech"] .card:hover {
-            border-color: rgba(0, 240, 255, 0.15);
-            box-shadow: 0 0 40px rgba(0, 240, 255, 0.04), var(--shadow-card-hover);
-        }
-        [data-theme="porcelain"] .card:hover {
-            border-color: rgba(138, 169, 196, 0.15);
-            box-shadow: 0 8px 32px rgba(138, 169, 196, 0.06), var(--shadow-card-hover);
         }
         .card.selected {
             background: var(--accent-soft);
@@ -1659,27 +1551,15 @@
             box-shadow: 0 0 0 2px rgba(138, 169, 196, 0.08), var(--shadow-card);
         }
         .card.clicked {
-            transform: scale(0.96);
+            transform: scale(0.96) !important;
             transition: transform 0.08s var(--ios-ease-in);
         }
-        .card>* {
-            position: relative;
-            z-index: 1;
-        }
+        .card>* { position: relative; z-index: 1; }
         @keyframes cardEnter {
-            0% {
-                opacity: 0;
-                transform: translateY(12px) scale(0.97);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
+            0% { opacity: 0; transform: translateY(12px) scale(0.97); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
-        .card b {
-            color: var(--accent);
-            font-weight: 700;
-        }
+        .card b { color: var(--accent); font-weight: 700; }
 
         .card-header {
             display: flex;
@@ -1692,10 +1572,7 @@
             padding-bottom: 2px;
             border-bottom: 1px solid var(--row-border);
         }
-        .card-header .combo-idx {
-            color: var(--text-primary);
-            opacity: 0.70;
-        }
+        .card-header .combo-idx { color: var(--text-primary); opacity: 0.70; }
         .card-header .combo-error {
             color: var(--accent);
             font-weight: 700;
@@ -1756,10 +1633,7 @@
             font-weight: 500;
             padding-left: 4px;
         }
-        .gear-set .result-values .val {
-            color: var(--accent);
-            font-weight: 600;
-        }
+        .gear-set .result-values .val { color: var(--accent); font-weight: 600; }
 
         .card .card-action {
             font-size: 11px;
@@ -1814,72 +1688,25 @@
         }
 
         @media (max-width:420px) {
-            .card {
-                padding: 6px 8px;
-                border-radius: 12px;
-            }
-            .card-header {
-                font-size: 11px;
-            }
-            .card-header .combo-error {
-                font-size: 10px;
-                padding: 0 6px;
-            }
-            .gear-set .gear-values {
-                font-size: 11px;
-                padding: 1px 6px;
-                gap: 2px 5px;
-            }
-            .gear-set .gear-values span {
-                font-size: 12px;
-                padding: 0 4px;
-            }
-            .gear-set .result-values {
-                font-size: 9px;
-            }
-            .star-btn {
-                font-size: 15px;
-            }
-            .card .card-action .copy-hint {
-                font-size: 10px;
-                padding: 2px 6px;
-            }
+            .card { padding: 6px 8px; border-radius: 12px; }
+            .card-header { font-size: 11px; }
+            .card-header .combo-error { font-size: 10px; padding: 0 6px; }
+            .gear-set .gear-values { font-size: 11px; padding: 1px 6px; gap: 2px 5px; }
+            .gear-set .gear-values span { font-size: 12px; padding: 0 4px; }
+            .gear-set .result-values { font-size: 9px; }
+            .star-btn { font-size: 15px; }
+            .card .card-action .copy-hint { font-size: 10px; padding: 2px 6px; }
         }
         @media (max-width:360px) {
-            .card {
-                padding: 5px 6px;
-                border-radius: 10px;
-            }
-            .card-header {
-                font-size: 10px;
-            }
-            .card-header .combo-error {
-                font-size: 9px;
-                padding: 0 5px;
-            }
-            .gear-set {
-                gap: 1px 4px;
-                padding: 1px 0;
-            }
-            .gear-set .gear-values {
-                font-size: 10px;
-                padding: 1px 4px;
-                gap: 1px 4px;
-            }
-            .gear-set .gear-values span {
-                font-size: 11px;
-                padding: 0 3px;
-            }
-            .gear-set .result-values {
-                font-size: 8px;
-            }
-            .gear-set .group-label {
-                font-size: 9px;
-                min-width: 22px;
-            }
-            .star-btn {
-                font-size: 14px;
-            }
+            .card { padding: 5px 6px; border-radius: 10px; }
+            .card-header { font-size: 10px; }
+            .card-header .combo-error { font-size: 9px; padding: 0 5px; }
+            .gear-set { gap: 1px 4px; padding: 1px 0; }
+            .gear-set .gear-values { font-size: 10px; padding: 1px 4px; gap: 1px 4px; }
+            .gear-set .gear-values span { font-size: 11px; padding: 0 3px; }
+            .gear-set .result-values { font-size: 8px; }
+            .gear-set .group-label { font-size: 9px; min-width: 22px; }
+            .star-btn { font-size: 14px; }
         }
 
         /* ---- 空闲齿轮 ---- */
@@ -1900,45 +1727,21 @@
             flex-shrink: 0;
             animation: gearFloat 4s var(--ios-ease-out) infinite alternate;
         }
-        .gear-item-anim:nth-child(2) {
-            animation-delay: 0.3s;
-        }
-        .gear-item-anim:nth-child(3) {
-            animation-delay: 0.6s;
-        }
-        .gear-item-anim:nth-child(4) {
-            animation-delay: 0.9s;
-        }
+        .gear-item-anim:nth-child(2) { animation-delay: 0.3s; }
+        .gear-item-anim:nth-child(3) { animation-delay: 0.6s; }
+        .gear-item-anim:nth-child(4) { animation-delay: 0.9s; }
         @keyframes gearFloat {
-            0% {
-                transform: translateY(0) scale(1);
-            }
-            100% {
-                transform: translateY(-3px) scale(1.02);
-            }
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-3px) scale(1.02); }
         }
-        .gear-svg {
-            display: block;
-            max-width: 48px;
-            height: auto;
-        }
+        .gear-svg { display: block; max-width: 48px; height: auto; }
         @media (max-width:420px) {
-            .gear-animation-wrap {
-                padding: 8px 3px;
-                border-radius: 12px;
-            }
-            .gear-svg {
-                max-width: 40px;
-            }
+            .gear-animation-wrap { padding: 8px 3px; border-radius: 12px; }
+            .gear-svg { max-width: 40px; }
         }
         @media (max-width:360px) {
-            .gear-animation-wrap {
-                padding: 6px 2px;
-                border-radius: 10px;
-            }
-            .gear-svg {
-                max-width: 34px;
-            }
+            .gear-animation-wrap { padding: 6px 2px; border-radius: 10px; }
+            .gear-svg { max-width: 34px; }
         }
 
         /* ---- 计算动画 ---- */
@@ -1999,12 +1802,8 @@
             border-right-color: rgba(138, 169, 196, 0.25);
         }
         @keyframes gearRingSpin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         .calc-gear-container .center-gear {
             position: relative;
@@ -2031,15 +1830,8 @@
             stroke-linejoin: round;
         }
         @keyframes gearPulse {
-            0%,
-            100% {
-                transform: scale(1);
-                opacity: 0.85;
-            }
-            50% {
-                transform: scale(1.10);
-                opacity: 1;
-            }
+            0%, 100% { transform: scale(1); opacity: 0.85; }
+            50% { transform: scale(1.10); opacity: 1; }
         }
         .calc-progress-track {
             width: 140px;
@@ -2073,33 +1865,17 @@
             background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.50), transparent);
         }
         @keyframes progressFlow {
-            0% {
-                background-position: 0% 0%;
-            }
-            100% {
-                background-position: 200% 0%;
-            }
+            0% { background-position: 0% 0%; }
+            100% { background-position: 200% 0%; }
         }
         @keyframes progressPulse {
-            0% {
-                width: 15%;
-                opacity: 0.6;
-            }
-            100% {
-                width: 65%;
-                opacity: 1;
-            }
+            0% { width: 15%; opacity: 0.6; }
+            100% { width: 65%; opacity: 1; }
         }
         @keyframes progressShine {
-            0% {
-                transform: translateX(-100%);
-            }
-            60% {
-                transform: translateX(100%);
-            }
-            100% {
-                transform: translateX(100%);
-            }
+            0% { transform: translateX(-100%); }
+            60% { transform: translateX(100%); }
+            100% { transform: translateX(100%); }
         }
         .calc-text {
             font-size: 12px;
@@ -2119,64 +1895,27 @@
             background: var(--accent);
             animation: dotPulse 1.4s var(--ios-ease-out) infinite;
         }
-        .calc-text .dot:nth-child(2) {
-            animation-delay: 0.2s;
-        }
-        .calc-text .dot:nth-child(3) {
-            animation-delay: 0.4s;
-        }
+        .calc-text .dot:nth-child(2) { animation-delay: 0.2s; }
+        .calc-text .dot:nth-child(3) { animation-delay: 0.4s; }
         @keyframes dotPulse {
-            0%,
-            80%,
-            100% {
-                opacity: 0.15;
-                transform: scale(0.5);
-            }
-            40% {
-                opacity: 1;
-                transform: scale(1);
-            }
+            0%, 80%, 100% { opacity: 0.15; transform: scale(0.5); }
+            40% { opacity: 1; transform: scale(1); }
         }
         @media (max-width:420px) {
-            .calc-gear-container {
-                width: 48px;
-                height: 48px;
-            }
-            .calc-gear-container .center-gear {
-                width: 22px;
-                height: 22px;
-            }
-            .calc-progress-track {
-                width: 120px;
-            }
-            .calc-text {
-                font-size: 11px;
-            }
+            .calc-gear-container { width: 48px; height: 48px; }
+            .calc-gear-container .center-gear { width: 22px; height: 22px; }
+            .calc-progress-track { width: 120px; }
+            .calc-text { font-size: 11px; }
         }
         @media (max-width:360px) {
-            .calc-gear-container {
-                width: 42px;
-                height: 42px;
-            }
-            .calc-gear-container .center-gear {
-                width: 18px;
-                height: 18px;
-            }
-            .calc-progress-track {
-                width: 100px;
-            }
-            .calc-text {
-                font-size: 10px;
-            }
+            .calc-gear-container { width: 42px; height: 42px; }
+            .calc-gear-container .center-gear { width: 18px; height: 18px; }
+            .calc-progress-track { width: 100px; }
+            .calc-text { font-size: 10px; }
         }
 
-        /* ================================================================
-           ★★★ 手动验算（卡片缩小、无按钮） ★★★
-           ================================================================ */
-        #manual-page {
-            padding: 4px 6px;
-            align-items: center;
-        }
+        /* ---- 手动验算 ---- */
+        #manual-page { padding: 4px 6px; align-items: center; }
         #manual-page>div {
             display: flex;
             flex-direction: column;
@@ -2238,30 +1977,13 @@
             justify-content: center;
             min-height: 26px;
         }
-        [data-theme="porcelain"] .manual-label {
-            border-bottom-color: rgba(138, 169, 196, 0.30);
-        }
-        [data-theme="tech"] .manual-label {
-            border-bottom-color: rgba(0, 240, 255, 0.20);
-        }
-        [data-theme="black-gold"] .manual-label {
-            border-bottom-color: rgba(212, 175, 55, 0.20);
-        }
+        [data-theme="porcelain"] .manual-label { border-bottom-color: rgba(138, 169, 196, 0.30); }
+        [data-theme="tech"] .manual-label { border-bottom-color: rgba(0, 240, 255, 0.20); }
+        [data-theme="black-gold"] .manual-label { border-bottom-color: rgba(212, 175, 55, 0.20); }
         @media (max-width:420px) {
-            .manual-label {
-                font-size: 13px;
-                letter-spacing: 0.5px;
-                padding-bottom: 2px;
-                margin-bottom: 2px;
-                min-height: 24px;
-            }
+            .manual-label { font-size: 13px; letter-spacing: 0.5px; padding-bottom: 2px; margin-bottom: 2px; min-height: 24px; }
         }
-        @media (max-width:360px) {
-            .manual-label {
-                font-size: 12px;
-                min-height: 22px;
-            }
-        }
+        @media (max-width:360px) { .manual-label { font-size: 12px; min-height: 22px; } }
 
         .gear-row {
             display: flex;
@@ -2332,44 +2054,15 @@
             user-select: none;
         }
         @media (max-width:420px) {
-            .manual-group {
-                padding: 4px 8px 6px;
-                border-radius: 10px;
-            }
-            .gear-row .gear-letter {
-                font-size: 12px;
-                width: 16px;
-            }
-            .gear-row .gear-field {
-                flex: 1 1 28px;
-                min-width: 18px !important;
-                max-width: 40px;
-                height: 24px;
-                font-size: 12px;
-                padding: 0 2px;
-            }
-            .gear-row .gear-operator {
-                font-size: 12px;
-                width: 8px;
-            }
+            .manual-group { padding: 4px 8px 6px; border-radius: 10px; }
+            .gear-row .gear-letter { font-size: 12px; width: 16px; }
+            .gear-row .gear-field { flex: 1 1 28px; min-width: 18px !important; max-width: 40px; height: 24px; font-size: 12px; padding: 0 2px; }
+            .gear-row .gear-operator { font-size: 12px; width: 8px; }
         }
         @media (max-width:360px) {
-            .gear-row .gear-letter {
-                font-size: 11px;
-                width: 14px;
-            }
-            .gear-row .gear-field {
-                flex: 1 1 22px;
-                min-width: 14px !important;
-                max-width: 32px;
-                height: 22px;
-                font-size: 11px;
-                padding: 0 1px;
-            }
-            .gear-row .gear-operator {
-                font-size: 11px;
-                width: 6px;
-            }
+            .gear-row .gear-letter { font-size: 11px; width: 14px; }
+            .gear-row .gear-field { flex: 1 1 22px; min-width: 14px !important; max-width: 32px; height: 22px; font-size: 11px; padding: 0 1px; }
+            .gear-row .gear-operator { font-size: 11px; width: 6px; }
         }
 
         .result-line {
@@ -2401,19 +2094,11 @@
             font-weight: 700;
             font-size: 13px;
         }
-        .result-line .val b {
-            color: var(--accent);
-            font-weight: 700;
-        }
+        .result-line .val b { color: var(--accent); font-weight: 700; }
         .result-line .sep-dot {
             color: var(--text-muted);
             font-weight: 300;
             margin: 0 2px;
-        }
-
-        /* 移除供送提示 */
-        .manual-row .feed-hint {
-            display: none !important;
         }
 
         #manual-results {
@@ -2424,21 +2109,12 @@
             width: 100%;
             max-width: 420px;
         }
-        #manual-results::-webkit-scrollbar {
-            width: 2px;
-        }
-        #manual-results::-webkit-scrollbar-thumb {
-            background: var(--accent-border);
-            border-radius: 2px;
-        }
+        #manual-results::-webkit-scrollbar { width: 2px; }
+        #manual-results::-webkit-scrollbar-track { background: transparent; }
+        #manual-results::-webkit-scrollbar-thumb { background: var(--accent-border); border-radius: 2px; }
 
-        /* ================================================================
-           ★★★ 设置页面（机械参数改为行样式，无单位） ★★★
-           ================================================================ */
-        #settings-page {
-            padding: 6px 8px;
-            align-items: center;
-        }
+        /* ---- 设置 ---- */
+        #settings-page { padding: 6px 8px; align-items: center; }
         #settings-page>div {
             display: flex;
             flex-direction: column;
@@ -2450,10 +2126,7 @@
             margin: 0 auto;
         }
 
-        .settings-group {
-            width: 100%;
-            margin-bottom: 2px;
-        }
+        .settings-group { width: 100%; margin-bottom: 2px; }
         .settings-group .group-title {
             font-size: 13px;
             font-weight: 600;
@@ -2532,89 +2205,35 @@
             transform: scale(1.02);
         }
 
-        .input-container {
-            width: 80px;
-            flex-shrink: 0;
-        }
-        .input-narrow {
-            width: 56px;
-            flex-shrink: 0;
-            min-height: 30px;
-        }
+        .input-container { width: 80px; flex-shrink: 0; }
+        .input-narrow { width: 56px; flex-shrink: 0; min-height: 30px; }
 
         @media (max-width:420px) {
-            #settings-page>div {
-                max-width: 100%;
-                padding: 0 4px;
-            }
-            .settings-row {
-                padding: 3px 6px;
-                min-height: 30px;
-                border-radius: 8px;
-                gap: 3px 4px;
-            }
-            .settings-label {
-                width: 52px;
-                font-size: 11px;
-            }
-            .settings-label2 {
-                width: 42px;
-                font-size: 11px;
-                margin-left: 2px;
-            }
-            .input-container {
-                width: 68px;
-            }
-            .input-narrow {
-                width: 48px;
-            }
-            .settings-input {
-                font-size: 11px;
-                min-height: 28px;
-                padding: 4px 2px;
-            }
+            #settings-page>div { max-width: 100%; padding: 0 4px; }
+            .settings-row { padding: 3px 6px; min-height: 30px; border-radius: 8px; gap: 3px 4px; }
+            .settings-label { width: 52px; font-size: 11px; }
+            .settings-label2 { width: 42px; font-size: 11px; margin-left: 2px; }
+            .input-container { width: 68px; }
+            .input-narrow { width: 48px; }
+            .settings-input { font-size: 11px; min-height: 28px; padding: 4px 2px; }
         }
         @media (max-width:360px) {
-            .settings-row {
-                padding: 2px 4px;
-                min-height: 26px;
-                gap: 2px 3px;
-            }
-            .settings-label {
-                width: 42px;
-                font-size: 10px;
-            }
-            .settings-label2 {
-                width: 34px;
-                font-size: 10px;
-                margin-left: 2px;
-            }
-            .input-container {
-                width: 56px;
-            }
-            .input-narrow {
-                width: 40px;
-            }
-            .settings-input {
-                font-size: 10px;
-                min-height: 24px;
-                padding: 3px 2px;
-            }
+            .settings-row { padding: 2px 4px; min-height: 26px; gap: 2px 3px; }
+            .settings-label { width: 42px; font-size: 10px; }
+            .settings-label2 { width: 34px; font-size: 10px; margin-left: 2px; }
+            .input-container { width: 56px; }
+            .input-narrow { width: 40px; }
+            .settings-input { font-size: 10px; min-height: 24px; padding: 3px 2px; }
         }
 
-        /* ================================================================
-           关于
-           ================================================================ */
+        /* ---- 关于 ---- */
         #about-page {
             padding: 6px 8px 4px;
             flex: 1;
             overflow-y: auto;
             align-items: center;
         }
-        #about-page>div {
-            max-width: 420px;
-            width: 100%;
-        }
+        #about-page>div { max-width: 420px; width: 100%; }
         #about-page h3 {
             color: var(--accent);
             font-size: 17px;
@@ -2658,42 +2277,20 @@
             border-color: var(--accent-border);
             box-shadow: var(--shadow-card-hover);
         }
-        #about-page p strong {
-            color: var(--accent);
-            opacity: 1;
-            font-weight: 700;
-        }
+        #about-page p strong { color: var(--accent); opacity: 1; font-weight: 700; }
         @media (max-width:420px) {
-            #about-page h3 {
-                font-size: 15px;
-            }
-            #about-page h4 {
-                font-size: 11px;
-            }
-            #about-page p {
-                font-size: 11px;
-                padding: 8px 12px;
-            }
+            #about-page h3 { font-size: 15px; }
+            #about-page h4 { font-size: 11px; }
+            #about-page p { font-size: 11px; padding: 8px 12px; }
         }
         @media (max-width:360px) {
-            #about-page h3 {
-                font-size: 13px;
-            }
-            #about-page h4 {
-                font-size: 10px;
-            }
-            #about-page p {
-                font-size: 10px;
-                padding: 6px 10px;
-            }
+            #about-page h3 { font-size: 13px; }
+            #about-page h4 { font-size: 10px; }
+            #about-page p { font-size: 10px; padding: 6px 10px; }
         }
 
-        /* ================================================================
-           Toast / Dialog
-           ================================================================ */
-        .toast-overlay,
-        .dialog-overlay,
-        .modal-overlay {
+        /* ---- Toast / Dialog ---- */
+        .toast-overlay, .dialog-overlay, .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
@@ -2709,12 +2306,8 @@
             animation: overlayFade 0.35s var(--ios-ease) both;
         }
         @keyframes overlayFade {
-            0% {
-                opacity: 0;
-            }
-            100% {
-                opacity: 1;
-            }
+            0% { opacity: 0; }
+            100% { opacity: 1; }
         }
         .toast-overlay {
             z-index: 9998;
@@ -2749,11 +2342,7 @@
             opacity: 1;
             transform: scale(1) translateY(0);
         }
-        .toast-glass .toast-icon {
-            font-size: 26px;
-            line-height: 1;
-            color: var(--accent);
-        }
+        .toast-glass .toast-icon { font-size: 26px; line-height: 1; color: var(--accent); }
         .toast-glass .toast-title {
             font-size: 14px;
             font-weight: 700;
@@ -2787,8 +2376,7 @@
             transition: transform 0.06s var(--ios-ease-in);
         }
 
-        .dialog-box,
-        .modal-content {
+        .dialog-box, .modal-content {
             background: var(--toast-bg);
             backdrop-filter: blur(28px);
             border: 1px solid var(--card-border);
@@ -2802,14 +2390,8 @@
             overflow-y: auto;
         }
         @keyframes dialogPop {
-            0% {
-                opacity: 0;
-                transform: scale(0.92) translateY(12px);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1) translateY(0);
-            }
+            0% { opacity: 0; transform: scale(0.92) translateY(12px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
         }
         .dialog-title {
             font-size: 15px;
@@ -2820,9 +2402,7 @@
             align-items: center;
             gap: 6px;
         }
-        .dialog-title .icon-emoji {
-            font-size: 18px;
-        }
+        .dialog-title .icon-emoji { font-size: 18px; }
         .dialog-sub {
             font-size: 12px;
             color: var(--text-secondary);
@@ -2951,9 +2531,7 @@
             transform: scale(0.80);
             transition: transform 0.06s var(--ios-ease-in);
         }
-        .modal-content .close-btn:hover {
-            opacity: 1;
-        }
+        .modal-content .close-btn:hover { opacity: 1; }
         .modal-content .fav-item {
             background: var(--row-bg);
             border: 1px solid var(--row-border);
@@ -3015,61 +2593,38 @@
             z-index: 9999;
         }
 
-        /* ===== 通用 ===== */
-        input[type="number"] {
-            -moz-appearance: textfield;
-        }
+        /* ---- 通用 ---- */
+        input[type="number"] { -moz-appearance: textfield; }
         input[type="number"]::-webkit-outer-spin-button,
         input[type="number"]::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
         }
-        .icon-emoji {
-            display: inline-block;
-            filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.02));
-        }
-        ::-webkit-scrollbar {
-            width: 2px;
-            height: 2px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--accent-border);
-            border-radius: 2px;
-        }
-        input,
-        select,
-        button {
-            touch-action: manipulation;
-        }
-        input,
-        input[type="number"],
-        input[type="text"],
-        textarea,
-        select {
+        .icon-emoji { display: inline-block; filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.02)); }
+        ::-webkit-scrollbar { width: 2px; height: 2px; }
+        ::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+        ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 2px; }
+        input, select, button { touch-action: manipulation; }
+        input, input[type="number"], input[type="text"], textarea, select {
             -webkit-user-select: text !important;
             user-select: text !important;
             pointer-events: auto !important;
             touch-action: manipulation !important;
         }
-        .btn-wrapper,
-        .btn-primary,
-        .btn-cancel,
-        .btn-fav,
-        .btn-reset,
-        .btn-calc-manual {
+        .btn-wrapper, .btn-primary, .btn-cancel, .btn-fav, .btn-reset, .btn-calc-manual {
             -webkit-tap-highlight-color: transparent;
         }
     </style>
 </head>
 <body>
+    <!-- 鼠标拖尾元素 -->
+    <div class="cursor-glow" id="cursorGlow"></div>
+
     <!-- 背景装饰 -->
     <div class="bg-blob bg-blob-1"></div>
     <div class="bg-blob bg-blob-2"></div>
 
-    <div class="app">
+    <div class="app" id="app">
         <!-- 主题切换 -->
         <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
             <span class="theme-icon-inner" id="themeIcon">🎨</span>
@@ -3165,10 +2720,9 @@
             </div>
         </div>
 
-        <!-- ===== ★★★ 手动验算（按钮已移除） ★★★ ===== -->
+        <!-- ===== 手动验算 ===== -->
         <div id="manual-page" class="page">
             <div>
-                <!-- 卷取 -->
                 <div class="manual-group">
                     <div class="manual-label">卷取</div>
                     <div class="gear-row">
@@ -3183,7 +2737,6 @@
                     <div id="m1res" class="result-line"><span class="hint">请输入完整齿轮齿数</span></div>
                 </div>
 
-                <!-- 拉伸 -->
                 <div class="manual-group">
                     <div class="manual-label">拉伸</div>
                     <div class="gear-row">
@@ -3198,7 +2751,6 @@
                     <div id="m2res" class="result-line"><span class="hint">请输入完整齿轮齿数</span></div>
                 </div>
 
-                <!-- 供送 -->
                 <div class="manual-group">
                     <div class="manual-label">供送</div>
                     <div class="gear-row">
@@ -3219,7 +2771,7 @@
             </div>
         </div>
 
-        <!-- ===== ★★★ 设置（机械参数行样式，无单位） ★★★ ===== -->
+        <!-- ===== 设置 ===== -->
         <div id="settings-page" class="page">
             <div>
                 <div class="settings-group">
@@ -3274,37 +2826,32 @@
             </div>
         </div>
 
-        <!-- ===== ★★★ 导航栏（优化图标，与首页卡片对应） ★★★ ===== -->
+        <!-- ===== 导航栏 ===== -->
         <div class="nav">
-            <!-- 首页 - 房子 -->
             <button class="nav-btn active" data-page="home" onclick="switchPage('home')">
                 <span class="nav-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                 </span>
                 <span class="label">首页</span>
             </button>
-            <!-- 寻优 - 放大镜（与首页卡片"自动寻优"对应） -->
             <button class="nav-btn" data-page="auto" onclick="switchPage('auto')">
                 <span class="nav-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10" cy="10" r="4"/><path d="M10 5V3M10 15v2M6 6L4.5 4.5M14 14l1.5 1.5M5 10H3M15 10h2M6 14l-1.5 1.5M14 6l1.5-1.5" stroke-width="1.2" opacity="0.4"/><line x1="13" y1="13" x2="19" y2="19"/></svg>
                 </span>
                 <span class="label">寻优</span>
             </button>
-            <!-- ★★★ 验算 - 矩形框+勾选（与首页卡片"手动验算"对应） ★★★ -->
             <button class="nav-btn" data-page="manual" onclick="switchPage('manual')">
                 <span class="nav-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><polyline points="9 11 12 14 17 9"/></svg>
                 </span>
                 <span class="label">验算</span>
             </button>
-            <!-- 设置 - 齿轮（与首页卡片"参数设置"对应） -->
             <button class="nav-btn" data-page="settings" onclick="switchPage('settings')">
                 <span class="nav-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
                 </span>
                 <span class="label">设置</span>
             </button>
-            <!-- 关于 - 信息（与首页卡片"关于程序"对应） -->
             <button class="nav-btn" data-page="about" onclick="switchPage('about')">
                 <span class="nav-icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><circle cx="12" cy="8" r="0.5" fill="#fff"/></svg>
@@ -3319,7 +2866,132 @@
 
     <script>
         // ================================================================
-        // 主题管理
+        // ★★★ 新增特效：鼠标拖尾光晕 ★★★
+        // ================================================================
+        (function() {
+            const glow = document.getElementById('cursorGlow');
+            if (!glow) return;
+            let active = false;
+            let timeout = null;
+
+            function moveGlow(e) {
+                glow.style.left = e.clientX + 'px';
+                glow.style.top = e.clientY + 'px';
+                if (!active) {
+                    glow.classList.add('active');
+                    active = true;
+                }
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    glow.classList.remove('active');
+                    active = false;
+                }, 300);
+            }
+
+            if (window.matchMedia('(hover: hover)').matches) {
+                document.addEventListener('mousemove', moveGlow);
+            }
+        })();
+
+        // ================================================================
+        // ★★★ 新增特效：导航图标点击弹跳 ★★★
+        // ================================================================
+        document.querySelectorAll('.nav-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                const icon = this.querySelector('.nav-icon');
+                if (icon) {
+                    icon.classList.remove('bounce');
+                    void icon.offsetWidth;
+                    icon.classList.add('bounce');
+                    setTimeout(() => icon.classList.remove('bounce'), 600);
+                }
+            });
+        });
+
+        // ================================================================
+        // ★★★ 新增特效：排名徽章（MutationObserver 自动添加） ★★★
+        // ================================================================
+        function addRankBadges() {
+            document.querySelectorAll('.card:not(.has-rank)').forEach((card, index) => {
+                if (card.querySelector('.rank-badge')) return;
+                const badge = document.createElement('div');
+                badge.className = 'rank-badge';
+                badge.textContent = '#' + (index + 1);
+                card.prepend(badge);
+                card.classList.add('has-rank');
+            });
+        }
+
+        const resultsObserver = new MutationObserver(() => { addRankBadges(); });
+        const resultsContainer = document.getElementById('results');
+        if (resultsContainer) {
+            resultsObserver.observe(resultsContainer, { childList: true, subtree: true });
+        }
+        const manualResultsContainer = document.getElementById('manual-results');
+        if (manualResultsContainer) {
+            const manualObserver = new MutationObserver(() => { addRankBadges(); });
+            manualObserver.observe(manualResultsContainer, { childList: true, subtree: true });
+        }
+        setTimeout(addRankBadges, 500);
+
+        // ================================================================
+        // ★★★ 新增特效：点击涟漪 ★★★
+        // ================================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // 注入涟漪样式
+            if (!document.getElementById('ripple-style')) {
+                const style = document.createElement('style');
+                style.id = 'ripple-style';
+                style.textContent = `
+                    @keyframes rippleAnim {
+                        0% { transform: scale(0); opacity: 0.6; }
+                        100% { transform: scale(18); opacity: 0; }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+
+            document.addEventListener('click', function(e) {
+                if (e.target.closest('input') || e.target.closest('button') || e.target.closest('.nav-btn')) return;
+                const ripple = document.createElement('span');
+                const size = 24;
+                ripple.style.cssText = `
+                    position: fixed; pointer-events: none; z-index: 9999;
+                    width: ${size}px; height: ${size}px; border-radius: 50%;
+                    background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+                    left: ${e.clientX - size/2}px; top: ${e.clientY - size/2}px;
+                    transform: scale(0); animation: rippleAnim 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+                    opacity: 0.5;
+                `;
+                document.body.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 900);
+            });
+        });
+
+        // ================================================================
+        // ★★★ 3D 卡片视差（桌面端） ★★★
+        // ================================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.matchMedia('(hover: hover)').matches) {
+                document.querySelectorAll('.home-card, .card').forEach(el => {
+                    el.addEventListener('mousemove', function(e) {
+                        const rect = this.getBoundingClientRect();
+                        const x = (e.clientX - rect.left) / rect.width - 0.5;
+                        const y = (e.clientY - rect.top) / rect.height - 0.5;
+                        this.style.transform =
+                            `perspective(800px) rotateX(${y * -6}deg) rotateY(${x * 6}deg) scale(1.02)`;
+                        this.style.transition = 'transform 0.1s ease';
+                    });
+                    el.addEventListener('mouseleave', function() {
+                        this.style.transform = 'perspective(800px) rotateX(0) rotateY(0) scale(1)';
+                        this.style.transition = 'transform 0.6s cubic-bezier(0.22, 1, 0.36, 1)';
+                    });
+                });
+            }
+        });
+
+        // ================================================================
+        // ★★★ 主题管理 ★★★
         // ================================================================
         const THEMES = ['light', 'dark', 'black-gold', 'tech', 'porcelain'];
         const THEME_NAMES = ['琥珀', '暗夜', '黑金', '科技', '青瓷'];
@@ -3368,7 +3040,7 @@
         }
 
         // ================================================================
-        // 页面切换
+        // ★★★ 页面切换 ★★★
         // ================================================================
         function switchPage(name) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -3381,7 +3053,7 @@
         }
 
         // ================================================================
-        // 齿轮SVG生成
+        // ★★★ 齿轮SVG生成 ★★★
         // ================================================================
         function gearSvg(teeth, size, stroke) {
             const c = size / 2;
@@ -3394,12 +3066,9 @@
                 const a2 = a + gap * 0.12;
                 const r1 = r * 0.96;
                 const r2 = r * 1.04;
-                const x1 = c + r1 * Math.cos(a1),
-                    y1 = c + r1 * Math.sin(a1);
-                const x2 = c + r2 * Math.cos(a),
-                    y2 = c + r2 * Math.sin(a);
-                const x3 = c + r1 * Math.cos(a2),
-                    y3 = c + r1 * Math.sin(a2);
+                const x1 = c + r1 * Math.cos(a1), y1 = c + r1 * Math.sin(a1);
+                const x2 = c + r2 * Math.cos(a), y2 = c + r2 * Math.sin(a);
+                const x3 = c + r1 * Math.cos(a2), y3 = c + r1 * Math.sin(a2);
                 pts += ` ${x1},${y1} ${x2},${y2} ${x3},${y3}`;
             }
             const hole = size * 0.22;
@@ -3425,22 +3094,15 @@
         }
 
         // ================================================================
-        // ★★★ 核心计算逻辑 ★★★
+        // ★★★ 核心计算逻辑（完整保留） ★★★
         // ================================================================
         const FIXED_GEARS = { curl: { a: 40, d: 80 }, stretch: { a: 72, d: 58 }, feed: { a: 78, d: 64 } };
-        const GEAR_MIN = 30,
-            GEAR_MAX = 80,
-            GEAR_STEP = 2;
-        let curlMap = null,
-            stretchMap = null,
-            feedMap = null;
-        let buildInProgress = false,
-            buildCancelled = false;
-        let searchCancelled = false,
-            searchTimeout = null;
+        const GEAR_MIN = 30, GEAR_MAX = 80, GEAR_STEP = 2;
+        let curlMap = null, stretchMap = null, feedMap = null;
+        let buildInProgress = false, buildCancelled = false;
+        let searchCancelled = false, searchTimeout = null;
         let calcScheduled = false;
 
-        // ----- 设置持久化 -----
         const settingsKeys = ['set_k2', 'set_err2', 'set_k3', 'set_err3', 'set_dd', 'set_dr', 'set_err_tension', 'set_display'];
         settingsKeys.forEach(id => {
             const el = document.getElementById(id);
@@ -3450,7 +3112,7 @@
             el.addEventListener('input', () => localStorage.setItem('cfg_' + id, el.value), { passive: true });
         });
 
-        // ----- Toast / Dialog -----
+        // ---- Toast / Dialog ----
         const Dialog = {
             _overlay: null,
             _createOverlay() {
@@ -3463,8 +3125,7 @@
                 this._overlay = overlay;
                 return overlay;
             },
-            _close() { if (this._overlay) { this._overlay.remove();
-                    this._overlay = null; } },
+            _close() { if (this._overlay) { this._overlay.remove(); this._overlay = null; } },
             confirm(options) {
                 return new Promise((resolve) => {
                     const overlay = this._createOverlay();
@@ -3482,9 +3143,7 @@
                     box.querySelectorAll('button').forEach(btn => {
                         btn.addEventListener('click', (e) => {
                             e.stopPropagation();
-                            if (btn.dataset.action === 'confirm') { this._close();
-                                resolve(true); } else { this._close();
-                                resolve(false); }
+                            if (btn.dataset.action === 'confirm') { this._close(); resolve(true); } else { this._close(); resolve(false); }
                         });
                     });
                 });
@@ -3495,15 +3154,9 @@
                     const box = document.createElement('div');
                     box.className = 'dialog-box';
                     let previewHtml = '';
-                    if (combo.curl) { const g = combo.curl;
-                        previewHtml +=
-                            `<div class="gear-preview"><span class="row-label">卷取</span><span class="vals">A=${g.a} B=${g.b} C=${g.c} D=${g.d}</span></div>`; }
-                    if (combo.stretch) { const g = combo.stretch;
-                        previewHtml +=
-                            `<div class="gear-preview"><span class="row-label">拉伸</span><span class="vals">A=${g.a} B=${g.b} C=${g.c} D=${g.d}</span></div>`; }
-                    if (combo.feed) { const g = combo.feed;
-                        previewHtml +=
-                            `<div class="gear-preview"><span class="row-label">供送</span><span class="vals">A=${g.a} B=${g.b} C=${g.c} D=${g.d}</span></div>`; }
+                    if (combo.curl) { const g = combo.curl; previewHtml += `<div class="gear-preview"><span class="row-label">卷取</span><span class="vals">A=${g.a} B=${g.b} C=${g.c} D=${g.d}</span></div>`; }
+                    if (combo.stretch) { const g = combo.stretch; previewHtml += `<div class="gear-preview"><span class="row-label">拉伸</span><span class="vals">A=${g.a} B=${g.b} C=${g.c} D=${g.d}</span></div>`; }
+                    if (combo.feed) { const g = combo.feed; previewHtml += `<div class="gear-preview"><span class="row-label">供送</span><span class="vals">A=${g.a} B=${g.b} C=${g.c} D=${g.d}</span></div>`; }
                     box.innerHTML = `
                         <div class="dialog-title"><span class="icon-emoji">⭐</span>收藏组合</div>
                         <div class="dialog-sub">为该组合添加货号（选填），方便后续查找</div>
@@ -3514,8 +3167,7 @@
                         </div>
                     `;
                     overlay.appendChild(box);
-                    setTimeout(() => { const inp = document.getElementById('dialog-itemNo'); if (inp) inp.focus(); },
-                    100);
+                    setTimeout(() => { const inp = document.getElementById('dialog-itemNo'); if (inp) inp.focus(); }, 100);
                     box.querySelectorAll('button').forEach(btn => {
                         btn.addEventListener('click', (e) => {
                             e.stopPropagation();
@@ -3523,13 +3175,11 @@
                                 const inp = document.getElementById('dialog-itemNo');
                                 this._close();
                                 resolve(inp ? inp.value.trim() : '');
-                            } else { this._close();
-                                resolve(undefined); }
+                            } else { this._close(); resolve(undefined); }
                         });
                     });
                     const inp = document.getElementById('dialog-itemNo');
-                    if (inp) inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { this._close();
-                            resolve(inp.value.trim()); } });
+                    if (inp) inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { this._close(); resolve(inp.value.trim()); } });
                 });
             },
             toast(msg) { showToast(msg, '提示', '✓'); }
@@ -3550,9 +3200,7 @@
                 </div>
             `;
             container.appendChild(overlay);
-            setTimeout(() => {
-                overlay.querySelector('.toast-glass')?.classList.add('show');
-            }, 20);
+            setTimeout(() => { overlay.querySelector('.toast-glass')?.classList.add('show'); }, 20);
             setTimeout(() => {
                 if (overlay.parentNode) {
                     overlay.classList.remove('show');
@@ -3561,12 +3209,10 @@
             }, 3000);
         }
 
-        // ----- 收藏夹 -----
+        // ---- 收藏夹 ----
         let favorites = JSON.parse(localStorage.getItem('amber-favorites') || '[]');
 
-        function saveFavorites() {
-            localStorage.setItem('amber-favorites', JSON.stringify(favorites));
-        }
+        function saveFavorites() { localStorage.setItem('amber-favorites', JSON.stringify(favorites)); }
 
         function comboKey(combo) {
             const c = combo.curl || { a: 0, b: 0, c: 0, d: 0 },
@@ -3595,8 +3241,7 @@
         async function removeFavorite(combo) {
             const idx = findFavoriteIndex(combo);
             if (idx < 0) return false;
-            const confirmed = await Dialog.confirm({ icon: '🗑️', title: '取消收藏', message: '确定要取消收藏该组合吗？',
-                confirmText: '取消收藏', danger: true });
+            const confirmed = await Dialog.confirm({ icon: '🗑️', title: '取消收藏', message: '确定要取消收藏该组合吗？', confirmText: '取消收藏', danger: true });
             if (!confirmed) return false;
             favorites.splice(idx, 1);
             saveFavorites();
@@ -3604,8 +3249,7 @@
             return true;
         }
 
-        async function toggleFavorite(combo) { return isFavorite(combo) ? await removeFavorite(combo) : await addFavorite(
-            combo); }
+        async function toggleFavorite(combo) { return isFavorite(combo) ? await removeFavorite(combo) : await addFavorite(combo); }
 
         function showFavorites() {
             if (favorites.length === 0) { Dialog.toast('暂无收藏的组合'); return; }
@@ -3615,17 +3259,13 @@
             const content = document.createElement('div');
             content.className = 'modal-content';
             content.onclick = (e) => e.stopPropagation();
-            let html =
-                `<h3>⭐ 收藏夹 <span style="font-size:13px;font-weight:400;color:var(--text-muted);">(${favorites.length}项)</span><button class="close-btn" onclick="this.closest('.modal-overlay').remove()">✕</button></h3>`;
+            let html = `<h3>⭐ 收藏夹 <span style="font-size:13px;font-weight:400;color:var(--text-muted);">(${favorites.length}项)</span><button class="close-btn" onclick="this.closest('.modal-overlay').remove()">✕</button></h3>`;
             favorites.forEach((item, idx) => {
                 const combo = item.combo;
                 html += `<div class="fav-item"><div style="font-size:12px;color:var(--text-secondary);margin-bottom:2px;">货号：${item.itemNo||'（未填写）'}</div>`;
-                if (combo.curl) html +=
-                    `<div class="gear-row"><span class="label">卷取</span><span class="vals">A=${combo.curl.a} B=${combo.curl.b} C=${combo.curl.c} D=${combo.curl.d}</span></div>`;
-                if (combo.stretch) html +=
-                    `<div class="gear-row"><span class="label">拉伸</span><span class="vals">A=${combo.stretch.a} B=${combo.stretch.b} C=${combo.stretch.c} D=${combo.stretch.d}</span></div>`;
-                if (combo.feed) html +=
-                    `<div class="gear-row"><span class="label">供送</span><span class="vals">A=${combo.feed.a} B=${combo.feed.b} C=${combo.feed.c} D=${combo.feed.d}</span></div>`;
+                if (combo.curl) html += `<div class="gear-row"><span class="label">卷取</span><span class="vals">A=${combo.curl.a} B=${combo.curl.b} C=${combo.curl.c} D=${combo.curl.d}</span></div>`;
+                if (combo.stretch) html += `<div class="gear-row"><span class="label">拉伸</span><span class="vals">A=${combo.stretch.a} B=${combo.stretch.b} C=${combo.stretch.c} D=${combo.stretch.d}</span></div>`;
+                if (combo.feed) html += `<div class="gear-row"><span class="label">供送</span><span class="vals">A=${combo.feed.a} B=${combo.feed.b} C=${combo.feed.c} D=${combo.feed.d}</span></div>`;
                 html += `<div class="fav-actions" style="margin-top:4px;"><button onclick="removeFavoriteFromList(${idx})">取消收藏</button></div></div>`;
             });
             content.innerHTML = html;
@@ -3636,8 +3276,7 @@
         async function removeFavoriteFromList(index) {
             if (index >= favorites.length) return;
             const combo = favorites[index].combo;
-            const confirmed = await Dialog.confirm({ icon: '🗑️', title: '取消收藏', message: '确定取消收藏？',
-                confirmText: '取消收藏', danger: true });
+            const confirmed = await Dialog.confirm({ icon: '🗑️', title: '取消收藏', message: '确定取消收藏？', confirmText: '取消收藏', danger: true });
             if (!confirmed) return;
             favorites.splice(index, 1);
             saveFavorites();
@@ -3649,19 +3288,16 @@
         function refreshStarStates() {
             document.querySelectorAll('.card .star-btn').forEach(btn => {
                 const combo = btn._combo;
-                if (combo) { const fav = isFavorite(combo);
-                    btn.textContent = fav ? '★' : '☆';
-                    btn.classList.toggle('active', fav); }
+                if (combo) { const fav = isFavorite(combo); btn.textContent = fav ? '★' : '☆'; btn.classList.toggle('active', fav); }
             });
         }
 
-        // ----- 构建齿轮映射 -----
+        // ---- 构建齿轮映射 ----
         function buildMapsAsync(callback) {
             if (curlMap && stretchMap && feedMap) { callback({ curl: curlMap, stretch: stretchMap, feed: feedMap }); return; }
             if (buildInProgress) {
                 const checkInterval = setInterval(() => {
-                    if (curlMap && stretchMap && feedMap) { clearInterval(checkInterval);
-                        callback({ curl: curlMap, stretch: stretchMap, feed: feedMap }); }
+                    if (curlMap && stretchMap && feedMap) { clearInterval(checkInterval); callback({ curl: curlMap, stretch: stretchMap, feed: feedMap }); }
                 }, 80);
                 return;
             }
@@ -3685,27 +3321,16 @@
 
             function step() {
                 if (buildCancelled) { buildInProgress = false; return; }
-                if (phase === 0) { curlMap = buildOneMap(FIXED_GEARS.curl.a, FIXED_GEARS.curl.d);
-                    phase = 1;
-                    requestAnimationFrame(step); } else if (phase === 1) { stretchMap = buildOneMap(FIXED_GEARS.stretch.a,
-                        FIXED_GEARS.stretch.d);
-                    phase = 2;
-                    requestAnimationFrame(step); } else if (phase === 2) { feedMap = buildOneMap(FIXED_GEARS.feed.a,
-                        FIXED_GEARS.feed.d);
-                    phase = 3;
-                    buildInProgress = false;
-                    callback({ curl: curlMap, stretch: stretchMap, feed: feedMap }); }
+                if (phase === 0) { curlMap = buildOneMap(FIXED_GEARS.curl.a, FIXED_GEARS.curl.d); phase = 1; requestAnimationFrame(step); }
+                else if (phase === 1) { stretchMap = buildOneMap(FIXED_GEARS.stretch.a, FIXED_GEARS.stretch.d); phase = 2; requestAnimationFrame(step); }
+                else if (phase === 2) { feedMap = buildOneMap(FIXED_GEARS.feed.a, FIXED_GEARS.feed.d); phase = 3; buildInProgress = false; callback({ curl: curlMap, stretch: stretchMap, feed: feedMap }); }
             }
             requestAnimationFrame(step);
         }
 
-        // ================================================================
-        // ★★★ 自动寻优搜索 ★★★
-        // ================================================================
+        // ---- 自动寻优 ----
         function handleStartSearch() {
-            const startBtn = document.getElementById('start-btn'),
-                cancelBtn = document.getElementById('cancel-btn'),
-                resultsEl = document.getElementById('results');
+            const startBtn = document.getElementById('start-btn'), cancelBtn = document.getElementById('cancel-btn'), resultsEl = document.getElementById('results');
 
             document.getElementById('fa').value = FIXED_GEARS.curl.a;
             document.getElementById('fd').value = FIXED_GEARS.curl.d;
@@ -3718,9 +3343,8 @@
             const tw = parseFloat(document.getElementById('tw').value) || 0;
             const ra = parseFloat(document.getElementById('ra').value) || 0;
 
-            // ★★★ 改为 Toast 弹窗 ★★★
             if (!ten && !tw && !ra) {
-                showToast('⚠️', '请至少输入一个目标值', '在张力、捻度、拉比中至少输入一项');
+                showToast('请至少输入一个目标值', '⚠️', '在张力、捻度、拉比中至少输入一项');
                 return;
             }
 
@@ -3729,8 +3353,7 @@
             cancelBtn.style.display = '';
             searchCancelled = false;
             if (searchTimeout) clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => { if (!searchCancelled) startAutoSearchInternal();
-                searchTimeout = null; }, 800);
+            searchTimeout = setTimeout(() => { if (!searchCancelled) startAutoSearchInternal(); searchTimeout = null; }, 800);
         }
 
         function showCalcAnimation(container) {
@@ -3751,12 +3374,10 @@
             const ten = parseFloat(document.getElementById('ten').value) || 0;
             const tw = parseFloat(document.getElementById('tw').value) || 0;
             const ra = parseFloat(document.getElementById('ra').value) || 0;
-            if (searchCancelled) { finishSearch();
-                resultsEl.innerHTML = '<div class="search-status hint">搜索已取消</div>'; return; }
+            if (searchCancelled) { finishSearch(); resultsEl.innerHTML = '<div class="search-status hint">搜索已取消</div>'; return; }
 
             buildMapsAsync(maps => {
-                if (searchCancelled) { finishSearch();
-                    resultsEl.innerHTML = '<div class="search-status hint">搜索已取消</div>'; return; }
+                if (searchCancelled) { finishSearch(); resultsEl.innerHTML = '<div class="search-status hint">搜索已取消</div>'; return; }
 
                 const dd = parseFloat(localStorage.getItem('cfg_set_dd')) || 100;
                 const dr = parseFloat(localStorage.getItem('cfg_set_dr')) || 70;
@@ -3774,9 +3395,7 @@
                 const hasRa = ra > 0 && twistVal > 0;
                 const MAX_CANDIDATES = 30;
 
-                let curlCandidates = [],
-                    stretchCandidates = [],
-                    feedCandidates = [];
+                let curlCandidates = [], stretchCandidates = [], feedCandidates = [];
 
                 if (hasTen && maps.curl) {
                     const targetRatio = (ten / tensionCoeff) * cConst;
@@ -3785,8 +3404,7 @@
                     maps.curl.forEach((gears, key) => {
                         if (searchCancelled) return;
                         const v = parseFloat(key);
-                        if (v >= low && v <= high) { gears.forEach(g => { if (curlCandidates.length < MAX_CANDIDATES)
-                                curlCandidates.push(g); }); }
+                        if (v >= low && v <= high) { gears.forEach(g => { if (curlCandidates.length < MAX_CANDIDATES) curlCandidates.push(g); }); }
                     });
                 }
 
@@ -3797,8 +3415,7 @@
                     maps.stretch.forEach((gears, key) => {
                         if (searchCancelled) return;
                         const v = parseFloat(key);
-                        if (v >= low && v <= high) { gears.forEach(g => { if (stretchCandidates.length < MAX_CANDIDATES)
-                                stretchCandidates.push(g); }); }
+                        if (v >= low && v <= high) { gears.forEach(g => { if (stretchCandidates.length < MAX_CANDIDATES) stretchCandidates.push(g); }); }
                     });
                 }
 
@@ -3809,13 +3426,11 @@
                     maps.feed.forEach((gears, key) => {
                         if (searchCancelled) return;
                         const v = parseFloat(key);
-                        if (v >= low && v <= high) { gears.forEach(g => { if (feedCandidates.length < MAX_CANDIDATES)
-                                feedCandidates.push(g); }); }
+                        if (v >= low && v <= high) { gears.forEach(g => { if (feedCandidates.length < MAX_CANDIDATES) feedCandidates.push(g); }); }
                     });
                 }
 
-                if ((hasTen && curlCandidates.length === 0) || (hasTw && stretchCandidates.length === 0) || (hasRa &&
-                        feedCandidates.length === 0)) {
+                if ((hasTen && curlCandidates.length === 0) || (hasTw && stretchCandidates.length === 0) || (hasRa && feedCandidates.length === 0)) {
                     finishSearch();
                     resultsEl.innerHTML = '<div class="search-status hint">未找到匹配的齿轮组合，请调整误差或目标值</div>';
                     restoreIdleGears(resultsEl);
@@ -3832,33 +3447,23 @@
 
                 let combined = [];
                 if (!hasTen && !hasTw && hasRa) {
-                    combined = feedCandidates.slice(0, displayCount).map(g => ({ curl: null, stretch: null, feed: g,
-                        error: 0 }));
+                    combined = feedCandidates.slice(0, displayCount).map(g => ({ curl: null, stretch: null, feed: g, error: 0 }));
                 } else if (!hasTen && hasTw && !hasRa) {
-                    combined = stretchCandidates.slice(0, displayCount).map(g => ({ curl: null, stretch: g, feed: null,
-                        error: 0 }));
+                    combined = stretchCandidates.slice(0, displayCount).map(g => ({ curl: null, stretch: g, feed: null, error: 0 }));
                 } else if (hasTen && !hasTw && !hasRa) {
-                    combined = curlCandidates.slice(0, displayCount).map(g => ({ curl: g, stretch: null, feed: null,
-                        error: 0 }));
+                    combined = curlCandidates.slice(0, displayCount).map(g => ({ curl: g, stretch: null, feed: null, error: 0 }));
                 } else {
                     let comboList = [];
                     const totalCombos = curlCandidates.length * stretchCandidates.length * feedCandidates.length;
                     const maxCombos = 20000;
-                    let cArr = curlCandidates,
-                        sArr = stretchCandidates,
-                        fArr = feedCandidates;
+                    let cArr = curlCandidates, sArr = stretchCandidates, fArr = feedCandidates;
                     if (totalCombos > maxCombos) {
                         const stepCurl = Math.max(1, Math.floor(curlCandidates.length / Math.pow(maxCombos, 1 / 3)));
-                        const stepStretch = Math.max(1, Math.floor(stretchCandidates.length / Math.pow(maxCombos, 1 /
-                        3)));
+                        const stepStretch = Math.max(1, Math.floor(stretchCandidates.length / Math.pow(maxCombos, 1 / 3)));
                         const stepFeed = Math.max(1, Math.floor(feedCandidates.length / Math.pow(maxCombos, 1 / 3)));
-                        cArr = [];
-                        for (let i = 0; i < curlCandidates.length; i += stepCurl) cArr.push(curlCandidates[i]);
-                        sArr = [];
-                        for (let i = 0; i < stretchCandidates.length; i += stepStretch) sArr.push(stretchCandidates[
-                        i]);
-                        fArr = [];
-                        for (let i = 0; i < feedCandidates.length; i += stepFeed) fArr.push(feedCandidates[i]);
+                        cArr = []; for (let i = 0; i < curlCandidates.length; i += stepCurl) cArr.push(curlCandidates[i]);
+                        sArr = []; for (let i = 0; i < stretchCandidates.length; i += stepStretch) sArr.push(stretchCandidates[i]);
+                        fArr = []; for (let i = 0; i < feedCandidates.length; i += stepFeed) fArr.push(feedCandidates[i]);
                     }
                     for (const curl of cArr)
                         for (const stretch of sArr)
@@ -3869,24 +3474,18 @@
                                 const twistCalc = k2 / ratioStretch;
                                 const ratioFeed = (feed.a / feed.b) * (feed.c / feed.d);
                                 const raCalc = k3 / (twistVal * ratioFeed);
-                                let errSum = 0,
-                                    count = 0;
-                                if (hasTen) { errSum += Math.abs((tensionCalc - ten) / ten) * 100;
-                                    count++; }
-                                if (hasTw) { errSum += Math.abs((twistCalc - tw) / tw) * 100;
-                                    count++; }
-                                if (hasRa) { errSum += Math.abs((raCalc - ra) / ra) * 100;
-                                    count++; }
+                                let errSum = 0, count = 0;
+                                if (hasTen) { errSum += Math.abs((tensionCalc - ten) / ten) * 100; count++; }
+                                if (hasTw) { errSum += Math.abs((twistCalc - tw) / tw) * 100; count++; }
+                                if (hasRa) { errSum += Math.abs((raCalc - ra) / ra) * 100; count++; }
                                 const avgErr = count > 0 ? errSum / count : 0;
-                                comboList.push({ curl, stretch, feed, error: avgErr, tensionCalc, twistCalc,
-                                    raCalc });
+                                comboList.push({ curl, stretch, feed, error: avgErr, tensionCalc, twistCalc, raCalc });
                             }
                     comboList.sort((a, b) => a.error - b.error);
                     combined = comboList.slice(0, displayCount);
                 }
 
-                if (searchCancelled) { finishSearch();
-                    resultsEl.innerHTML = '<div class="search-status hint">搜索已取消</div>'; return; }
+                if (searchCancelled) { finishSearch(); resultsEl.innerHTML = '<div class="search-status hint">搜索已取消</div>'; return; }
                 displayCombinedResults(combined, resultsEl, hasTen, hasTw, hasRa, ten, tw, ra);
                 finishSearch();
             });
@@ -3894,8 +3493,7 @@
 
         function displayCombinedResults(results, container, hasTen, hasTw, hasRa, targetTen, targetTw, targetRa) {
             container.innerHTML = '';
-            if (results.length === 0) { container.innerHTML = '<div class="search-status hint">未找到匹配的组合，请调整误差或目标值</div>';
-                restoreIdleGears(container); return; }
+            if (results.length === 0) { container.innerHTML = '<div class="search-status hint">未找到匹配的组合，请调整误差或目标值</div>'; restoreIdleGears(container); return; }
             const title = document.createElement('div');
             title.className = 'section-title';
             title.textContent = `组合结果（${results.length} 套）`;
@@ -3905,43 +3503,34 @@
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.style.animationDelay = (idx * 0.05) + 's';
-                let html =
-                    `<div class="card-header"><span class="combo-idx">组合 #${idx+1}</span><span class="combo-error">误差 ${item.error.toFixed(2)}%</span></div>`;
+                let html = `<div class="card-header"><span class="combo-idx">组合 #${idx+1}</span><span class="combo-error">误差 ${item.error.toFixed(2)}%</span></div>`;
                 if (item.curl) {
                     const g = item.curl;
-                    html +=
-                        `<div class="gear-set"><span class="group-label">卷取</span><div class="gear-values">A=<span>${g.a}</span> B=<span>${g.b}</span> C=<span>${g.c}</span> D=<span>${g.d}</span></div>`;
+                    html += `<div class="gear-set"><span class="group-label">卷取</span><div class="gear-values">A=<span>${g.a}</span> B=<span>${g.b}</span> C=<span>${g.c}</span> D=<span>${g.d}</span></div>`;
                     if (hasTen) html += `<span class="result-values">张力 <span class="val">${item.tensionCalc.toFixed(2)}%</span></span>`;
                     html += `</div>`;
-                } else { html +=
-                    `<div class="gear-set"><span class="group-label">卷取</span><span style="color:var(--text-muted);font-size:10px;">未搜索</span></div>`; }
+                } else { html += `<div class="gear-set"><span class="group-label">卷取</span><span style="color:var(--text-muted);font-size:10px;">未搜索</span></div>`; }
                 if (item.stretch) {
                     const g = item.stretch;
-                    html +=
-                        `<div class="gear-set"><span class="group-label">拉伸</span><div class="gear-values">A=<span>${g.a}</span> B=<span>${g.b}</span> C=<span>${g.c}</span> D=<span>${g.d}</span></div>`;
+                    html += `<div class="gear-set"><span class="group-label">拉伸</span><div class="gear-values">A=<span>${g.a}</span> B=<span>${g.b}</span> C=<span>${g.c}</span> D=<span>${g.d}</span></div>`;
                     if (hasTw) html += `<span class="result-values">捻度 <span class="val">${item.twistCalc.toFixed(2)}</span></span>`;
                     html += `</div>`;
-                } else { html +=
-                    `<div class="gear-set"><span class="group-label">拉伸</span><span style="color:var(--text-muted);font-size:10px;">未搜索</span></div>`; }
+                } else { html += `<div class="gear-set"><span class="group-label">拉伸</span><span style="color:var(--text-muted);font-size:10px;">未搜索</span></div>`; }
                 if (item.feed) {
                     const g = item.feed;
-                    html +=
-                        `<div class="gear-set"><span class="group-label">供送</span><div class="gear-values">A=<span>${g.a}</span> B=<span>${g.b}</span> C=<span>${g.c}</span> D=<span>${g.d}</span></div>`;
+                    html += `<div class="gear-set"><span class="group-label">供送</span><div class="gear-values">A=<span>${g.a}</span> B=<span>${g.b}</span> C=<span>${g.c}</span> D=<span>${g.d}</span></div>`;
                     if (hasRa) html += `<span class="result-values">拉比 <span class="val">${item.raCalc.toFixed(4)}</span></span>`;
                     html += `</div>`;
-                } else { html +=
-                    `<div class="gear-set"><span class="group-label">供送</span><span style="color:var(--text-muted);font-size:10px;">未搜索</span></div>`; }
+                } else { html += `<div class="gear-set"><span class="group-label">供送</span><span style="color:var(--text-muted);font-size:10px;">未搜索</span></div>`; }
                 const isFav = isFavorite(item);
-                html +=
-                    `<div class="card-action"><span class="copy-hint" onclick="event.stopPropagation(); confirmFill(this, ${idx})">📥 填入</span><span class="star-btn ${isFav?'active':''}" onclick="event.stopPropagation(); handleStarClick(this, ${idx})">${isFav?'★':'☆'}</span></div>`;
+                html += `<div class="card-action"><span class="copy-hint" onclick="event.stopPropagation(); confirmFill(this, ${idx})">📥 填入</span><span class="star-btn ${isFav?'active':''}" onclick="event.stopPropagation(); handleStarClick(this, ${idx})">${isFav?'★':'☆'}</span></div>`;
                 card.innerHTML = html;
                 card._combo = item;
                 card._idx = idx;
                 const starBtn = card.querySelector('.star-btn');
                 if (starBtn) starBtn._combo = item;
                 card.addEventListener('click', function(e) {
-                    if (e.target.closest('.card-action') || e.target.closest('.star-btn') || e.target.closest(
-                            '.copy-hint')) return;
+                    if (e.target.closest('.card-action') || e.target.closest('.star-btn') || e.target.closest('.copy-hint')) return;
                     const isSelected = this.classList.contains('selected');
                     document.querySelectorAll('.card.selected').forEach(c => c.classList.remove('selected'));
                     if (!isSelected) this.classList.add('selected');
@@ -3951,6 +3540,8 @@
                 });
                 container.appendChild(card);
             });
+            // 延迟添加徽章（确保卡片已渲染）
+            setTimeout(addRankBadges, 100);
         }
 
         async function confirmFill(el, idx) {
@@ -3962,21 +3553,11 @@
             card.classList.add('clicked');
             clearTimeout(card._clickTimer);
             card._clickTimer = setTimeout(() => card.classList.remove('clicked'), 400);
-            const confirmed = await Dialog.confirm({ icon: '📥', title: '填入齿轮', message: '确定将该组合的齿轮值填入输入框吗？',
-                confirmText: '确认填入' });
+            const confirmed = await Dialog.confirm({ icon: '📥', title: '填入齿轮', message: '确定将该组合的齿轮值填入输入框吗？', confirmText: '确认填入' });
             if (!confirmed) return;
-            if (item.curl) { document.getElementById('fa').value = item.curl.a;
-                document.getElementById('fb').value = item.curl.b;
-                document.getElementById('fc').value = item.curl.c;
-                document.getElementById('fd').value = item.curl.d; }
-            if (item.stretch) { document.getElementById('sa').value = item.stretch.a;
-                document.getElementById('sb').value = item.stretch.b;
-                document.getElementById('sc').value = item.stretch.c;
-                document.getElementById('sd').value = item.stretch.d; }
-            if (item.feed) { document.getElementById('fea').value = item.feed.a;
-                document.getElementById('feb').value = item.feed.b;
-                document.getElementById('fec').value = item.feed.c;
-                document.getElementById('fed').value = item.feed.d; }
+            if (item.curl) { document.getElementById('fa').value = item.curl.a; document.getElementById('fb').value = item.curl.b; document.getElementById('fc').value = item.curl.c; document.getElementById('fd').value = item.curl.d; }
+            if (item.stretch) { document.getElementById('sa').value = item.stretch.a; document.getElementById('sb').value = item.stretch.b; document.getElementById('sc').value = item.stretch.c; document.getElementById('sd').value = item.stretch.d; }
+            if (item.feed) { document.getElementById('fea').value = item.feed.a; document.getElementById('feb').value = item.feed.b; document.getElementById('fec').value = item.feed.c; document.getElementById('fed').value = item.feed.d; }
             Dialog.toast('已填入齿轮组合');
         }
 
@@ -3990,28 +3571,23 @@
             clearTimeout(card._clickTimer);
             card._clickTimer = setTimeout(() => card.classList.remove('clicked'), 300);
             const result = await toggleFavorite(item);
-            if (result !== false) { const fav = isFavorite(item);
-                el.textContent = fav ? '★' : '☆';
-                el.classList.toggle('active', fav); }
+            if (result !== false) { const fav = isFavorite(item); el.textContent = fav ? '★' : '☆'; el.classList.toggle('active', fav); }
         }
 
         function finishSearch() {
             document.getElementById('start-btn').style.display = '';
             document.getElementById('cancel-btn').style.display = 'none';
             buildCancelled = false;
-            if (searchTimeout) { clearTimeout(searchTimeout);
-                searchTimeout = null; }
+            if (searchTimeout) { clearTimeout(searchTimeout); searchTimeout = null; }
         }
 
         function cancelSearch() {
             searchCancelled = true;
             buildCancelled = true;
-            if (searchTimeout) { clearTimeout(searchTimeout);
-                searchTimeout = null; }
+            if (searchTimeout) { clearTimeout(searchTimeout); searchTimeout = null; }
             finishSearch();
             const resultsEl = document.getElementById('results');
-            if (resultsEl) { resultsEl.innerHTML = '<div class="search-status hint">搜索已取消</div>';
-                restoreIdleGears(resultsEl); }
+            if (resultsEl) { resultsEl.innerHTML = '<div class="search-status hint">搜索已取消</div>'; restoreIdleGears(resultsEl); }
         }
 
         function restoreIdleGears(container) {
@@ -4019,14 +3595,11 @@
             const wrap = document.createElement('div');
             wrap.className = 'gear-animation-wrap';
             wrap.id = 'idle-gears';
-            wrap.innerHTML =
-                `<div class="gear-item-anim">${gearSvg(16,42)}</div><div class="gear-item-anim">${gearSvg(20,36)}</div><div class="gear-item-anim">${gearSvg(18,48)}</div><div class="gear-item-anim">${gearSvg(22,34)}</div>`;
+            wrap.innerHTML = `<div class="gear-item-anim">${gearSvg(16,42)}</div><div class="gear-item-anim">${gearSvg(20,36)}</div><div class="gear-item-anim">${gearSvg(18,48)}</div><div class="gear-item-anim">${gearSvg(22,34)}</div>`;
             container.appendChild(wrap);
         }
 
-        // ================================================================
-        // ★★★ 手动验算（实时计算，无按钮） ★★★
-        // ================================================================
+        // ---- 手动验算 ----
         function calcManual() {
             if (calcScheduled) return;
             calcScheduled = true;
@@ -4059,9 +3632,7 @@
                             if (ratio !== 0) twistVal = k2 / ratio;
                         }
                     }
-                    if (!twistVal || isNaN(twistVal) || twistVal === 0) {
-                        return 0;
-                    }
+                    if (!twistVal || isNaN(twistVal) || twistVal === 0) { return 0; }
                     return k / (twistVal * (a / b) * (c / d));
                 }, 'm3res', '拉比');
             });
@@ -4079,15 +3650,11 @@
             }
             const val = formula(a, b, c, d);
             if (isNaN(val) || !isFinite(val) || val === 0) {
-                if (resId === 'm3res') {
-                    el.innerHTML = '<span class="hint">需要拉伸捻度来计算拉比</span>';
-                } else {
-                    el.innerHTML = '<span class="hint">计算结果无效</span>';
-                }
+                if (resId === 'm3res') { el.innerHTML = '<span class="hint">需要拉伸捻度来计算拉比</span>'; }
+                else { el.innerHTML = '<span class="hint">计算结果无效</span>'; }
                 return;
             }
-            el.innerHTML =
-                `<span class="val">${label} = <b>${val.toFixed(4)}</b></span><span class="sep-dot">·</span><span style="font-size:10px;color:var(--text-muted);">A/B × C/D = ${(a/b).toFixed(4)} × ${(c/d).toFixed(4)}</span>`;
+            el.innerHTML = `<span class="val">${label} = <b>${val.toFixed(4)}</b></span><span class="sep-dot">·</span><span style="font-size:10px;color:var(--text-muted);">A/B × C/D = ${(a/b).toFixed(4)} × ${(c/d).toFixed(4)}</span>`;
         }
 
         const debouncedCalc = debounce(calcManual, 120);
@@ -4096,29 +3663,21 @@
             if (el) el.addEventListener('input', debouncedCalc, { passive: true });
         });
 
-        function debounce(fn, delay) { let t; return () => { clearTimeout(t);
-                t = setTimeout(fn, delay); }; }
+        function debounce(fn, delay) { let t; return () => { clearTimeout(t); t = setTimeout(fn, delay); }; }
 
-        // ================================================================
-        // 设置
-        // ================================================================
+        // ---- 设置 ----
         function saveSettings() {
-            settingsKeys.forEach(id => { const el = document.getElementById(id); if (el) localStorage.setItem('cfg_' + id,
-                    el.value); });
+            settingsKeys.forEach(id => { const el = document.getElementById(id); if (el) localStorage.setItem('cfg_' + id, el.value); });
             showToast('设置已保存', '保存成功', '💾');
         }
 
         function resetSettings() {
-            const defaults = { set_k2: '1334.4545', set_err2: '2.0', set_k3: '3741.0728', set_err3: '0.05', set_dd: '100',
-                set_dr: '70', set_err_tension: '0.2', set_display: '5' };
-            settingsKeys.forEach(id => { const el = document.getElementById(id); if (el) { el.value = defaults[id] || '';
-                    localStorage.setItem('cfg_' + id, el.value); } });
+            const defaults = { set_k2: '1334.4545', set_err2: '2.0', set_k3: '3741.0728', set_err3: '0.05', set_dd: '100', set_dr: '70', set_err_tension: '0.2', set_display: '5' };
+            settingsKeys.forEach(id => { const el = document.getElementById(id); if (el) { el.value = defaults[id] || ''; localStorage.setItem('cfg_' + id, el.value); } });
             showToast('已恢复默认设置', '重置完成', '↩️');
         }
 
-        // ================================================================
-        // 初始化
-        // ================================================================
+        // ---- 初始化 ----
         function initFixedGears() {
             document.getElementById('fa').value = FIXED_GEARS.curl.a;
             document.getElementById('fd').value = FIXED_GEARS.curl.d;
@@ -4163,9 +3722,10 @@
             setTimeout(calcManual, 300);
             requestIdleCallback(() => { buildMapsAsync(() => {}); }, { timeout: 3000 });
 
-            console.log('⚙️ 包覆工艺自动计算 v2.0 整合版已加载');
+            console.log('⚙️ 包覆工艺自动计算 v2.0 终极版已加载');
             console.log('📦 主题:', THEME_NAMES[currentThemeIndex]);
             console.log('⭐ 收藏:', favorites.length, '个');
+            console.log('✨ 12 项 VIP 特效全部激活！');
         });
     </script>
 </body>
