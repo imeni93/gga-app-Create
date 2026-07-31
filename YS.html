@@ -1,0 +1,1308 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>包覆工艺 · 手动验算</title>
+    <style>
+        /* ===== 重置 & 基础 ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --ios-ease: cubic-bezier(0.22, 1, 0.36, 1);
+            --ios-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --theme-transition: 0.25s var(--ios-ease);
+        }
+
+        /* ===== 主题 ===== */
+        [data-theme="light"] {
+            --bg-base: #f0e8de;
+            --bg-app: rgba(255, 250, 245, 0.82);
+            --border-app: rgba(255, 245, 235, 0.60);
+            --shadow-app: 0 32px 80px rgba(120, 90, 60, 0.10), 0 6px 20px rgba(120, 90, 60, 0.03), inset 0 1px 0 rgba(255, 255, 255, 0.85);
+            --shadow-card: 0 12px 40px rgba(120, 90, 60, 0.10), 0 4px 16px rgba(120, 90, 60, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.80);
+            --text-primary: #1a1410;
+            --text-secondary: rgba(26, 20, 16, 0.74);
+            --text-muted: rgba(26, 20, 16, 0.36);
+            --accent: #b8863a;
+            --accent-light: #d4a85a;
+            --accent-soft: rgba(184, 134, 58, 0.12);
+            --accent-border: rgba(184, 134, 58, 0.30);
+            --card-bg: rgba(255, 252, 248, 0.92);
+            --card-border: rgba(0, 0, 0, 0.04);
+            --input-bg: rgba(255, 255, 255, 0.92);
+            --input-border: rgba(200, 185, 170, 0.22);
+            --input-focus: rgba(184, 134, 58, 0.38);
+            --row-bg: rgba(255, 252, 248, 0.50);
+            --row-border: rgba(0, 0, 0, 0.03);
+            --gear-stroke: #c8b8a8;
+            --gear-center-stroke: #d8c8b8;
+            --blob1: radial-gradient(circle, #e8d5c0, #d4b8a0 60%, transparent 80%);
+            --blob2: radial-gradient(circle, #dcc8b4, #c8ac94 60%, transparent 80%);
+            --scrollbar-thumb: rgba(184, 134, 58, 0.25);
+            --gradient-bg: linear-gradient(135deg, #f0e8de, #e8ddd0, #f5ede4, #e8ddd0);
+            --badge-bg: rgba(184, 134, 58, 0.10);
+            --badge-text: #9a7a5a;
+            --toast-overlay: rgba(0, 0, 0, 0.12);
+            --toast-bg: rgba(255, 252, 248, 0.94);
+        }
+
+        [data-theme="dark"] {
+            --bg-base: #181410;
+            --bg-app: rgba(24, 20, 16, 0.88);
+            --border-app: rgba(255, 245, 235, 0.05);
+            --shadow-app: 0 32px 80px rgba(0, 0, 0, 0.60), inset 0 1px 0 rgba(255, 255, 255, 0.02);
+            --shadow-card: 0 12px 40px rgba(0, 0, 0, 0.30), 0 4px 16px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.02);
+            --text-primary: #f0e8e0;
+            --text-secondary: rgba(220, 210, 200, 0.78);
+            --text-muted: rgba(220, 210, 200, 0.36);
+            --accent: #d4a85a;
+            --accent-light: #e8c880;
+            --accent-soft: rgba(212, 168, 90, 0.12);
+            --accent-border: rgba(212, 168, 90, 0.30);
+            --card-bg: rgba(255, 252, 248, 0.06);
+            --card-border: rgba(255, 245, 235, 0.04);
+            --input-bg: rgba(255, 252, 248, 0.06);
+            --input-border: rgba(200, 190, 215, 0.06);
+            --input-focus: rgba(212, 168, 90, 0.38);
+            --row-bg: rgba(255, 252, 248, 0.03);
+            --row-border: rgba(255, 245, 235, 0.03);
+            --gear-stroke: #7a6a5a;
+            --gear-center-stroke: #6a5a4a;
+            --blob1: radial-gradient(circle, #3a2e24, #2a1e16 60%, transparent 80%);
+            --blob2: radial-gradient(circle, #2e241e, #1e1612 60%, transparent 80%);
+            --scrollbar-thumb: rgba(212, 168, 90, 0.25);
+            --gradient-bg: linear-gradient(135deg, #181410, #2a221e, #181410, #2a221e);
+            --badge-bg: rgba(212, 168, 90, 0.10);
+            --badge-text: #c8b080;
+            --toast-overlay: rgba(0, 0, 0, 0.50);
+            --toast-bg: rgba(24, 20, 16, 0.94);
+        }
+
+        /* ===== 全局 ===== */
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 8px 12px 12px;
+            background: var(--gradient-bg);
+            background-size: 300% 300%;
+            animation: gradientFlow 18s ease-in-out infinite alternate;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            transition: background var(--theme-transition), background-color var(--theme-transition);
+        }
+        @keyframes gradientFlow {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            background-image:
+                radial-gradient(2px 2px at 15% 25%, rgba(255, 255, 240, 0.35), transparent),
+                radial-gradient(2px 2px at 35% 65%, rgba(255, 255, 240, 0.25), transparent),
+                radial-gradient(1.5px 1.5px at 55% 15%, rgba(255, 255, 240, 0.40), transparent),
+                radial-gradient(1.5px 1.5px at 75% 80%, rgba(255, 255, 240, 0.20), transparent),
+                radial-gradient(2px 2px at 90% 35%, rgba(255, 255, 240, 0.30), transparent),
+                radial-gradient(1px 1px at 5% 70%, rgba(255, 255, 240, 0.25), transparent),
+                radial-gradient(1px 1px at 45% 90%, rgba(255, 255, 240, 0.15), transparent),
+                radial-gradient(2px 2px at 85% 10%, rgba(255, 255, 240, 0.20), transparent);
+            background-size: 100% 100%;
+            animation: twinkle 10s ease-in-out infinite alternate;
+            transition: opacity var(--theme-transition);
+        }
+        @keyframes twinkle {
+            0% {
+                opacity: 0.25;
+            }
+            100% {
+                opacity: 0.85;
+            }
+        }
+
+        .bg-blob {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.10;
+            pointer-events: none;
+            z-index: 0;
+            animation: blobFloat 28s var(--ios-ease) infinite alternate;
+        }
+        .bg-blob-1 {
+            width: 50vw;
+            height: 50vw;
+            top: -18vw;
+            right: -16vw;
+            background: var(--blob1);
+            animation-duration: 22s;
+        }
+        .bg-blob-2 {
+            width: 40vw;
+            height: 40vw;
+            bottom: -14vw;
+            left: -10vw;
+            background: var(--blob2);
+            animation-duration: 26s;
+            animation-delay: -6s;
+        }
+        @keyframes blobFloat {
+            0% {
+                transform: translate(0, 0) scale(1);
+            }
+            50% {
+                transform: translate(30px, -20px) scale(1.06);
+            }
+            100% {
+                transform: translate(-20px, 20px) scale(0.94);
+            }
+        }
+
+        /* ===== App 容器 ===== */
+        .app {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 480px;
+            background: var(--bg-app);
+            backdrop-filter: blur(56px) saturate(1.6);
+            -webkit-backdrop-filter: blur(56px) saturate(1.6);
+            border-radius: 40px;
+            border: 1px solid var(--border-app);
+            box-shadow: var(--shadow-app);
+            display: flex;
+            flex-direction: column;
+            height: 82vh;
+            max-height: 760px;
+            overflow: hidden;
+            transition: background var(--theme-transition), border-color var(--theme-transition), box-shadow var(--theme-transition);
+        }
+        .app::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(180deg, rgba(255, 252, 248, 0.06) 0%, transparent 100%);
+            border-radius: 40px 40px 0 0;
+            pointer-events: none;
+            z-index: 0;
+            transition: opacity var(--theme-transition);
+        }
+        .app::after {
+            content: '';
+            position: absolute;
+            inset: -2.5px;
+            border-radius: 42px;
+            padding: 2.5px;
+            background: conic-gradient(from var(--angle, 0deg),
+                    transparent 0%,
+                    var(--accent) 15%,
+                    var(--accent-light) 30%,
+                    transparent 45%,
+                    transparent 55%,
+                    var(--accent-light) 70%,
+                    var(--accent) 85%,
+                    transparent 100%);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            pointer-events: none;
+            z-index: 20;
+            animation: rotateBorder 8s linear infinite;
+            opacity: 0.6;
+            transition: opacity var(--theme-transition);
+        }
+        .app:hover::after {
+            opacity: 1;
+        }
+        @keyframes rotateBorder {
+            to {
+                --angle: 360deg;
+            }
+        }
+        @property --angle {
+            syntax: '<angle>';
+            initial-value: 0deg;
+            inherits: false;
+        }
+
+        @media (max-width:420px) {
+            .app {
+                border-radius: 32px;
+                height: 78vh;
+                max-height: 680px;
+            }
+            .app::before {
+                border-radius: 32px 32px 0 0;
+            }
+            .app::after {
+                border-radius: 34px;
+            }
+        }
+        @media (max-width:360px) {
+            .app {
+                border-radius: 26px;
+                height: 76vh;
+                max-height: 620px;
+            }
+            .app::before {
+                border-radius: 26px 26px 0 0;
+            }
+            .app::after {
+                border-radius: 28px;
+            }
+        }
+
+        /* ===== 标题栏 ===== */
+        .title-bar {
+            position: relative;
+            z-index: 1;
+            padding: 14px 50px 12px 20px;
+            font-weight: 700;
+            font-size: 20px;
+            text-align: center;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--row-border);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            transition: background var(--theme-transition), color var(--theme-transition), border-color var(--theme-transition);
+        }
+        .title-bar .icon {
+            font-size: 18px;
+            opacity: 0.45;
+        }
+        .title-bar .badge {
+            font-weight: 400;
+            font-size: 11px;
+            opacity: 0.60;
+            background: var(--badge-bg);
+            padding: 2px 14px;
+            border-radius: 20px;
+            color: var(--badge-text);
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            user-select: none;
+            transition: transform 0.2s var(--ios-spring), background var(--theme-transition), color var(--theme-transition);
+        }
+        .title-bar .badge:active {
+            transform: scale(0.88);
+        }
+        @media (max-width:420px) {
+            .title-bar {
+                font-size: 17px;
+                padding: 12px 44px 10px 16px;
+                gap: 6px;
+            }
+            .title-bar .badge {
+                font-size: 10px;
+                padding: 2px 12px;
+            }
+            .title-bar .icon {
+                font-size: 16px;
+            }
+        }
+        @media (max-width:360px) {
+            .title-bar {
+                font-size: 15px;
+                padding: 10px 38px 8px 14px;
+            }
+            .title-bar .badge {
+                font-size: 9px;
+                padding: 1px 10px;
+            }
+        }
+
+        /* ===== 主题切换按钮 ===== */
+        .theme-toggle {
+            position: absolute;
+            top: 14px;
+            right: 16px;
+            z-index: 10;
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            padding: 0;
+            color: var(--text-primary);
+            user-select: none;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.03);
+            transition: transform 0.2s var(--ios-spring), background var(--theme-transition), border-color var(--theme-transition), color var(--theme-transition);
+        }
+        .theme-toggle:active {
+            transform: scale(0.82);
+            transition: transform 0.08s var(--ios-ease);
+        }
+        @media (max-width:420px) {
+            .theme-toggle {
+                width: 34px;
+                height: 34px;
+                font-size: 16px;
+                top: 12px;
+                right: 14px;
+            }
+        }
+        @media (max-width:360px) {
+            .theme-toggle {
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
+                top: 10px;
+                right: 12px;
+            }
+        }
+
+        /* ===== 滚动区域 ===== */
+        .page {
+            flex: 1;
+            overflow-y: auto;
+            padding: 6px 10px 4px;
+            position: relative;
+            z-index: 1;
+            -webkit-overflow-scrolling: touch;
+        }
+        .page::-webkit-scrollbar {
+            width: 2px;
+        }
+        .page::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .page::-webkit-scrollbar-thumb {
+            background: var(--accent-border);
+            border-radius: 2px;
+        }
+        ::-webkit-scrollbar {
+            width: 2px;
+            height: 2px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--scrollbar-thumb);
+            border-radius: 2px;
+        }
+
+        /* ===== 参数设置区 ===== */
+        .settings-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 8px;
+            background: var(--row-bg);
+            border-radius: 12px;
+            padding: 6px 10px;
+            border: 1px solid var(--row-border);
+            margin-bottom: 6px;
+            align-items: center;
+            justify-content: center;
+            transition: background var(--theme-transition), border-color var(--theme-transition);
+        }
+        .settings-area .s-item {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 11px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .settings-area .s-item label {
+            opacity: 0.55;
+            white-space: nowrap;
+            font-weight: 600;
+        }
+        .settings-area .s-item input {
+            width: 60px;
+            padding: 3px 4px;
+            border-radius: 6px;
+            border: 1px solid var(--input-border);
+            background: var(--input-bg);
+            color: var(--text-primary);
+            font-size: 11px;
+            text-align: center;
+            font-weight: 600;
+            transition: border-color 0.2s var(--ios-ease), box-shadow 0.2s var(--ios-ease), background var(--theme-transition), color var(--theme-transition);
+        }
+        .settings-area .s-item input:focus {
+            outline: none;
+            border-color: var(--input-focus);
+            box-shadow: 0 0 0 3px var(--accent-soft);
+        }
+        @media (max-width:420px) {
+            .settings-area {
+                padding: 4px 6px;
+                gap: 3px 6px;
+            }
+            .settings-area .s-item {
+                font-size: 10px;
+            }
+            .settings-area .s-item input {
+                width: 50px;
+                font-size: 10px;
+                padding: 2px 3px;
+            }
+        }
+        @media (max-width:360px) {
+            .settings-area .s-item input {
+                width: 42px;
+                font-size: 9px;
+            }
+            .settings-area .s-item {
+                font-size: 9px;
+            }
+        }
+
+        /* ===== 计算卡片 ===== */
+        .manual-group {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1.5px solid var(--accent-border);
+            border-radius: 14px;
+            padding: 8px 10px 10px;
+            box-shadow: var(--shadow-card);
+            flex-shrink: 0;
+            width: 100%;
+            margin-bottom: 6px;
+            transition: background var(--theme-transition), border-color var(--theme-transition), box-shadow var(--theme-transition);
+        }
+        .manual-group:hover {
+            border-color: var(--accent);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.10), 0 2px 8px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+        [data-theme="dark"] .manual-group:hover {
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+        }
+
+        .manual-label {
+            font-weight: 700;
+            font-size: 14px;
+            letter-spacing: 0.8px;
+            color: var(--accent);
+            text-align: center;
+            margin-bottom: 4px;
+            padding-bottom: 4px;
+            border-bottom: 1.5px solid var(--accent-border);
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 26px;
+            gap: 6px;
+            transition: color var(--theme-transition), border-color var(--theme-transition);
+        }
+        .manual-label .gear-icon {
+            font-size: 16px;
+            opacity: 0.50;
+        }
+        @media (max-width:420px) {
+            .manual-label {
+                font-size: 13px;
+                min-height: 24px;
+                padding-bottom: 3px;
+                margin-bottom: 3px;
+            }
+            .manual-label .gear-icon {
+                font-size: 14px;
+            }
+        }
+        @media (max-width:360px) {
+            .manual-label {
+                font-size: 12px;
+                min-height: 22px;
+            }
+            .manual-label .gear-icon {
+                font-size: 12px;
+            }
+        }
+
+        .gear-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+            padding: 2px 0;
+            width: 100%;
+            flex-wrap: nowrap;
+        }
+        .gear-row .gear-letter {
+            font-weight: 700;
+            font-size: 13px;
+            color: var(--accent);
+            width: 18px;
+            text-align: center;
+            flex-shrink: 0;
+            opacity: 0.80;
+            pointer-events: none;
+            user-select: none;
+            transition: color var(--theme-transition);
+        }
+        .gear-row .gear-field {
+            flex: 1 1 34px;
+            min-width: 22px !important;
+            max-width: 48px;
+            height: 28px;
+            padding: 0 3px;
+            border-radius: 5px;
+            font-size: 13px;
+            text-align: center;
+            background: var(--input-bg);
+            border: 1.5px solid var(--input-border);
+            color: var(--text-primary);
+            font-weight: 600;
+            pointer-events: auto !important;
+            touch-action: manipulation !important;
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            cursor: text !important;
+            position: relative;
+            z-index: 1;
+            transition: border-color 0.2s var(--ios-ease), box-shadow 0.2s var(--ios-ease), transform 0.2s var(--ios-spring), background var(--theme-transition), color var(--theme-transition);
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        .gear-row .gear-field:focus {
+            outline: none;
+            border-color: var(--input-focus);
+            box-shadow: 0 0 0 3px var(--accent-soft);
+            transform: scale(1.04);
+            z-index: 2;
+        }
+        .gear-row .gear-field::placeholder {
+            color: var(--text-muted);
+            font-weight: 400;
+            font-size: 10px;
+            opacity: 0.35;
+        }
+        .gear-row .gear-operator {
+            font-size: 13px;
+            color: var(--text-muted);
+            opacity: 0.20;
+            font-weight: 300;
+            flex-shrink: 0;
+            width: 10px;
+            text-align: center;
+            pointer-events: none;
+            user-select: none;
+            transition: color var(--theme-transition);
+        }
+        @media (max-width:420px) {
+            .manual-group {
+                padding: 5px 8px 8px;
+                border-radius: 12px;
+            }
+            .gear-row .gear-letter {
+                font-size: 12px;
+                width: 16px;
+            }
+            .gear-row .gear-field {
+                flex: 1 1 28px;
+                min-width: 18px !important;
+                max-width: 40px;
+                height: 24px;
+                font-size: 12px;
+                padding: 0 2px;
+            }
+            .gear-row .gear-operator {
+                font-size: 12px;
+                width: 8px;
+            }
+        }
+        @media (max-width:360px) {
+            .gear-row .gear-letter {
+                font-size: 11px;
+                width: 14px;
+            }
+            .gear-row .gear-field {
+                flex: 1 1 22px;
+                min-width: 14px !important;
+                max-width: 32px;
+                height: 22px;
+                font-size: 11px;
+                padding: 0 1px;
+            }
+            .gear-row .gear-operator {
+                font-size: 11px;
+                width: 6px;
+            }
+        }
+
+        .result-line {
+            font-size: 12px;
+            font-weight: 500;
+            margin: 4px 0 0;
+            word-break: break-all;
+            color: var(--text-primary);
+            padding: 3px 8px;
+            background: var(--row-bg);
+            border-radius: 6px;
+            border: 1px solid var(--row-border);
+            min-height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 3px 8px;
+            width: 100%;
+            text-align: center;
+            transition: background var(--theme-transition), border-color var(--theme-transition), color var(--theme-transition);
+        }
+        .result-line .hint {
+            color: var(--text-muted);
+            font-weight: 400;
+            font-size: 10px;
+        }
+        .result-line .val {
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 14px;
+            display: inline-block;
+            animation: numberPop 0.6s var(--ios-spring) both;
+        }
+        @keyframes numberPop {
+            0% {
+                opacity: 0;
+                transform: scale(0.2) translateY(20px);
+            }
+            60% {
+                transform: scale(1.2) translateY(-4px);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+        .result-line .sep-dot {
+            color: var(--text-muted);
+            font-weight: 300;
+            margin: 0 2px;
+        }
+        .result-line .sub {
+            font-size: 10px;
+            color: var(--text-muted);
+            opacity: 0.50;
+        }
+        .result-line .val b {
+            color: var(--accent);
+            font-weight: 700;
+        }
+        @media (max-width:420px) {
+            .result-line {
+                font-size: 11px;
+                padding: 2px 6px;
+                min-height: 24px;
+            }
+            .result-line .val {
+                font-size: 13px;
+            }
+            .result-line .sub {
+                font-size: 9px;
+            }
+        }
+        @media (max-width:360px) {
+            .result-line {
+                font-size: 10px;
+                padding: 2px 4px;
+                min-height: 22px;
+            }
+            .result-line .val {
+                font-size: 12px;
+            }
+        }
+
+        /* ===== Toast ===== */
+        .toast-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        .toast-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--toast-overlay);
+            backdrop-filter: blur(6px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9998;
+            padding: 20px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s var(--ios-ease);
+        }
+        .toast-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .toast-glass {
+            background: var(--toast-bg);
+            backdrop-filter: blur(28px);
+            border: 1px solid var(--card-border);
+            border-radius: 18px;
+            max-width: 260px;
+            width: 100%;
+            padding: 14px 18px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            opacity: 0;
+            transform: scale(0.92) translateY(12px);
+            transition: all 0.4s var(--ios-spring);
+            pointer-events: auto;
+        }
+        .toast-glass.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+        .toast-glass .toast-icon {
+            font-size: 26px;
+            line-height: 1;
+            color: var(--accent);
+        }
+        .toast-glass .toast-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: 0.2px;
+        }
+        .toast-glass .toast-msg {
+            font-size: 12px;
+            color: var(--text-secondary);
+            opacity: 0.55;
+            line-height: 1.3;
+        }
+        .toast-glass .toast-btn {
+            margin-top: 3px;
+            padding: 5px 18px;
+            border-radius: 12px;
+            border: 1px solid var(--accent-border);
+            background: var(--accent-soft);
+            color: var(--accent);
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            pointer-events: auto;
+            min-width: 64px;
+            user-select: none;
+            transition: all 0.3s var(--ios-spring), background var(--theme-transition), border-color var(--theme-transition), color var(--theme-transition);
+        }
+        .toast-glass .toast-btn:active {
+            transform: scale(0.90);
+            opacity: 0.70;
+        }
+
+        /* ===== 输入通用 ===== */
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input,
+        select,
+        button {
+            touch-action: manipulation;
+        }
+        input,
+        input[type="number"],
+        input[type="text"] {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            pointer-events: auto !important;
+            touch-action: manipulation !important;
+        }
+
+        /* ===== 点击涟漪 ===== */
+        @keyframes rippleAnim {
+            0% {
+                transform: scale(0);
+                opacity: 0.6;
+            }
+            100% {
+                transform: scale(18);
+                opacity: 0;
+            }
+        }
+
+        /* ===== 响应式微调 ===== */
+        @media (max-width:420px) {
+            .app {
+                border-radius: 32px;
+                height: 78vh;
+                max-height: 680px;
+            }
+            .app::before {
+                border-radius: 32px 32px 0 0;
+            }
+            .app::after {
+                border-radius: 34px;
+            }
+            body {
+                padding: 4px 8px 8px;
+            }
+        }
+        @media (max-width:360px) {
+            .app {
+                border-radius: 26px;
+                height: 76vh;
+                max-height: 620px;
+            }
+            .app::before {
+                border-radius: 26px 26px 0 0;
+            }
+            .app::after {
+                border-radius: 28px;
+            }
+            body {
+                padding: 2px 4px 6px;
+            }
+        }
+
+        /* ===== 鼠标拖尾光晕 ===== */
+        .cursor-glow {
+            position: fixed;
+            pointer-events: none;
+            z-index: 99999;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-soft) 0%, transparent 70%);
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.5);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            mix-blend-mode: screen;
+            will-change: transform, opacity;
+        }
+        @media (hover: hover) {
+            .cursor-glow.active {
+                opacity: 0.25;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        @media (hover: none) {
+            .cursor-glow {
+                display: none !important;
+            }
+        }
+
+        /* ===== 输入框聚焦光晕 ===== */
+        .gear-field:focus {
+            animation: inputGlow 1.2s ease-in-out infinite alternate;
+        }
+        @keyframes inputGlow {
+            0% {
+                box-shadow: 0 0 8px var(--input-focus), 0 0 20px var(--input-focus);
+            }
+            100% {
+                box-shadow: 0 0 16px var(--input-focus), 0 0 40px var(--input-focus), 0 0 60px var(--accent-soft);
+            }
+        }
+
+        /* ===== 结果卡片入场 ===== */
+        .manual-group {
+            animation: cardEnter 0.5s var(--ios-spring) both;
+        }
+        .manual-group:nth-child(2) {
+            animation-delay: 0.08s;
+        }
+        .manual-group:nth-child(3) {
+            animation-delay: 0.16s;
+        }
+        @keyframes cardEnter {
+            0% {
+                opacity: 0;
+                transform: translateY(16px) scale(0.97);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* 齿轮装饰图标旋转 */
+        .gear-icon-spin {
+            display: inline-block;
+            animation: gearSpin 6s linear infinite;
+        }
+        @keyframes gearSpin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor-glow" id="cursorGlow"></div>
+    <div class="bg-blob bg-blob-1"></div>
+    <div class="bg-blob bg-blob-2"></div>
+
+    <div class="app" id="app">
+        <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()">
+            <span class="theme-icon-inner" id="themeIcon">☀️</span>
+        </button>
+
+        <div class="title-bar">
+            <span class="icon">⚙️</span>包覆工艺 · 手动验算
+            <span class="badge" id="themeBadge" onclick="toggleTheme()">琥珀</span>
+        </div>
+
+        <div class="page" id="main-page">
+            <!-- 参数设置 -->
+            <div class="settings-area" id="settingsArea">
+                <span class="s-item"><label>拉伸常数</label><input id="set_k2" type="number" step="any" value="1334.4545"></span>
+                <span class="s-item"><label>供送常数</label><input id="set_k3" type="number" step="any" value="3741.0728"></span>
+                <span class="s-item"><label>卷取直径</label><input id="set_dd" type="number" step="any" value="100"></span>
+                <span class="s-item"><label>拉伸直径</label><input id="set_dr" type="number" step="any" value="70"></span>
+            </div>
+
+            <!-- 卷取 -->
+            <div class="manual-group">
+                <div class="manual-label"><span class="gear-icon gear-icon-spin">⚙</span> 卷取 <span class="gear-icon gear-icon-spin">⚙</span></div>
+                <div class="gear-row">
+                    <span class="gear-letter">A</span><input class="gear-field" id="m1a" placeholder="齿数" type="number" inputmode="numeric" step="1" value="40">
+                    <span class="gear-operator">/</span>
+                    <span class="gear-letter">B</span><input class="gear-field" id="m1b" placeholder="齿数" type="number" inputmode="numeric" step="1">
+                    <span class="gear-operator">×</span>
+                    <span class="gear-letter">C</span><input class="gear-field" id="m1c" placeholder="齿数" type="number" inputmode="numeric" step="1">
+                    <span class="gear-operator">/</span>
+                    <span class="gear-letter">D</span><input class="gear-field" id="m1d" placeholder="齿数" type="number" inputmode="numeric" step="1" value="80">
+                </div>
+                <div id="m1res" class="result-line"><span class="hint">请输入完整齿轮齿数</span></div>
+            </div>
+
+            <!-- 拉伸 -->
+            <div class="manual-group">
+                <div class="manual-label"><span class="gear-icon gear-icon-spin">⚙</span> 拉伸 <span class="gear-icon gear-icon-spin">⚙</span></div>
+                <div class="gear-row">
+                    <span class="gear-letter">A</span><input class="gear-field" id="m2a" placeholder="齿数" type="number" inputmode="numeric" step="1" value="72">
+                    <span class="gear-operator">/</span>
+                    <span class="gear-letter">B</span><input class="gear-field" id="m2b" placeholder="齿数" type="number" inputmode="numeric" step="1">
+                    <span class="gear-operator">×</span>
+                    <span class="gear-letter">C</span><input class="gear-field" id="m2c" placeholder="齿数" type="number" inputmode="numeric" step="1">
+                    <span class="gear-operator">/</span>
+                    <span class="gear-letter">D</span><input class="gear-field" id="m2d" placeholder="齿数" type="number" inputmode="numeric" step="1" value="58">
+                </div>
+                <div id="m2res" class="result-line"><span class="hint">请输入完整齿轮齿数</span></div>
+            </div>
+
+            <!-- 供送 -->
+            <div class="manual-group">
+                <div class="manual-label"><span class="gear-icon gear-icon-spin">⚙</span> 供送 <span class="gear-icon gear-icon-spin">⚙</span></div>
+                <div class="gear-row">
+                    <span class="gear-letter">A</span><input class="gear-field" id="m3a" placeholder="齿数" type="number" inputmode="numeric" step="1" value="78">
+                    <span class="gear-operator">/</span>
+                    <span class="gear-letter">B</span><input class="gear-field" id="m3b" placeholder="齿数" type="number" inputmode="numeric" step="1">
+                    <span class="gear-operator">×</span>
+                    <span class="gear-letter">C</span><input class="gear-field" id="m3c" placeholder="齿数" type="number" inputmode="numeric" step="1">
+                    <span class="gear-operator">/</span>
+                    <span class="gear-letter">D</span><input class="gear-field" id="m3d" placeholder="齿数" type="number" inputmode="numeric" step="1" value="64">
+                </div>
+                <div id="m3res" class="result-line"><span class="hint">请输入完整齿轮齿数</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // ================================================================
+        // ★★★ 主题管理 ★★★
+        // ================================================================
+        const THEMES = ['light', 'dark'];
+        const THEME_NAMES = ['琥珀', '暗夜'];
+        const THEME_ICONS = ['☀️', '🌙'];
+        let currentThemeIndex = 0;
+
+        function getThemeIndex(name) {
+            const idx = THEMES.indexOf(name);
+            return idx >= 0 ? idx : 0;
+        }
+
+        function applyTheme(index) {
+            const theme = THEMES[index];
+            document.documentElement.setAttribute('data-theme', theme);
+            document.getElementById('themeBadge').textContent = THEME_NAMES[index];
+            document.getElementById('themeIcon').textContent = THEME_ICONS[index];
+            currentThemeIndex = index;
+            localStorage.setItem('amber-theme-verify', theme);
+        }
+
+        function toggleTheme() {
+            const next = (currentThemeIndex + 1) % THEMES.length;
+            applyTheme(next);
+        }
+
+        function loadTheme() {
+            const saved = localStorage.getItem('amber-theme-verify');
+            if (saved && THEMES.includes(saved)) {
+                applyTheme(getThemeIndex(saved));
+            } else {
+                applyTheme(0);
+            }
+        }
+
+        // ================================================================
+        // ★★★ Toast ★★★
+        // ================================================================
+        function showToast(msg, title, icon) {
+            const container = document.getElementById('toastContainer');
+            const overlay = document.createElement('div');
+            overlay.className = 'toast-overlay show';
+            overlay.innerHTML = `
+                <div class="toast-glass show">
+                    <div class="toast-icon">${icon || '✓'}</div>
+                    <div class="toast-title">${title || '提示'}</div>
+                    <div class="toast-msg">${msg || ''}</div>
+                    <button class="toast-btn" onclick="this.closest('.toast-overlay').remove()">确定</button>
+                </div>
+            `;
+            container.appendChild(overlay);
+            setTimeout(() => { overlay.querySelector('.toast-glass')?.classList.add('show'); }, 20);
+            setTimeout(() => {
+                if (overlay.parentNode) {
+                    overlay.classList.remove('show');
+                    setTimeout(() => overlay.remove(), 400);
+                }
+            }, 2800);
+        }
+
+        // ================================================================
+        // ★★★ 参数管理 ★★★
+        // ================================================================
+        const PARAM_KEYS = ['set_k2', 'set_k3', 'set_dd', 'set_dr'];
+
+        function loadParams() {
+            PARAM_KEYS.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                const saved = localStorage.getItem('cfg_verify_' + id);
+                if (saved !== null) el.value = saved;
+                el.addEventListener('input', () => {
+                    localStorage.setItem('cfg_verify_' + id, el.value);
+                    debouncedCalc();
+                }, { passive: true });
+            });
+        }
+
+        function getParam(id) {
+            const el = document.getElementById(id);
+            if (!el) return 0;
+            return parseFloat(el.value) || 0;
+        }
+
+        // ================================================================
+        // ★★★ 核心计算 ★★★
+        // ================================================================
+        let calcScheduled = false;
+        let lastTwistValue = 0;
+
+        function calcManual() {
+            if (calcScheduled) return;
+            calcScheduled = true;
+            requestAnimationFrame(() => {
+                calcScheduled = false;
+                // 卷取
+                calcGroup('m1', (a, b, c, d) => {
+                    const dd = getParam('set_dd') || 100;
+                    const dr = getParam('set_dr') || 70;
+                    if (dr === 0 || dd === 0) return 0;
+                    return (a / b) * (c / d) / (dr / dd) * 100;
+                }, 'm1res', '张力');
+
+                // 拉伸
+                calcGroup('m2', (a, b, c, d) => {
+                    const k2 = getParam('set_k2') || 1334.4545;
+                    const ratio = (a / b) * (c / d);
+                    if (ratio === 0) return 0;
+                    return k2 / ratio;
+                }, 'm2res', '捻度', true);
+
+                // 供送
+                calcGroup('m3', (a, b, c, d) => {
+                    const k3 = getParam('set_k3') || 3741.0728;
+                    const twistVal = lastTwistValue;
+                    if (!twistVal || isNaN(twistVal) || twistVal === 0) return 0;
+                    const ratio = (a / b) * (c / d);
+                    if (ratio === 0) return 0;
+                    return k3 / (twistVal * ratio);
+                }, 'm3res', '拉比');
+            });
+        }
+
+        function calcGroup(prefix, formula, resId, label, storeTwist) {
+            const a = parseFloat(document.getElementById(prefix + 'a').value);
+            const b = parseFloat(document.getElementById(prefix + 'b').value);
+            const c = parseFloat(document.getElementById(prefix + 'c').value);
+            const d = parseFloat(document.getElementById(prefix + 'd').value);
+            const el = document.getElementById(resId);
+            if (isNaN(a) || isNaN(b) || isNaN(c) || isNaN(d) || b === 0 || d === 0) {
+                el.innerHTML = '<span class="hint">请输入完整齿轮齿数</span>';
+                if (storeTwist) lastTwistValue = 0;
+                return;
+            }
+            const val = formula(a, b, c, d);
+            if (isNaN(val) || !isFinite(val) || val === 0) {
+                if (resId === 'm3res') {
+                    el.innerHTML = '<span class="hint">需要拉伸捻度来计算拉比</span>';
+                } else {
+                    el.innerHTML = '<span class="hint">计算结果无效</span>';
+                }
+                if (storeTwist) lastTwistValue = 0;
+                return;
+            }
+            const ratioAB = (a / b);
+            const ratioCD = (c / d);
+            el.innerHTML =
+                `<span class="val">${label} = <b>${val.toFixed(4)}</b></span><span class="sep-dot">·</span><span class="sub">A/B × C/D = ${ratioAB.toFixed(4)} × ${ratioCD.toFixed(4)}</span>`;
+            if (storeTwist) lastTwistValue = val;
+        }
+
+        const debouncedCalc = (function() {
+            let timer = null;
+            return function() {
+                if (timer) clearTimeout(timer);
+                timer = setTimeout(() => {
+                    calcManual();
+                    timer = null;
+                }, 80);
+            };
+        })();
+
+        // ================================================================
+        // ★★★ 绑定输入事件 ★★★
+        // ================================================================
+        const inputIds = ['m1a', 'm1b', 'm1c', 'm1d', 'm2a', 'm2b', 'm2c', 'm2d', 'm3a', 'm3b', 'm3c', 'm3d'];
+        inputIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', debouncedCalc, { passive: true });
+                el.addEventListener('focus', function() { this.select(); });
+            }
+        });
+
+        // 参数输入也触发计算
+        PARAM_KEYS.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.addEventListener('input', debouncedCalc, { passive: true });
+            }
+        });
+
+        // ================================================================
+        // ★★★ 鼠标拖尾光晕 ★★★
+        // ================================================================
+        (function() {
+            const glow = document.getElementById('cursorGlow');
+            if (!glow) return;
+            let active = false,
+                timeout = null;
+
+            function moveGlow(e) {
+                glow.style.left = e.clientX + 'px';
+                glow.style.top = e.clientY + 'px';
+                if (!active) { glow.classList.add('active');
+                    active = true; }
+                clearTimeout(timeout);
+                timeout = setTimeout(() => { glow.classList.remove('active');
+                    active = false; }, 300);
+            }
+            if (window.matchMedia('(hover: hover)').matches) {
+                document.addEventListener('mousemove', moveGlow);
+            }
+        })();
+
+        // ================================================================
+        // ★★★ 点击涟漪 ★★★
+        // ================================================================
+        document.addEventListener('click', function(e) {
+            if (e.target.closest('input') || e.target.closest('button')) return;
+            const ripple = document.createElement('span');
+            const size = 24;
+            ripple.style.cssText = `
+                position: fixed; pointer-events: none; z-index: 9999;
+                width: ${size}px; height: ${size}px; border-radius: 50%;
+                background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+                left: ${e.clientX - size/2}px; top: ${e.clientY - size/2}px;
+                transform: scale(0); animation: rippleAnim 0.9s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+                opacity: 0.5;
+            `;
+            document.body.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 900);
+        });
+
+        // ================================================================
+        // ★★★ 初始化 ★★★
+        // ================================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+            loadParams();
+
+            // 设置初始默认值
+            if (!document.getElementById('m1b').value) document.getElementById('m1b').value = '';
+            if (!document.getElementById('m1c').value) document.getElementById('m1c').value = '';
+            if (!document.getElementById('m2b').value) document.getElementById('m2b').value = '';
+            if (!document.getElementById('m2c').value) document.getElementById('m2c').value = '';
+            if (!document.getElementById('m3b').value) document.getElementById('m3b').value = '';
+            if (!document.getElementById('m3c').value) document.getElementById('m3c').value = '';
+
+            // 延迟计算
+            setTimeout(calcManual, 200);
+
+            // 键盘 ESC 关闭 Toast
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    const overlay = document.querySelector('.toast-overlay');
+                    if (overlay) overlay.remove();
+                }
+            });
+
+            console.log('⚙️ 包覆工艺 · 手动验算 v2.0');
+            console.log('📦 主题:', THEME_NAMES[currentThemeIndex]);
+        });
+    </script>
+</body>
+</html>
